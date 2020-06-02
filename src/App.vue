@@ -471,6 +471,7 @@
             return {
                 routes      : [],
                 currentRoute: {},
+                query       : {},
             };
         },
         watch     : {
@@ -487,7 +488,8 @@
             // console.info(router.options.routes);
             this.routes       = router.options.routes;
             this.currentRoute = router.currentRoute;
-            globalDbg         = router;
+            // globalDbg         = router;
+
         },
     }
 </script>

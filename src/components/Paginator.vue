@@ -5,7 +5,7 @@
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
-        <li v-for="offset in pageOffsets" :class="{active:page==offset}" v-on:click="reset(offset)"><a href="javascript:void(0)">{{offset}}</a></li>
+        <li v-for="offset in pageOffsets" :class="{active:page===offset}" v-on:click="goto(offset)"><a href="javascript:void(0)">{{offset}}</a></li>
         <!--<li c0.lass="disabled"><a href="javascript:void(0)">3</a></li>-->
         <li>
             <a href="javascript:void(0)" v-on:click="next">
@@ -16,28 +16,37 @@
 </template>
 
 <script>
+    import store  from '../store';
+    import router from '../router';
+
     /**
      * @var page
-     * @method reset                (page) 重置分页
-     * @method switcher             (page) (internal)
-     * @method switcherCallback     (page) 用于替换
+     * @method goto                 (page) 重置分页
      * @method prev
      * @method next
+     * @method pagination           () (internal)
+     * @method pagination           () (internal)
      * */
     export default {
-        name   : "Paginator",
+        name    : "Paginator",
+        store   : store,
         // el     : '#paginator',
-        data   : function () {
+        data    : function () {
             return {
-                page       : 1,
                 pageOffsets: [
                     1, 2, 3, 4, 5,
                 ],
             };
         },
-        created: function () {
+        created : function () {
         },
-        methods: {
+        computed: {
+            page: function () {
+                console.info('paginator: param:page computed');
+                return this.$store.state.page;
+            }
+        },
+        methods : {
             /** @private 生成新的分页 */
             pagination: function () {
                 //生成页数
@@ -49,28 +58,31 @@
                 }
                 this.pageOffsets = targetOffset;
             },
-            //用于注入外部switcher方法的方法
-            //到这里只更新路由，具体的获取数据等路由更新了以后自己去监听
-            switcher  : function () {
+            /** @private 切换分页 */
+            switch    : function () {
                 console.info('switcher');
+                let path  = router.currentRoute.path;
+                let param = router.currentRoute.params;
+                let page  = this.page;
+                router.push({path: path, query: Object.assign(param, {page: page})});
             },
-            reset     : function (page) {
+            goto      : function (page) {
                 console.info('reset');
-                this.page = page ? Number.parseInt(page) : 1;
+                this.$store.commit('setPage', page ? page : 1);
                 this.pagination();
-                this.switcher();
+                this.switch();
             },
             prev      : function () {
                 console.info('prev');
-                this.page -= 1;
+                this.$store.commit('setPage', this.page - 1);
                 this.pagination();
-                this.switcher();
+                this.switch();
             },
             next      : function () {
                 console.info('next');
-                this.page += 1;
+                this.$store.commit('setPage', this.page + 1);
                 this.pagination();
-                this.switcher();
+                this.switch();
             },
         }
     }

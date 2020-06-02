@@ -25,7 +25,7 @@ const routes = [
 
 const router = new VueRouter(
     {
-        routes:routes,
+        routes: routes,
     })
 
 export default router

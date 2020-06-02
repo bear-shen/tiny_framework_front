@@ -475,15 +475,16 @@
         },
         watch     : {
             $route: function (to, from) {
-                console.info(to);
-                console.info(from);
+                console.info(`route to ${router.currentRoute.name}`);
+                // console.info(to);
+                // console.info(from);
                 this.currentRoute = router.currentRoute;
             }
         },
         created   : function () {
             console.info('app created');
-            console.info(router);
-            console.info(router.options.routes);
+            // console.info(router);
+            // console.info(router.options.routes);
             this.routes       = router.options.routes;
             this.currentRoute = router.currentRoute;
             globalDbg         = router;

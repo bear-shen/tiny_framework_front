@@ -12,6 +12,8 @@
     import HelloWorld from '@/components/HelloWorld.vue'
     import store      from "../store";
     import router     from "../router";
+    import GenFunc from '../lib/GenFuncLib'
+    import Uploader from '../lib/Uploader'
 
     export default {
         name      : 'Home',
@@ -57,6 +59,8 @@
         created   : function () {
             console.info('Home.vue create');
             console.info(this);
+            console.info(GenFunc);
+            console.info(Uploader);
             // this.page = this.$store.state.pageSet;
         },
         mounted   : function () {
@@ -71,7 +75,7 @@
         },
         methods   : {
             query: function () {
-
+                this.page=1;
             }
         },
     }

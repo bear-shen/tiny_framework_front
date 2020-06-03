@@ -2,6 +2,7 @@
     <div class="home">
         <div>in homo.vue</div>
         <img alt="Vue logo" src="../assets/logo.png">
+        <button v-on:click="query()">goto page 1</button>
         <HelloWorld msg="Welcome to Your Vue.js App"/>
     </div>
 </template>
@@ -18,6 +19,17 @@
             HelloWorld
         },
         store     : store,
+        watch     : {
+            $route: function (to, from) {
+                console.info(`home: route to ${router.currentRoute.name}`);
+                // console.info(to);
+                // console.info(from);
+                this.currentRoute = router.currentRoute;
+            },
+            page: function (to, from) {
+                console.info('home: param:page compute watched');
+            }
+        },
         data      : function () {
             return {
                 param: {},
@@ -34,7 +46,7 @@
             page: {
                 get: function () {
                     console.info('home: param:page get');
-                    return this.$store.state.pageSet;
+                    return this.$store.state.page;
                 },
                 set: function (val) {
                     console.info('home: param:page set');
@@ -43,8 +55,18 @@
             }
         },
         created   : function () {
-            console.info(this.$store);
-            console.info(this.page);
+            console.info('Home.vue create');
+            console.info(this);
+            // this.page = this.$store.state.pageSet;
+        },
+        mounted   : function () {
+            console.info('Home.vue mount');
+            console.info(this);
+            // this.page = this.$store.state.pageSet;
+        },
+        updated   : function () {
+            console.info('Home.vue update');
+            console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         methods   : {

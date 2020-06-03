@@ -464,6 +464,9 @@
     import Paginator from "./components/Paginator";
     import Popup     from "./components/Popup";
     import router    from "./router";
+    import store     from "./store";
+
+    console.log('Hello world');
 
     export default {
         components: {Popup, Paginator, Msg, Loader, Header},
@@ -474,14 +477,24 @@
                 query       : {},
             };
         },
+        store   : store,
         watch     : {
             $route: function (to, from) {
-                console.info(`route to ${router.currentRoute.name}`);
+                console.info(`app: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
                 this.currentRoute = router.currentRoute;
-            }
+            },
+            /*page: function (to, from) {
+                console.info('app: param:page compute watched');
+            }*/
         },
+        /*computed: {
+            page: function () {
+                console.info('app: param:page computed');
+                return this.$store.state.page;
+            }
+        },*/
         created   : function () {
             console.info('app created');
             // console.info(router);

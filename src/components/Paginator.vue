@@ -64,24 +64,26 @@
                 let path  = router.currentRoute.path;
                 let param = router.currentRoute.params;
                 let page  = this.page;
-                router.push({path: path, query: Object.assign(param, {page: page})});
+                router.push(
+                    {path: path, query: Object.assign(param, {page: page})},
+                    ()=>{
+                        this.pagination();
+                    }
+                );
             },
             goto      : function (page) {
                 console.info('reset');
                 this.$store.commit('setPage', page ? page : 1);
-                this.pagination();
                 this.switch();
             },
             prev      : function () {
                 console.info('prev');
                 this.$store.commit('setPage', this.page - 1);
-                this.pagination();
                 this.switch();
             },
             next      : function () {
                 console.info('next');
                 this.$store.commit('setPage', this.page + 1);
-                this.pagination();
                 this.switch();
             },
         }

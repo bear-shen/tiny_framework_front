@@ -1,25 +1,25 @@
-// import GenFunc from './GenFuncLib.js';
+import GenFunc from './GenFuncLib.js';
 
 /**
  * @param data Object
  *
  * {
-     *      dragArea        : DOM            : 拖拽的 DOM
-     *      sourceInput     : DOM            : 上传文件的 input
-     *      sizeLimit       : int            : 上传文件的尺寸上限
-     *      chunkSize       : int            : 自动分割上传文件的大小， 0 不分割
-     *      refreshFileList : function(){}   : 添加文件时自动触发的函数
-     *      uploadUrl       : string         : 上传的地址
-     *      partSignal      : string         : 拆分的标志
-     *      endSignal       : string         : 结束标志
-     *      extraData       : Object({})     : post时发送的额外数据
-     *      uploadOneTime   : int            : 每次请求上传的文件数
-     *      uploadProgress  : function(){}   : 上传过程中触发的函数
-     *      tokenSize       : int            : 分割上传文件的 token 长度
-     *      onComplete      : function(){}   : 上传结束后触发的函数
-     * }
+ *      dragArea          : DOM            : 拖拽的 DOM
+ *      sourceInput       : DOM            : 上传文件的 input
+ *      sizeLimit         : int            : 上传文件的尺寸上限
+ *      chunkSize         : int            : 自动分割上传文件的大小， 0 不分割
+ *      onRefreshFileList : function(){}   : 添加文件时自动触发的函数
+ *      uploadUrl         : string         : 上传的地址
+ *      partSignal        : string         : 拆分的标志
+ *      endSignal         : string         : 结束标志
+ *      extraData         : Object({})     : post时发送的额外数据
+ *      uploadOneTime     : int            : 每次请求上传的文件数
+ *      uploadProgress    : function(){}   : 上传过程中触发的函数
+ *      tokenSize         : int            : 分割上传文件的 token 长度
+ *      onComplete        : function(){}   : 上传结束后触发的函数
+ * }
  * */
-const Uploader = function (data) {
+const UploaderLib = function (data) {
     this.data     = Object.assign(
         {
             dragArea       : null,  //拖拽用的目标label
@@ -27,10 +27,10 @@ const Uploader = function (data) {
             sizeLimit      : 1024 * 1024 * 1024 * 20,//文件尺寸上限
             chunkSize      : 1024 * 1024 * 20,  //大于xx后分割文件上传,0不分割
             //更新文件列表的函数
-            refreshFileList: () => {
+            onRefreshFileList: (fileList) => {
                 let targetStr = '';
-                for (let i1 = 0; i1 < this.public.fileList.length; i1++) {
-                    let cur = this.public.fileList[i1];
+                for (let i1 = 0; i1 < fileList.length; i1++) {
+                    let cur = fileList[i1];
                     targetStr += `<li>${cur.name}</li>`;
                 }
                 document.getElementById('files').innerHTML = targetStr;
@@ -55,11 +55,11 @@ const Uploader = function (data) {
                 /**
                  * fileList as
                  * {
-                     *      relFile       : '',
-                     *      relIndex      : '',
-                     *      chunkIndex    : '',
-                     *      chunkSize     : '',
-                     * }
+                 *      relFile       : '',
+                 *      relIndex      : '',
+                 *      chunkIndex    : '',
+                 *      chunkSize     : '',
+                 * }
                  * */
                 console.info('on process');
                 console.info(e);
@@ -69,6 +69,11 @@ const Uploader = function (data) {
             onComplete     : () => {
                 console.info('complete');
             },
+            onDragEnter    : () => {},
+            onDragLeave    : () => {},
+            onDragDrop     : () => {},
+            onDragPaste    : () => {},
+            onInputChange  : () => {},
             //
         }, data);
     //内部数据
@@ -87,15 +92,8 @@ const Uploader = function (data) {
         },
         callPrevent     : () => {
             for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
-                console.debug('has prevent event:' + this.internal.preventEventList[ia]);
+                console.debug('set prevent event:' + this.internal.preventEventList[ia]);
                 document.addEventListener(
-                    this.internal.preventEventList[ia], this.internal.preventEvent)
-            }
-        },
-        removePrevent   : () => {
-            for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
-                console.debug('has prevent event:' + this.internal.preventEventList[ia]);
-                document.removeEventListener(
                     this.internal.preventEventList[ia], this.internal.preventEvent)
             }
         },
@@ -122,7 +120,7 @@ const Uploader = function (data) {
                     let chunkSize = Math.ceil(current.size / this.data.chunkSize);
                     console.info(`chunk ${chunkSize}`);
                     //
-                    $token = GenFunc.randStr(this.data.tokenSize);
+                    let token = GenFunc.randStr(this.data.tokenSize);
                     //
                     for (let i2 = 0; i2 < chunkSize; i2++) {
                         let subFileData = current.slice(
@@ -131,8 +129,8 @@ const Uploader = function (data) {
                         );
                         //
                         let fName       = current.name;
-                        if (i2 < chunkSize - 1) fName += this.data.partSignal + $token;
-                        else fName += this.data.endSignal + $token;
+                        if (i2 < chunkSize - 1) fName += this.data.partSignal + token;
+                        else fName += this.data.endSignal + token;
                         //
                         let subFile = new File([subFileData], fName);
                         this.internal.uploadFileQueue.push(
@@ -186,6 +184,7 @@ const Uploader = function (data) {
                             if (!this.data.uploadProgress) return;
                             this.data.uploadProgress(e, fileInfoList);
                         },
+                        withCredentials:false,
                     });
             });
             query.then((result, status) => {
@@ -217,7 +216,7 @@ const Uploader = function (data) {
                 this.public.checkFile(file[i1])
                     .then(() => {
                         this.public.fileList.push(file[i1]);
-                        this.data.refreshFileList();
+                        this.data.onRefreshFileList(this.public.fileList);
                         if (++fCount === file.length) {
                             // 表单只能获取，无法回写
                             // this.data.sourceInput.files = this.public.fileList;
@@ -232,12 +231,13 @@ const Uploader = function (data) {
             }
             //这里因为用了异步函数，所以下面的步骤全没有用了
             // if (preLength === this.public.fileList.length) return false;
-            // this.data.refreshFileList();
+            // this.data.onRefreshFileList();
             return true;
         },
         checkFile: (file) => {
             /**
              * @see https://segmentfault.com/a/1190000013298317
+             * 仅支持文件上传，文件夹上传没支持
              * */
             return new Promise((resolve, reject) => {
                 // console.info(file);
@@ -264,7 +264,7 @@ const Uploader = function (data) {
             this.public.fileList.splice(fileIndex, 1);
             //
             if (preLength === this.public.fileList.length) return false;
-            this.data.refreshFileList();
+            this.data.onRefreshFileList(this.public.fileList);
             return true;
         },
         // file uploader -----------------
@@ -272,18 +272,26 @@ const Uploader = function (data) {
             this.internal.fillQueue();
             this.internal.uploadWalker();
         },
+        removePrevent   : () => {
+            for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
+                console.debug('set prevent event:' + this.internal.preventEventList[ia]);
+                document.removeEventListener(
+                    this.internal.preventEventList[ia], this.internal.preventEvent)
+            }
+        },
     };
     this.internal.callPrevent();
     // this.internal.removePrevent();
-    //
     if (this.data.dragArea) {
         this.data.dragArea.addEventListener('dragenter', (e) => {
             // console.debug('dragenter');
             // console.debug(e);
+            this.data.onDragEnter();
         });
         this.data.dragArea.addEventListener('dragleave', (e) => {
             // console.debug('dragleave');
             // console.debug(e);
+            this.data.onDragLeave();
         });
         this.data.dragArea.addEventListener('drop', (e) => {
             console.debug('drop');
@@ -291,12 +299,14 @@ const Uploader = function (data) {
             // console.debug(e.dataTransfer.files);
             //话说不清楚这个是否会存在到别的数据。。。
             this.public.addFile(e.dataTransfer.files);
+            this.data.onDragDrop();
         });
         this.data.dragArea.addEventListener('paste', (e) => {
             console.debug('paste');
             // console.debug(e);
             // console.debug(e.clipboardData.files);
             this.public.addFile(e.clipboardData.files);
+            this.data.onDragPaste();
         });
     }
     //
@@ -304,7 +314,8 @@ const Uploader = function (data) {
         this.data.sourceInput.addEventListener('change', (e) => {
             this.data.fileList = [];
             this.public.addFile(this.data.sourceInput.files);
+            this.data.onInputChange();
         });
     }
 };
-export {Uploader as default};
+export {UploaderLib as default};

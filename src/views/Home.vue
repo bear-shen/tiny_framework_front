@@ -3,6 +3,7 @@
         <div>in homo.vue</div>
         <img alt="Vue logo" src="../assets/logo.png">
         <button v-on:click="query()">goto page 1</button>
+        <Uploader/>
         <HelloWorld msg="Welcome to Your Vue.js App"/>
     </div>
 </template>
@@ -12,13 +13,14 @@
     import HelloWorld from '@/components/HelloWorld.vue'
     import store      from "../store";
     import router     from "../router";
-    import GenFunc from '../lib/GenFuncLib'
-    import Uploader from '../lib/Uploader'
+    import GenFunc    from '../lib/GenFuncLib'
+    import Uploader   from "../components/Uploader";
 
     export default {
         name      : 'Home',
         components: {
-            HelloWorld
+            HelloWorld,
+            Uploader,
         },
         store     : store,
         watch     : {
@@ -59,9 +61,9 @@
         },
         created   : function () {
             console.info('Home.vue create');
-            console.info(this);
-            console.info(GenFunc);
-            console.info(Uploader);
+            // console.info(this);
+            // console.info(GenFunc);
+            // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
         },
         mounted   : function () {

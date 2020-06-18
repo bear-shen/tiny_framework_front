@@ -5,12 +5,38 @@ import Home      from '../views/Home.vue'
 Vue.use(VueRouter)
 
 const routes = [
-    {name: 'index1', title: 'index1', path: '/', component: Home, props: true,},
-    {name: 'index2', title: 'index2', path: '/index2', component: Home, props: true,},
-    {name: 'index3', title: 'index3', path: '/index3', component: Home, props: true,},
-    {name: 'index4', title: 'index4', path: '/index4', component: Home, props: true,},
-    {name: 'index5', title: 'index5', path: '/index5', component: Home, props: true,},
-    {name: 'index6', title: 'index6', path: '/index6', component: Home, props: true,},
+    {
+        name: 'List', title: 'List',
+        icon: 'list', path: '/', component: Home, props: true,
+    },
+    {
+        name: 'TagGroup', title: 'TagGroup',
+        icon: 'tag_group', path: '/tag_group', component: Home, props: true,
+    },
+    {
+        name: 'Tag', title: 'Tag',
+        icon: 'tag', path: '/tag', component: Home, props: true,
+    },
+    {
+        name: 'Favourite', title: 'Favourite',
+        icon: 'favourite', path: '/favourite', component: Home, props: true,
+    },
+    {
+        name: 'UserGroup', title: 'UserGroup',
+        icon: 'user_group', path: '/user_group', component: Home, props: true,
+    },
+    {
+        name: 'User', title: 'User',
+        icon: 'user', path: '/user', component: Home, props: true,
+    },
+    {
+        name: 'Settings', title: 'Settings',
+        icon: 'settings', path: '/settings', component: Home, props: true,
+    },
+    {
+        name: 'Recycle', title: 'Recycle',
+        icon: 'recycle', path: '/recycle', component: Home, props: true,
+    },
     /*{
      path: '/about',
      name: 'About',

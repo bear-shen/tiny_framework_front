@@ -27,6 +27,7 @@
                 // console.info(to);
                 // console.info(from);
                 this.currentRoute = router.currentRoute;
+                this.query();
             },
             page: function (to, from) {
                 console.info('home: param:page compute watched');
@@ -65,17 +66,17 @@
         },
         mounted   : function () {
             console.info('Home.vue mount');
-            console.info(this);
+            // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         updated   : function () {
             console.info('Home.vue update');
-            console.info(this);
+            // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         methods   : {
             query: function () {
-                this.page=1;
+                console.info('home: query');
             }
         },
     }

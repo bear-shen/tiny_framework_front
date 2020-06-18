@@ -18,8 +18,12 @@
 <script>
     import store  from '../store';
     import router from '../router';
+    import Helper from '../lib/Helper';
 
     /**
+     * 除去点击分页以后分页自行切换的部分
+     * 分页通过监听路由的修改来自己实现自动切换
+     *
      * @var page
      * @method goto                 (page) 重置分页
      * @method prev
@@ -31,6 +35,22 @@
         name    : "Paginator",
         store   : store,
         // el     : '#paginator',
+        watch   : {
+            $route: function (to, from) {
+                console.info(`paginator: route to ${router.currentRoute.name}`);
+                // console.info(to);
+                // console.info(from);
+                // console.info(this.page);
+                if (!Helper.isSameRoute(from,to)) {
+                    console.info('paginator: page modified');
+                    this.page = 1;
+                    this.pagination();
+                }
+            },
+            page  : function (to, from) {
+                console.info('paginator: param:page compute watched');
+            }
+        },
         data    : function () {
             return {
                 pageOffsets: [
@@ -41,14 +61,21 @@
         created : function () {
         },
         computed: {
-            page: function () {
-                console.info('paginator: param:page computed');
-                return this.$store.state.page;
+            page: {
+                get: function () {
+                    console.info('paginator: param:page get');
+                    return this.$store.state.page;
+                },
+                set: function (val) {
+                    console.info('paginator: param:page set');
+                    this.$store.commit('setPage', val);
+                },
             }
         },
         methods : {
             /** @private 生成新的分页 */
             pagination: function () {
+                console.info('paginator: go pagination, page:' + this.page);
                 //生成页数
                 let start        = Math.max(this.page - 2, 1);
                 let end          = start + 4;
@@ -66,7 +93,7 @@
                 let page  = this.page;
                 router.push(
                     {path: path, query: Object.assign(param, {page: page})},
-                    ()=>{
+                    () => {
                         this.pagination();
                     }
                 );

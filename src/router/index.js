@@ -1,13 +1,14 @@
 import Vue       from 'vue'
 import VueRouter from 'vue-router'
 import Home      from '../views/Home.vue'
+import List      from "../views/List";
 
 Vue.use(VueRouter)
 
 const routes = [
     {
         name: 'List', title: 'List',
-        icon: 'list', path: '/', component: Home, props: true,
+        icon: 'list', path: '/', component: List, props: true,
     },
     {
         name: 'TagGroup', title: 'TagGroup',

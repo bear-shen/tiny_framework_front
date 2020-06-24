@@ -21,8 +21,70 @@
     </ul>
 </template>
 
-<style scoped>
+<style lang="scss">
+    #msg {
+        font-size: 0;
+        height: $footerHeight;
+        margin-bottom: 0;
+        width: 75%;
+        white-space: nowrap;
 
+        li {
+            display: inline-block;
+            font-size: initial;
+            height: $footerHeight;
+            line-height: $footerHeight;
+            width: 5%;
+            text-align: center;
+            position: relative;
+            transition: width 0s, height 0s;
+
+            .hinter {
+                display: none;
+                position: absolute;
+                z-index: 40;
+                left: 0;
+                bottom: $footerHeight;
+                line-height: $footerHeight*0.5;
+                height: $footerHeight*0.5;
+                font-size: $footerHeight*0.25;
+                white-space: nowrap;
+                padding: 0 5px;
+                max-width: 20vw;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            &.hiding {
+                transition: width 1s, height 1s;
+                width: 0;
+                font-size: 0;
+            }
+        }
+    }
+    @media(max-width: 767px) {
+        #msg {
+            width: 90%;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+
+            height: $footerHeight*0.4;
+            margin: 0 auto $footerHeight*0.1;
+
+            li {
+                height: $footerHeight*0.4;
+                font-size: 0;
+
+                .hinter {
+                    bottom: $footerHeight*0.4;
+                    line-height: $footerHeight*0.6;
+                    height: $footerHeight*0.6;
+                    font-size: $footerHeight*0.6*0.5;
+                }
+            }
+        }
+    }
 </style>
 
 <script>

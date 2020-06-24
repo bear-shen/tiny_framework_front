@@ -15,6 +15,49 @@
     </ul>
 </template>
 
+<style lang="scss">
+    #paginator {
+        height: $footerHeight;
+        width: 25%;
+        margin-right: 0;
+        font-size: 0;
+
+        li {
+            width: percentage(1/7);
+            display: inline-block;
+            height: $footerHeight;
+            text-align: center;
+        }
+
+        a {
+            font-size: $footerHeight/4;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+    @media(max-width: 767px) {
+        #paginator {
+            width: 90%;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+
+            margin-top: 0;
+            white-space: nowrap;
+            height: $footerHeight;
+
+            li {
+            }
+
+            a {
+                line-height: $footerHeight;
+                padding: 0;
+                font-size: $footerHeight/2;
+            }
+        }
+    }
+</style>
+
 <script>
     import store  from '../store';
     import router from '../router';

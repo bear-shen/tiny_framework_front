@@ -7,8 +7,104 @@
     </div>
 </template>
 
-<style scoped>
+<style lang="scss">
+    #loader {
+        //background-color: rgba(0, 0, 0, 0.25);
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
+        svg.square {
+            $width: 300px;
+            $angle: 4;
+            $speed: 1;
+            $colorList: (
+                    #023E73,
+                    #023059,
+                    #024873,
+                    #023859,
+                    #0D0D0D
+            );
+            animation: rotate #{$angle}s cubic-bezier(0, 0, 1, 1) infinite;
+            //width: 20vw;
+            //height: 20vw;
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: calc(50vh - #{$width/2} - #{$footerHeight});
+            display: block;
+
+            polygon {
+                position: absolute;
+                width: 50%;
+                height: 50%;
+                transform-origin: $width*0.5 $width*0.5;
+                //opacity: 0.5;
+                //transform: scale(0.2);
+                //fill: rgba(255, 255, 255, 0.2);
+                @for $i from 1 through $angle {
+                    @keyframes subAnim_#{$i} {
+                        0% {
+                            transform: scale(1) rotate(#{(($i - 1)*360/$angle)-90}deg);
+                            //opacity: 0.5;
+                        }
+                        #{percentage(1/$angle)} {
+                            transform: scale(0.5) rotate(#{(($i - 1)*360/$angle)-90}deg);
+                            //opacity: 1;
+                        }
+                        #{percentage(2/$angle)} {
+                            transform: scale(1) rotate(#{(($i - 1)*360/$angle)-90}deg);
+                            //opacity: 0.5;
+                        }
+                        100% {
+                            transform: scale(1) rotate(#{(($i - 1)*360/$angle)-90}deg);
+                            //opacity: 0.5;
+                        }
+                    }
+                    &:nth-child(#{$i}) {
+                        transform: rotate(#{(($i - 1)*360/$angle)-90}deg);
+                        //fill: hsla($i*360/$angle, 80%, 50%, 1);
+                        fill: nth($colorList, $i);
+                        animation: subAnim_#{$i} #{$angle/$speed}s cubic-bezier(0, 0, 1, 1) infinite;
+                        animation-delay: #{($angle - $i - 2)/$speed}s;
+                    }
+                }
+            }
+        }
+
+    }
+
+    #loader {
+        //background-color: rgba(0, 0, 0, 0.25);
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: $footerHeight;
+        z-index: 4000;
+        background-image: url(/img/bg.png);
+        backdrop-filter: blur(2px);
+        opacity: 0;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+    }
+
+    @media(max-width: 767px) {
+        #loader {
+            top: $footerHeight*0.75;
+        }
+    }
 </style>
 
 <script>

@@ -2,13 +2,59 @@
     <div id="header" class="nav nav-tabs navbar-fixed-top hidden-xs">
         <div class="container">
             <div class="navbar-brand">{{title}}</div>
-            <ul class="nav navbar-nav ">
+            <ul class="nav navbar-nav">
                 <li v-for="(href,name) in list" :class="{active:name===current}"><a :href="href">{{name}}</a></li>
             </ul>
             <div class="navbar-text navbar-right">{{time}}</div>
         </div>
     </div>
 </template>
+
+<style lang="scss">
+    .navbar-text {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .navbar-nav {
+        flex-direction: row;
+    }
+
+    .nav > li > a:hover, .nav > li > a:focus {
+        background-color: #202020;
+    }
+
+    .nav.navbar-fixed-top {
+        background-image: linear-gradient(0deg, #202020 0%, #2f2f2f 100%);
+        border: none;
+    }
+
+    .nav.navbar-fixed-bottom {
+        background-image: linear-gradient(180deg, #202020 0%, #2f2f2f 100%);
+        border: none;
+    }
+
+    .navbar-nav > li > a {
+        color: #ddd;
+        text-decoration: none;
+        text-shadow: 0 0 0;
+
+        &:hover, &:focus {
+            background-color: #999;
+            color: #fff;
+        }
+    }
+
+    .nav .active {
+        background-color: #666;
+        color: #fff;
+    }
+
+    .nav-pills > li > a:focus {
+        background-color: rgba(0, 0, 0, 0.25);
+        color: #00aaff;
+    }
+</style>
 
 <script>
     /**

@@ -15,6 +15,7 @@
                 ,{'btn-danger'  :item.type=='error'}
                 ,{'btn-warning' :item.type=='notice'}
                 ,{'btn-warning' :item.type=='notice'}
+                ,{'hide' :!item.detail}
                 ]">{{item.msg}}
             </div>
         </li>
@@ -29,6 +30,9 @@
         width: 75%;
         white-space: nowrap;
 
+        justify-content: flex-start;
+        flex-direction: row;
+
         li {
             display: inline-block;
             font-size: initial;
@@ -40,7 +44,7 @@
             transition: width 0s, height 0s;
 
             .hinter {
-                display: none;
+                /*display: none;*/
                 position: absolute;
                 z-index: 40;
                 left: 0;
@@ -55,6 +59,10 @@
                 overflow: hidden;
             }
 
+            &.hide {
+                display: none;
+            }
+
             &.hiding {
                 transition: width 1s, height 1s;
                 width: 0;
@@ -62,12 +70,13 @@
             }
         }
     }
+
     @media(max-width: 767px) {
         #msg {
             width: 90%;
             text-align: center;
-            margin-right: auto;
-            margin-left: auto;
+            /*margin-right: auto;*/
+            /*margin-left: auto;*/
 
             height: $footerHeight*0.4;
             margin: 0 auto $footerHeight*0.1;
@@ -102,10 +111,17 @@
             return {
                 list       : [
                     {
-                        type: 'info',
-                        msg : 'success',
-                        hide: false,
-                    }
+                        type  : 'info',
+                        msg   : 'success',
+                        hide  : false,
+                        detail: false,
+                    },
+                    {
+                        type  : 'info',
+                        msg   : 'success',
+                        hide  : false,
+                        detail: true,
+                    },
                 ],
                 gcTimer    : 0,
                 detailTimer: 0,
@@ -128,13 +144,15 @@
                 }
                 if (this.list.length >= 16) {
                     for (let i1 = 0; i1 < this.list.length - 16; i1++) {
-                        this.list[i1].hide = true;
+                        this.list[i1].hide   = true;
+                        this.list[i1].detail = false;
                     }
                 }
                 let target = {
-                    type: type,
-                    msg : data /*+ (new Date()) * 1*/,
-                    hide: false,
+                    type  : type,
+                    msg   : data /*+ (new Date()) * 1*/,
+                    hide  : false,
+                    detail: false,
                 };
                 this.list.push(target);
                 console.info(target);
@@ -147,17 +165,21 @@
                 }, 2000);
             },
             showDetail: function (index) {
-                // console.info('show');
-                let target = $('#msg li').eq(index).children('div');
-                target.fadeIn(200, () => {
-                    setTimeout(() => {
-                        target.fadeOut(200);
-                    }, 15000)
-                });
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    this.list[i1].detail = false;
+                }
+                clearInterval(this.detailTimer);
+                //
+                let curItem      = this.list[index];
+                curItem.detail   = true;
+                //
+                this.detailTimer = setTimeout(() => {
+                    curItem.detail = false;
+                }, 5 * 1000);
             },
             hideAll   : function () {
                 // console.info('hide');
-                $('#msg li div').stop(true, true).fadeOut(200);
+                // $('#msg li div').stop(true, true).fadeOut(200);
             }
         }
     }

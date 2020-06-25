@@ -11,48 +11,47 @@
 </template>
 
 <style lang="scss">
-    .navbar-text {
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-
-    .navbar-nav {
-        flex-direction: row;
-    }
-
-    .nav > li > a:hover, .nav > li > a:focus {
-        background-color: #202020;
-    }
-
-    .nav.navbar-fixed-top {
+    #header.navbar-fixed-top {
         background-image: linear-gradient(0deg, #202020 0%, #2f2f2f 100%);
         border: none;
-    }
 
-    .nav.navbar-fixed-bottom {
-        background-image: linear-gradient(180deg, #202020 0%, #2f2f2f 100%);
-        border: none;
-    }
+        .navbar-nav {
+            flex-direction: row;
+        }
 
-    .navbar-nav > li > a {
-        color: #ddd;
-        text-decoration: none;
-        text-shadow: 0 0 0;
+        .navbar-text {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
 
-        &:hover, &:focus {
-            background-color: #999;
+        .navbar-nav {
+            flex-direction: row;
+        }
+
+        .nav > li > a:hover, .nav > li > a:focus {
+            background-color: #202020;
+        }
+
+        .nav.navbar-nav > li > a {
+            color: #ddd;
+            text-decoration: none;
+            text-shadow: 0 0 0;
+
+            &:hover, &:focus {
+                background-color: rgba(0, 0, 0, 0.25);
+                color: #ddd;
+            }
+        }
+
+         .active {
+            background-color: #666;
             color: #fff;
         }
-    }
 
-    .nav .active {
-        background-color: #666;
-        color: #fff;
-    }
-
-    .nav-pills > li > a:focus {
-        background-color: rgba(0, 0, 0, 0.25);
-        color: #00aaff;
+        .nav-pills > li > a:focus {
+            background-color: rgba(0, 0, 0, 0.25);
+            color: #343a40;
+        }
     }
 </style>
 

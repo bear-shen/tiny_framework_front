@@ -3,7 +3,7 @@
         <Header/>
         <div id="body" :class="['container-fluid']">
             <div id="" class="row">
-                <div class="col-lg-1">
+                <div class="col-lg-1 nav-col">
                     <ul id="leftNavi" class="nav nav-pills nav-stacked ">
                         <li v-for="r in routes" :class="{active:currentRoute.path===r.path}">
                             <router-link :to="r.path">{{r.title}}</router-link>
@@ -20,10 +20,10 @@
             </div>
         </div>
         <div id="footer" class="nav navbar-fixed-bottom">
-            <div class="">
+<!--            <div class="">-->
                 <Msg/>
                 <Paginator/>
-            </div>
+<!--            </div>-->
         </div>
         <Loader/>
         <Popup/>
@@ -54,34 +54,35 @@
             margin-right: 0;
             margin-left: 0;
         }
+    }
 
-        .col-lg-1 {
-            padding-right: 0;
-            padding-left: 0;
-            white-space: nowrap;
+    .col-lg-1 {
+        padding-right: 0;
+        padding-left: 0;
+        white-space: nowrap;
+    }
+
+    #leftNavi.nav {
+        position: fixed;
+        left: 0;
+        top: $footerHeight;
+        z-index: 20;
+        width: percentage(1/12);
+        li{
+            width: 100%;
         }
 
-        .nav {
-            position: fixed;
-            left: 0;
-            top: $footerHeight;
-            z-index: 20;
-            width: percentage(1/12);
-            li{
-                width: 100%;
-            }
-
-            > li > a {
-                padding: 10px 15px 10px 0;
-                text-align: right;
-            }
-        }
-
-        #content {
-            min-height: 70vh;
-            word-break: break-word;
+        > li > a {
+            padding: 10px 15px 10px 0;
+            text-align: right;
         }
     }
+
+    #content {
+        min-height: 70vh;
+        word-break: break-word;
+    }
+
 
     #footer {
         height: $footerHeight;
@@ -90,6 +91,28 @@
         //  display: inline-block;
         //  white-space: nowrap;
         //}
+        background-image: linear-gradient(180deg, #202020 0%, #2f2f2f 100%);
+        border: none;
+
+        .nav > li > a:hover, .nav > li > a:focus {
+            background-color: #202020;
+        }
+
+        .nav.navbar-nav > li > a {
+            color: #ddd;
+            text-decoration: none;
+            text-shadow: 0 0 0;
+
+            &:hover, &:focus {
+                background-color: rgba(0, 0, 0, 0.25);
+                color: #ddd;
+            }
+        }
+
+        .active {
+            background-color: #666;
+            color: #fff;
+        }
     }
 
 
@@ -98,16 +121,34 @@
             padding-top: $footerHeight*2;
             padding-bottom: $footerHeight*1.5;
         }
+
+        .col-lg-1.nav-col {
+            width: 0;
+            padding-left: 0;
+            padding-right: 0;
+            flex-basis: 0;
+        }
+        .col-lg-11#content{
+            width: 100vw;
+            max-width: 100vw;
+            flex-basis: 100%;
+        }
+
         #leftNavi.nav {
             //position: fixed;
             top: $footerHeight;
             background-image: linear-gradient(0deg, #101010 0%, #202020 100%);
-            width: 100%;
+            width: 100vw;
+
+            flex-direction: row;
+            flex-wrap: nowrap;
+            text-align: center;
 
             li {
                 display: inline-block;
 
                 a {
+                    text-align: center;
                     padding: 0 $footerHeight/4;
                     font-size: $footerHeight/4;
                     line-height: $footerHeight*0.75;

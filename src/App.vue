@@ -2,11 +2,17 @@
     <div id="app">
         <Header/>
         <div id="body" :class="['container-fluid']">
-            <div id="" class="row">
-                <div class="col-lg-1 nav-col">
-                    <ul id="leftNavi" class="nav nav-pills nav-stacked ">
+            <div id="" :class="['row',{showTitle:showTitle}]">
+                <div :class="['col-lg-1','nav-col']">
+                    <ul id="leftNavi" :class="['nav','nav-pills','nav-stacked']">
+                        <li class="toggler" v-on:click="toggler">
+                            <a href="javascript:void(0)" title="toggle"><span class="sysIcon sysIcon_swap"></span></a>
+                        </li>
                         <li v-for="r in routes" :class="{active:currentRoute.path===r.path}">
-                            <router-link :to="r.path">{{r.title}}</router-link>
+                            <router-link :to="r.path" :title="r.title">
+                                <span :class="['navTxt']">{{r.title}}</span>
+                                <span :class="['navIcon','sysIcon',r.icon,]"></span>
+                            </router-link>
                         </li>
                     </ul>
                 </div>
@@ -20,10 +26,10 @@
             </div>
         </div>
         <div id="footer" class="nav navbar-fixed-bottom">
-<!--            <div class="">-->
-                <Msg/>
-                <Paginator/>
-<!--            </div>-->
+            <!--            <div class="">-->
+            <Msg/>
+            <Paginator/>
+            <!--            </div>-->
         </div>
         <Loader/>
         <Popup/>
@@ -68,13 +74,68 @@
         top: $footerHeight;
         z-index: 20;
         width: percentage(1/12);
-        li{
+
+        li {
             width: 100%;
         }
 
         > li > a {
             padding: 10px 15px 10px 0;
             text-align: right;
+        }
+
+        .toggler {
+            /* background-color: black; */
+            text-align: right;
+        }
+
+        .navIcon {
+            padding-left: 0.5em;
+        }
+
+        > li > a:hover, > li > a:focus {
+            background-color: rgba(0, 0, 0, 0.25);
+            color: #00aaff;
+        }
+
+        .navTxt {
+            display: none;
+        }
+    }
+
+    @media(min-width: 1200px) {
+        .col-lg-1.nav-col {
+            flex-basis: 3.5%;
+        }
+
+        #leftNavi.nav {
+            width: 3%;
+        }
+
+        #content.col-lg-11 {
+            width: 96.5%;
+            flex: 0 0 96.5%;
+            max-width: 96.5%;
+        }
+
+        .showTitle {
+            .col-lg-1.nav-col {
+                flex-basis: 8.333333%;
+            }
+
+            #leftNavi.nav {
+                width: 8.333333%;
+            }
+
+            #leftNavi.nav .navTxt {
+                display: inline;
+            }
+
+            #content.col-lg-11.col-lg-11 {
+                width: 91.66666667%;
+                flex: 0 0 91.66666667%;
+                max-width: 91.66666667%;
+            }
         }
     }
 
@@ -128,7 +189,7 @@
             padding-right: 0;
             flex-basis: 0;
         }
-        .col-lg-11#content{
+        .col-lg-11#content {
             width: 100vw;
             max-width: 100vw;
             flex-basis: 100%;
@@ -144,6 +205,14 @@
             flex-wrap: nowrap;
             text-align: center;
 
+            .navTxt {
+                display: none;
+            }
+
+            .toggler {
+                display: none;
+            }
+
             li {
                 display: inline-block;
 
@@ -155,6 +224,9 @@
                     height: $footerHeight*0.75;
                 }
             }
+        }
+        .showTitle #leftNavi.nav .navTxt {
+            display: none;
         }
     }
 
@@ -192,12 +264,13 @@
         components: {Popup, Paginator, Msg, Loader, Header},
         data      : function () {
             return {
+                showTitle   : true,
                 routes      : [],
                 currentRoute: {},
                 query       : {},
             };
         },
-        store   : store,
+        store     : store,
         watch     : {
             $route: function (to, from) {
                 console.info(`app: route to ${router.currentRoute.name}`);
@@ -206,15 +279,15 @@
                 this.currentRoute = router.currentRoute;
             },
             /*page: function (to, from) {
-                console.info('app: param:page compute watched');
-            }*/
+             console.info('app: param:page compute watched');
+             }*/
         },
         /*computed: {
-            page: function () {
-                console.info('app: param:page computed');
-                return this.$store.state.page;
-            }
-        },*/
+         page: function () {
+         console.info('app: param:page computed');
+         return this.$store.state.page;
+         }
+         },*/
         created   : function () {
             console.info('app created');
             // console.info(router);
@@ -223,6 +296,11 @@
             this.currentRoute = router.currentRoute;
             // globalDbg         = router;
 
+        },
+        methods   : {
+            toggler: function () {
+                this.showTitle = !this.showTitle;
+            }
         },
     }
 </script>

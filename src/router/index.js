@@ -8,35 +8,35 @@ Vue.use(VueRouter)
 const routes = [
     {
         name: 'List', title: 'List',
-        icon: 'list', path: '/', component: List, props: true,
+        icon: 'sysIcon_listType_detail', path: '/', component: List, props: true,
     },
     {
         name: 'TagGroup', title: 'TagGroup',
-        icon: 'tag_group', path: '/tag_group', component: Home, props: true,
+        icon: 'sysIcon_tagso', path: '/tag_group', component: Home, props: true,
     },
     {
         name: 'Tag', title: 'Tag',
-        icon: 'tag', path: '/tag', component: Home, props: true,
+        icon: 'sysIcon_tag-o', path: '/tag', component: Home, props: true,
     },
     {
         name: 'Favourite', title: 'Favourite',
-        icon: 'favourite', path: '/favourite', component: Home, props: true,
+        icon: 'sysIcon_heart-o', path: '/favourite', component: Home, props: true,
     },
     {
         name: 'UserGroup', title: 'UserGroup',
-        icon: 'user_group', path: '/user_group', component: Home, props: true,
+        icon: 'sysIcon_team', path: '/user_group', component: Home, props: true,
     },
     {
         name: 'User', title: 'User',
-        icon: 'user', path: '/user', component: Home, props: true,
+        icon: 'sysIcon_user', path: '/user', component: Home, props: true,
     },
     {
         name: 'Settings', title: 'Settings',
-        icon: 'settings', path: '/settings', component: Home, props: true,
+        icon: 'sysIcon_setting', path: '/settings', component: Home, props: true,
     },
     {
         name: 'Recycle', title: 'Recycle',
-        icon: 'recycle', path: '/recycle', component: Home, props: true,
+        icon: 'sysIcon_delete', path: '/recycle', component: Home, props: true,
     },
     /*{
      path: '/about',

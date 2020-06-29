@@ -69,14 +69,14 @@
         data   : function () {
             return {
                 list   : {
-                    'Tieba'     : 'javascript:void(0)',
+                    'Toshokan'     : 'javascript:void(0)',
                     'Nas'       : 'javascript:void(0)',
                     'Router'    : 'javascript:void(0)',
                     'Hypervisor': 'javascript:void(0)',
                     // 'Router': 'javascript:void(0)',
                     // 'Github': 'javascript:void(0)',
                 },
-                current: 'Tieba',
+                current: 'Toshokan',
                 title  : 'Hentai',
                 time   : '',
                 timer  : 0,

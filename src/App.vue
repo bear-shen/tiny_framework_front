@@ -104,18 +104,20 @@
     }
 
     @media(min-width: 1200px) {
+        $iconSize:40px;
         .col-lg-1.nav-col {
-            flex-basis: 3.5%;
+            flex-basis: $iconSize;
         }
 
         #leftNavi.nav {
-            width: 3%;
+            width: $iconSize;
         }
 
         #content.col-lg-11 {
-            width: 96.5%;
-            flex: 0 0 96.5%;
-            max-width: 96.5%;
+            //vw对滚动条支持不好，所以%
+            width: calc(100% - #{$iconSize});
+            flex: 0 0 calc(100% - #{$iconSize});
+            max-width: calc(100% - #{$iconSize});
         }
 
         .showTitle {

@@ -120,7 +120,7 @@
                         type  : 'info',
                         msg   : 'success',
                         hide  : false,
-                        detail: true,
+                        detail: false,
                     },
                 ],
                 gcTimer    : 0,

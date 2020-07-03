@@ -16,29 +16,29 @@
                 <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder"></button>
             </div>
             <div class="listHeaderLayout">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_listType_text"></button>
-                <button type="button" class="btn btn-dark sysIcon sysIcon_listType_detail"></button>
-                <button type="button" class="btn btn-dark sysIcon sysIcon_listType_img"></button>
+                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listTypeLocal==='text'}]" v-on:click="changeListType('text')"></button>
+                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_detail',{active:listTypeLocal==='detail'}]" v-on:click="changeListType('detail')"></button>
+                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listTypeLocal==='img'}]" v-on:click="changeListType('img')"></button>
             </div>
         </div>
-        <div class="listContent">
+        <div :class="['listContent','listType_'+listTypeLocal]">
             <ul>
-                <li v-for="item in list" :data-id="item.id">
+                <li v-for="item in list" :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
                     <div class="ct_alpha">
-                        <span :class="['listIcon','listIcon_file_'+item.alpha]"></span>
+                        <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
                         <img class="ct_cover" :src="item.cover" alt="">
                     </div>
                     <div class="ct_title">{{item.title}}</div>
                     <div class="ct_description">{{item.description}}</div>
+                    <div class="ct_type">{{item.type}}</div>
                     <div class="ct_size">{{item.size}}</div>
                     <div class="ct_hash">{{item.hash}}</div>
-                    <div class="ct_type">{{item.type}}</div>
                     <div class="ct_time_create">{{item.time_create}}</div>
                     <div class="ct_time_update">{{item.time_update}}</div>
-                    <div class="ct_tag">
+                    <div v-if="item.tag.length" class="ct_tag">
                         <dl v-for="group in item.tag" :data-id="group.id">
                             <dt>{{group.name}}:</dt>
-                            <dd v-for="tag in group.sub" :data-id="tag.id">{{tag.name}}</dd>
+                            <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">{{tag.name}}</dd>
                         </dl>
                     </div>
                 </li>
@@ -96,16 +96,23 @@
         .listHeaderSearch, .listHeaderOperates, .listHeaderLayout {
             margin-left: 1em;
         }
+
+        .listHeaderLayout button {
+        }
+
+        .listHeaderLayout button.active {
+        }
     }
 
     @media (max-width: 1199px) {
         .listHeader {
             flex-wrap: wrap;
             white-space: normal;
-            height: $fontSize*4.5;
+            // height: $fontSize*4.5;
+            height: auto;
 
             input[type="text"] {
-                width: calc(100vw - #{$fontSize *2 *7});
+                width: calc(100vw - #{$fontSize *2 *7} - 40px);
                 border-radius: $fontSize*0.25;
                 height: $fontSize*2;
                 text-indent: 0.5em;
@@ -141,6 +148,385 @@
             }
         }
     }
+
+    .listContent {
+        > ul {
+            width: 100%;
+            margin-left: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        > ul > li {
+            &:nth-child(2n) {
+                background-color: rgba(0, 0, 0, 0.25);
+            }
+        }
+
+        > ul > li > div {
+        }
+    }
+
+    .listContent.listType_text {
+        $listFontSize: $fontSize*1;
+
+        > ul {
+            display: table;
+        }
+
+        > ul > li {
+            display: table-row;
+        }
+
+        > ul > li > div {
+            display: table-cell;
+            line-height: 2.5 * $listFontSize;
+            font-size: $listFontSize;
+            vertical-align: middle;
+        }
+
+        /*.ct_alpha,*/
+        /*.ct_icon,*/
+        .ct_cover,
+            /*.ct_title,*/
+        .ct_description,
+            /*.ct_size,*/
+            /*.ct_hash,*/
+        .ct_type,
+        .ct_time_create,
+            /*.ct_time_update,*/
+        .ct_tag {
+            display: none;
+        }
+
+        .ct_alpha, .ct_icon {
+            width: $listFontSize*2;
+            font-size: $listFontSize*2;
+        }
+
+        .ct_title {
+        }
+
+        .ct_hash {
+            width: $listFontSize*20;
+        }
+
+        .ct_size {
+            width: $listFontSize*5;
+        }
+
+        .ct_time_update {
+            width: $listFontSize*10;
+        }
+
+        @media (max-width: 1199px) {
+            .ct_hash,
+            .ct_time_update {
+                display: none;
+            }
+        }
+    }
+
+    .listContent.listType_img {
+        > ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        $liWidth: 12vw;
+        $liMinWidth: 120px;
+        $liMaxWidth: 180px;
+        $liRate: 4/3;
+
+        > ul > li {
+            width: $liWidth;
+            height: $liWidth*$liRate;
+            min-width: $liMinWidth;
+            min-height: $liMinWidth*$liRate;
+            max-width: $liMaxWidth;
+            max-height: $liMaxWidth*$liRate;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        > ul > li > div {
+        }
+
+        /*.ct_alpha,*/
+        /*.ct_icon,*/
+        /*.ct_cover,*/
+        /*.ct_title,*/
+        .ct_description,
+        .ct_size,
+        .ct_hash,
+        .ct_type,
+        .ct_time_create,
+        .ct_time_update,
+        .ct_tag {
+            display: none;
+        }
+
+        .ct_alpha,
+            /*.ct_icon,*/
+            /*.ct_cover,*/
+        .ct_title {
+            width: 100%;
+        }
+
+        .ct_title {
+            line-height: $fontSize*1.125;
+            height: $fontSize*1.125*2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ct_icon,
+        .ct_cover {
+            max-width: calc(#{$liMaxWidth} * 0.9);
+            max-height: calc(#{$liMaxWidth} * 0.9);
+            position: absolute;
+            left: 5%;
+            top: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            right: 5%;
+        }
+
+        .ct_icon {
+            z-index: 1;
+            font-size: $liMaxWidth*0.6;
+            text-align: center;
+            width: 90%;
+        }
+
+        .ct_cover {
+            z-index: 2;
+        }
+
+        .ct_title {
+            text-align: center;
+            position: absolute;
+            top: calc(#{$liMaxWidth} * 0.9 + 30px);
+
+        }
+
+        //这俩是根据宽度比例计算的
+        @media (max-width: 1499px) {
+            .ct_icon,
+            .ct_cover {
+                top: 10px;
+                max-width: calc(#{$liWidth} * 0.9);
+                max-height: calc(#{$liWidth} * 0.9);
+            }
+            .ct_title {
+                top: calc(#{$liWidth} * 0.9 + 20px);
+            }
+            .ct_icon {
+                font-size: $liWidth*0.6;
+            }
+        }
+
+        @media (max-width: 999px) {
+            .ct_icon,
+            .ct_cover {
+                top: 5px;
+                max-width: calc(#{$liMinWidth} * 0.9);
+                max-height: calc(#{$liMinWidth} * 0.9);
+            }
+            .ct_title {
+                top: calc(#{$liMinWidth} * 0.9 + 10px);
+            }
+            .ct_icon {
+                font-size: $liMinWidth*0.6;
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .ct_icon {
+                z-index: 1;
+                font-size: 80px;
+                text-align: center;
+                width: 90%;
+            }
+        }
+
+    }
+
+    .listContent.listType_detail {
+        > ul {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            justify-content: flex-start;
+
+            .hasTag {
+                min-width: 60%;
+            }
+
+            .noTag {
+                width: 490px;
+            }
+        }
+
+        $liHeight: 320px;
+        $liRate: 4/3;
+
+        > ul > li {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: $liHeight;
+
+            padding: 10px 0 10px 0;
+        }
+
+        > ul > li > div {
+        }
+
+        /*.ct_alpha,*/
+        /*.ct_icon,*/
+        /*.ct_cover,*/
+        /*.ct_title,*/
+        /*.ct_description,*/
+        /*.ct_size,*/
+        /*.ct_hash,*/
+        /*.ct_type,*/
+        /*.ct_time_create,*/
+        /*.ct_time_update,*/
+        /*.ct_tag {*/
+        /*    display: none;*/
+        /*}*/
+        .ct_alpha {
+            height: 100%;
+            width: $liHeight/$liRate;
+            position: relative;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .ct_icon,
+        .ct_cover {
+            max-height: calc(#{$liHeight} - 20px);
+            max-width: $liHeight/$liRate;
+        }
+
+        .ct_icon {
+            font-size: $liHeight/$liRate*0.8;
+            line-height: calc(#{$liHeight} - 20px);
+        }
+
+        .ct_cover {
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            position: absolute;
+        }
+
+        .ct_title,
+        .ct_description,
+        .ct_size,
+        .ct_hash,
+        .ct_type,
+        .ct_time_create,
+        .ct_time_update {
+            width: $liHeight/$liRate;
+        }
+
+        .ct_tag {
+            margin-left: 10px;
+            height: 100%;
+            width: calc(100% - #{$liHeight/$liRate} * 2 - 20px);
+            overflow: hidden;
+
+            dl {
+                display: block;
+                margin-bottom: 0;
+            }
+
+            dt,
+            dd {
+                display: inline-block;
+                margin-bottom: 5px;
+                line-height: $fontSize;
+            }
+
+            dt {
+            }
+
+            dd {
+                margin-left: 5px;
+                padding: 5px;
+            }
+        }
+
+        @media (max-width: calc(1470px/(1 - 0.083333))) {
+            > ul {
+                .hasTag {
+                    width: 100%;
+                }
+                .noTag {
+                    width: 50%;
+                }
+            }
+        }
+        @media (max-width: 980px) {
+            > ul {
+                .noTag {
+                    width: 100%;
+                }
+            }
+        }
+
+        @media (max-width: 799px) {
+
+            > ul > li {
+                flex-direction: row;
+                height: auto;
+                display: block;
+            }
+            .ct_alpha {
+                height: $liHeight;
+            }
+            .ct_tag {
+                height: auto;
+                width: 100%;
+                clear: both;
+            }
+            .ct_alpha, .ct_title,
+            .ct_description,
+            .ct_size,
+            .ct_hash,
+            .ct_type,
+            .ct_time_create,
+            .ct_time_update {
+                float: left;
+            }
+            .ct_title,
+            .ct_description,
+            .ct_size,
+            .ct_hash,
+            .ct_type,
+            .ct_time_create,
+            .ct_time_update {
+                width: calc(100% - #{$liHeight/$liRate} - 20px);
+            }
+        }
+        @media (max-width: 499px) {
+
+            .ct_alpha, .ct_title,
+            .ct_description,
+            .ct_size,
+            .ct_hash,
+            .ct_type,
+            .ct_time_create,
+            .ct_time_update {
+                clear: left;
+                width: calc(100%);
+            }
+        }
+    }
 </style>
 
 <script>
@@ -159,14 +545,14 @@
         store     : store,
         watch     : {
             $route: function (to, from) {
-                console.info(`home: route to ${router.currentRoute.name}`);
+                console.info(`list: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
                 this.currentRoute = router.currentRoute;
                 this.query();
             },
             page  : function (to, from) {
-                console.info('home: param:page compute watched');
+                console.info('list: param:page compute watched');
             }
         },
         data      : function () {
@@ -174,7 +560,130 @@
                 {
                     id         : '0',
                     cover      : '/img/cover.jpg',
-                    alpha      : 'binary',
+                    // alpha      : 'binary',
+                    title      : 'this is title this is title this is title this is title this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                                {id: 7, name: 'magical girl',},
+                                {id: 7, name: 'sleeping',},
+                                {id: 7, name: 'bunny girl',},
+                                {id: 7, name: 'animal ears',},
+                                {id: 7, name: 'tail',},
+                                {id: 7, name: 'small breast',},
+                                {id: 7, name: 'tiara',},
+                                {id: 7, name: 'pantyhose',},
+                                {id: 7, name: 'vampire',},
+                                {id: 7, name: 'baby',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                //
+
+                {
+                    id         : '0',
+                    cover      : '/img/smp1.jpg',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                {
+                    id         : '0',
+                    cover      : '/img/smp2.jpg',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                {
+                    id         : '0',
+                    cover      : '/img/smp3.png',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'text',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                //
+                {
+                    id         : '0',
+                    cover      : '/img/smp1.jpg',
+                    // alpha      : 'binary',
                     title      : 'this is title',
                     description: 'this is description',
                     size       : '996 KB',
@@ -215,56 +724,390 @@
                             ],
                         },
                     ],
-                }
+                },
+                {
+                    id         : '0',
+                    cover      : '/img/smp2.jpg',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id         : '0',
+                    cover      : '/img/smp3.png',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'text',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'video',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'audio',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'image',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [
+                        {
+                            id  : 1,
+                            name: 'female',
+                            sub : [
+                                {id: 1, name: 'lolicon',},
+                                {id: 2, name: 'rape',},
+                                {id: 3, name: 'netorare',},
+                                {id: 4, name: 'defloration',},
+                                {id: 5, name: 'guro',},
+                                {id: 6, name: 'snuff',},
+                                {id: 7, name: 'drugs',},
+                            ],
+                        },
+                        {
+                            id  : 2,
+                            name: 'male',
+                            sub : [
+                                {id: 4, name: 'tencales',},
+                                {id: 5, name: 'dilf',},
+                                {id: 6, name: 'sole male',},
+                            ],
+                        },
+                        {
+                            id  : 3,
+                            name: 'misc',
+                            sub : [
+                                {id: 4, name: 'full censorship',},
+                                {id: 5, name: 'webtoon',},
+                                {id: 6, name: 'story arc',},
+                            ],
+                        },
+                    ],
+                },
             ];
             for (let i = 0; i < 10; i++) {
                 listData.push(listData[0]);
             }
             return {
-                param: {},
+                param        : {},
                 // page: 1,
-                list : listData,
+                listTypeLocal: this.listType,
+                list         : listData,
             }
         },
         /*watch  : {
          page: function () {
-         console.info('home: param:page computed');
+         console.info('list: param:page computed');
          return this.$store.state.pageSet;
          }
          },*/
         computed  : {
-            page: {
+            page    : {
                 get: function () {
-                    console.info('home: param:page get');
+                    console.info('list: param:page get');
                     return this.$store.state.page;
                 },
                 set: function (val) {
-                    console.info('home: param:page set');
+                    console.info('list: param:page set');
                     this.$store.commit('setPage', val);
                 },
-            }
+            },
+            listType: {
+                get: function () {
+                    console.info('list: param:listType get');
+                    let data = localStorage.getItem('toshokan_framework_var_listType');
+                    data     = data ? data : 'text';
+                    return data;
+                },
+                set: function (val) {
+                    console.info('list: param:listType set:' + val);
+                    localStorage.setItem('toshokan_framework_var_listType', val);
+                },
+            },
         },
         created   : function () {
-            console.info('Home.vue create');
+            console.info('List.vue create');
             // console.info(this);
             // console.info(GenFunc);
             // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
+            this.listTypeLocal = this.listType;
         },
         mounted   : function () {
-            console.info('Home.vue mount');
+            console.info('List.vue mount');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         updated   : function () {
-            console.info('Home.vue update');
+            console.info('List.vue update');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         methods   : {
-            query: function () {
-                console.info('home: query');
-            }
+            query         : function () {
+                console.info('list: query');
+            },
+            changeListType: function (listType) {
+                console.info('list: changeListType');
+                this.listType      = listType;
+                this.listTypeLocal = listType;
+            },
         },
     }
 </script>

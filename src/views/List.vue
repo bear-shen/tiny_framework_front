@@ -21,6 +21,7 @@
                 <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listTypeLocal==='img'}]" v-on:click="changeListType('img')"></button>
             </div>
         </div>
+        <file-detail v-bind:file-detail="detail"/>
         <div :class="['listContent','listType_'+listTypeLocal]">
             <ul>
                 <li v-for="item in list" :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
@@ -536,10 +537,12 @@
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
     import Uploader   from "../components/Uploader";
+    import FileDetail from "../components/FileDetail";
 
     export default {
         name      : 'List',
         components: {
+            FileDetail,
             Uploader,
         },
         store     : store,
@@ -565,7 +568,7 @@
                     description: 'this is description',
                     size       : '996 KB',
                     hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
+                    type       : 'folder',
                     time_create: '1919-08-10 11:45:14',
                     time_update: '1919-08-10 11:45:14',
                     tag        : [
@@ -675,6 +678,19 @@
                     size       : '996 KB',
                     hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                     type       : 'binary',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                {
+                    id         : '0',
+                    cover      : '',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'folder',
                     time_create: '1919-08-10 11:45:14',
                     time_update: '1919-08-10 11:45:14',
                     tag        : [],
@@ -1049,6 +1065,7 @@
                 // page: 1,
                 listTypeLocal: this.listType,
                 list         : listData,
+                detail         : listData[0],
             }
         },
         /*watch  : {

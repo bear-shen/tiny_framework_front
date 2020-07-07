@@ -106,7 +106,7 @@
     {
       "icon_id": "9976625",
       "name": "文件夹",
-      "font_class": "21folder",
+      "font_class": "file_folder",
       "unicode": "e6a4",
       "unicode_decimal": 59044
     },

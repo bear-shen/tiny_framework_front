@@ -1,3 +1,13 @@
+<!--
+这里还是有些毛病的，
+现在的想法是文件夹和文件都具有同样的属性
+点击文件则进入不同的处理环节
+点击文件夹则进入文件夹
+
+关键是文件夹和文件的数据怎么整合，
+要么就功能全部做在列表上，详情页什么都不做
+
+-->
 <template>
     <div class="list">
         <div class="listHeader">
@@ -21,7 +31,6 @@
                 <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listTypeLocal==='img'}]" v-on:click="changeListType('img')"></button>
             </div>
         </div>
-        <file-detail v-bind:file-detail="detail"/>
         <div :class="['listContent','listType_'+listTypeLocal]">
             <ul>
                 <li v-for="item in list" :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
@@ -29,24 +38,55 @@
                         <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
                         <img class="ct_cover" :src="item.cover" alt="">
                     </div>
-                    <div class="ct_title">{{item.title}}</div>
-                    <div class="ct_description">{{item.description}}</div>
-                    <div class="ct_type">{{item.type}}</div>
-                    <div class="ct_size">{{item.size}}</div>
-                    <div class="ct_hash">{{item.hash}}</div>
-                    <div class="ct_time_create">{{item.time_create}}</div>
-                    <div class="ct_time_update">{{item.time_update}}</div>
+                    <template v-if="editMetaId===item.id">
+
+                    </template>
+                    <template v-else>
+
+                    </template>
+                    <template v-if="editTagId===item.id">
+
+                    </template>
+                    <template v-else>
+
+                    </template>
+                    <div class="ct_meta">
+                        <div class="ct_title">{{item.title}}</div>
+                        <div class="ct_description">{{item.description}}</div>
+                        <div class="ct_type">{{item.type}}</div>
+                        <div class="ct_size">{{item.size}}</div>
+                        <div class="ct_hash">{{item.hash}}</div>
+                        <div class="ct_time_create">{{item.time_create}}</div>
+                        <div class="ct_time_update">{{item.time_update}}</div>
+                        <div class="ct_operate">
+                            <div v-if="item.type==='image'"
+                                 :class="['btn', 'btn-dark', {'active':detail.cover_id===item.id}]"
+                            ><span class="sysIcon sysIcon_edit"></span>&nbsp;cover
+                            </div>
+                            <div class="btn btn-dark"><span class="sysIcon sysIcon_edit"></span>&nbsp;info</div>
+                            <div class="btn btn-dark"><span class="sysIcon sysIcon_edit"></span>&nbsp;tag</div>
+                        </div>
+                    </div>
                     <div v-if="item.tag.length" class="ct_tag">
                         <dl v-for="group in item.tag" :data-id="group.id">
                             <dt>{{group.name}}:</dt>
-                            <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">{{tag.name}}</dd>
+                            <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
+                                {{tag.name}}
+                                <span class="sysIcon sysIcon_delete"></span>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>add:</dt>
+                            <dd></dd>
                         </dl>
                     </div>
                 </li>
             </ul>
         </div>
-        <div class="listUploadAplha">
-        </div>
+        <!--        <file-detail v-bind:file-detail="detail"/>-->
+        <!--        <div class="listUploadAplha">-->
+        <!--        </div>-->
+
     </div>
 </template>
 
@@ -462,11 +502,12 @@
             }
         }
 
-        @media (max-width: calc(1470px/(1 - 0.083333))) {
+        @media (max-width: calc(1470px / (1 - 0.083333))) {
             > ul {
                 .hasTag {
                     width: 100%;
                 }
+
                 .noTag {
                     width: 50%;
                 }
@@ -537,12 +578,10 @@
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
     import Uploader   from "../components/Uploader";
-    import FileDetail from "../components/FileDetail";
 
     export default {
         name      : 'List',
         components: {
-            FileDetail,
             Uploader,
         },
         store     : store,
@@ -562,7 +601,8 @@
             let listData = [
                 {
                     id         : '0',
-                    cover      : '/img/cover.jpg',
+                    cover      : '/sample/cover.jpg',
+                    cover_id   : '1',
                     // alpha      : 'binary',
                     title      : 'this is title this is title this is title this is title this is title',
                     description: 'this is description',
@@ -618,8 +658,21 @@
                 //
 
                 {
+                    id         : '1',
+                    cover      : '/sample/smp1.jpg',
+                    // alpha      : 'binary',
+                    title      : 'this is title',
+                    description: 'this is description',
+                    size       : '996 KB',
+                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                    type       : 'image',
+                    time_create: '1919-08-10 11:45:14',
+                    time_update: '1919-08-10 11:45:14',
+                    tag        : [],
+                },
+                {
                     id         : '0',
-                    cover      : '/img/smp1.jpg',
+                    cover      : '/sample/smp2.jpg',
                     // alpha      : 'binary',
                     title      : 'this is title',
                     description: 'this is description',
@@ -632,20 +685,7 @@
                 },
                 {
                     id         : '0',
-                    cover      : '/img/smp2.jpg',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                {
-                    id         : '0',
-                    cover      : '/img/smp3.png',
+                    cover      : '/sample/smp3.png',
                     // alpha      : 'binary',
                     title      : 'this is title',
                     description: 'this is description',
@@ -698,7 +738,7 @@
                 //
                 {
                     id         : '0',
-                    cover      : '/img/smp1.jpg',
+                    cover      : '/sample/smp1.jpg',
                     // alpha      : 'binary',
                     title      : 'this is title',
                     description: 'this is description',
@@ -743,7 +783,7 @@
                 },
                 {
                     id         : '0',
-                    cover      : '/img/smp2.jpg',
+                    cover      : '/sample/smp2.jpg',
                     // alpha      : 'binary',
                     title      : 'this is title',
                     description: 'this is description',
@@ -788,7 +828,7 @@
                 },
                 {
                     id         : '0',
-                    cover      : '/img/smp3.png',
+                    cover      : '/sample/smp3.png',
                     // alpha      : 'binary',
                     title      : 'this is title',
                     description: 'this is description',
@@ -1065,7 +1105,9 @@
                 // page: 1,
                 listTypeLocal: this.listType,
                 list         : listData,
-                detail         : listData[0],
+                detail       : listData[0],
+                editMetaId   : 0,
+                editTagId    : 0,
             }
         },
         /*watch  : {

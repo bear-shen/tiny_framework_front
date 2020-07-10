@@ -35,51 +35,78 @@
             <ul>
                 <li v-for="item in list" :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
                     <div class="ct_alpha">
-                        <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
+                   `     <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
                         <img class="ct_cover" :src="item.cover" alt="">
                     </div>
-                    <template v-if="editMetaId===item.id">
-
-                    </template>
-                    <template v-else>
-
-                    </template>
-                    <template v-if="editTagId===item.id">
-
-                    </template>
-                    <template v-else>
-
-                    </template>
                     <div class="ct_meta">
-                        <div class="ct_title">{{item.title}}</div>
-                        <div class="ct_description">{{item.description}}</div>
-                        <div class="ct_type">{{item.type}}</div>
-                        <div class="ct_size">{{item.size}}</div>
-                        <div class="ct_hash">{{item.hash}}</div>
-                        <div class="ct_time_create">{{item.time_create}}</div>
-                        <div class="ct_time_update">{{item.time_update}}</div>
+                        <template v-if="editMetaId===item.id">
+                            <div class="ct_title"><input type="text" v-model="item.title"></div>
+                            <div class="ct_description"><textarea v-model="item.description"></textarea></div>
+                        </template>
+                        <template v-else>
+                            <div class="ct_title">{{item.title}}</div>
+                            <div class="ct_description">{{item.description}}</div>
+                            <div class="ct_type">{{item.type}}</div>
+                            <div class="ct_size">{{item.size}}</div>
+                            <div class="ct_hash">{{item.hash}}</div>
+                            <div class="ct_time_create">{{item.time_create}}</div>
+                            <div class="ct_time_update">{{item.time_update}}</div>
+                        </template>
                         <div class="ct_operate">
-                            <div v-if="item.type==='image'"
+                            <div v-if="item.cover"
                                  :class="['btn', 'btn-dark', {'active':detail.cover_id===item.id}]"
+                                 v-on:click="setCover(item.id)"
                             ><span class="sysIcon sysIcon_edit"></span>&nbsp;cover
                             </div>
-                            <div class="btn btn-dark"><span class="sysIcon sysIcon_edit"></span>&nbsp;info</div>
-                            <div class="btn btn-dark"><span class="sysIcon sysIcon_edit"></span>&nbsp;tag</div>
+
+                            <template v-if="editMetaId===item.id">
+                                <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta(item.id)">
+                                    <span class="sysIcon sysIcon_sync"></span>&nbsp;info
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div :class="['btn', 'btn-dark']" v-on:click="editMeta(item.id)">
+                                    <span class="sysIcon sysIcon_edit"></span>&nbsp;info
+                                </div>
+                            </template>
+
+                            <template v-if="editTagId===item.id">
+                                <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveTag(item.id)">
+                                    <span class="sysIcon sysIcon_sync"></span>&nbsp;tag
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div :class="['btn', 'btn-dark']" v-on:click="editTag(item.id)">
+                                    <span class="sysIcon sysIcon_edit"></span>&nbsp;tag
+                                </div>
+                            </template>
                         </div>
                     </div>
-                    <div v-if="item.tag.length" class="ct_tag">
-                        <dl v-for="group in item.tag" :data-id="group.id">
-                            <dt>{{group.name}}:</dt>
-                            <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
-                                {{tag.name}}
-                                <span class="sysIcon sysIcon_delete"></span>
-                            </dd>
-                        </dl>
-                        <dl>
-                            <dt>add:</dt>
-                            <dd></dd>
-                        </dl>
-                    </div>
+                    <template v-if="editTagId===item.id">
+                        <div class="ct_tag">
+                            <dl v-for="group in item.tag" :data-id="group.id">
+                                <dt>{{group.name}}:</dt>
+                                <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
+                                    {{tag.name}}
+                                    <span class="sysIcon sysIcon_delete"></span>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>add:</dt>
+                                <dd><input type="text" v-model="addTagTxt" placeholder="separate by ,"></dd>
+                            </dl>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div v-if="item.tag.length" class="ct_tag">
+                            <dl v-for="group in item.tag" :data-id="group.id">
+                                <dt>{{group.name}}:</dt>
+                                <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
+                                    {{tag.name}}
+                                </dd>
+                            </dl>
+                        </div>
+                    </template>
                 </li>
             </ul>
         </div>
@@ -1108,6 +1135,7 @@
                 detail       : listData[0],
                 editMetaId   : 0,
                 editTagId    : 0,
+                addTagTxt    : '',
             }
         },
         /*watch  : {
@@ -1166,6 +1194,25 @@
                 console.info('list: changeListType');
                 this.listType      = listType;
                 this.listTypeLocal = listType;
+            },
+            editMeta      : function (itemId) {
+                console.info('list: editMeta');
+                this.editMetaId = itemId;
+            },
+            editTag       : function (itemId) {
+                console.info('list: editTag');
+                this.editTagId = itemId;
+            },
+            saveMeta      : function (itemId) {
+                console.info('list: saveMeta');
+                this.editMetaId = 0;
+            },
+            saveTag       : function (itemId) {
+                console.info('list: saveTag');
+                this.editTagId = 0;
+            },
+            setCover       : function (itemId) {
+                console.info('list: setCover');
             },
         },
     }

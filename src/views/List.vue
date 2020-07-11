@@ -35,18 +35,26 @@
             <ul>
                 <li v-for="item in list" :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
                     <div class="ct_alpha">
-                   `     <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
-                        <img class="ct_cover" :src="item.cover" alt="">
+                        <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
+                        <img v-if="item.cover && listTypeLocal!=='text'" class="ct_cover" :src="item.cover" alt="">
                     </div>
                     <div class="ct_meta">
                         <template v-if="editMetaId===item.id">
-                            <div class="ct_title"><input type="text" v-model="item.title"></div>
-                            <div class="ct_description"><textarea v-model="item.description"></textarea></div>
+                            <div class="ct_title">
+                                <label>title:<br>
+                                    <input type="text" v-model="item.title">
+                                </label>
+                            </div>
+                            <div class="ct_description">
+                                <label>description:<br>
+                                    <textarea v-model="item.description"></textarea>
+                                </label>
+                            </div>
                         </template>
                         <template v-else>
+                            <div class="ct_type">{{item.type}}</div>
                             <div class="ct_title">{{item.title}}</div>
                             <div class="ct_description">{{item.description}}</div>
-                            <div class="ct_type">{{item.type}}</div>
                             <div class="ct_size">{{item.size}}</div>
                             <div class="ct_hash">{{item.hash}}</div>
                             <div class="ct_time_create">{{item.time_create}}</div>
@@ -232,6 +240,14 @@
         }
 
         > ul > li > div {
+        }
+
+        .btn {
+            margin-left: 5px;
+            padding: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+            line-height: $fontSize;
         }
     }
 
@@ -427,23 +443,17 @@
             flex-wrap: wrap;
             flex-direction: row;
             justify-content: flex-start;
-
-            .hasTag {
-                min-width: 60%;
-            }
-
-            .noTag {
-                width: 490px;
-            }
         }
 
         $liHeight: 320px;
-        $liRate: 4/3;
+        $liContentHeight: $liHeight - 20px;
+        $liImgRate: 4/3;
+        $liImgWidth: $liHeight/$liImgRate;
+        $liMetaWidth: $liHeight;
 
         > ul > li {
             display: flex;
-            flex-wrap: wrap;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: flex-start;
             height: $liHeight;
 
@@ -451,148 +461,113 @@
         }
 
         > ul > li > div {
-        }
-
-        /*.ct_alpha,*/
-        /*.ct_icon,*/
-        /*.ct_cover,*/
-        /*.ct_title,*/
-        /*.ct_description,*/
-        /*.ct_size,*/
-        /*.ct_hash,*/
-        /*.ct_type,*/
-        /*.ct_time_create,*/
-        /*.ct_time_update,*/
-        /*.ct_tag {*/
-        /*    display: none;*/
-        /*}*/
-        .ct_alpha {
-            height: 100%;
-            width: $liHeight/$liRate;
-            position: relative;
-            text-align: center;
             margin-right: 10px;
+            height: $liHeight;
+
+            &:last-child {
+                margin-right: 0;
+            }
         }
 
-        .ct_icon,
-        .ct_cover {
-            max-height: calc(#{$liHeight} - 20px);
-            max-width: $liHeight/$liRate;
+        .ct_alpha {
+            width: $liImgWidth;
+            max-width: $liImgWidth;
+            min-width: $liImgWidth;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+
+            .ct_icon {
+                width: $liImgWidth;
+                font-size: $liImgWidth * 0.8;
+                line-height: $liImgWidth;
+                display: block;
+                text-align: center;
+            }
+
+            .ct_cover {
+                max-width: $liImgWidth - 20px;
+                max-height: $liContentHeight - 20px;
+            }
         }
 
-        .ct_icon {
-            font-size: $liHeight/$liRate*0.8;
-            line-height: calc(#{$liHeight} - 20px);
-        }
+        .ct_meta {
+            > div {
+                width: $liMetaWidth;
+                display: block;
+            }
 
-        .ct_cover {
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            position: absolute;
-        }
+            input, textarea {
+                width: $liMetaWidth;
+            }
 
-        .ct_title,
-        .ct_description,
-        .ct_size,
-        .ct_hash,
-        .ct_type,
-        .ct_time_create,
-        .ct_time_update {
-            width: $liHeight/$liRate;
+            textarea {
+                height: $fontSize*6;
+            }
+
+            .ct_operate {
+            }
         }
 
         .ct_tag {
-            margin-left: 10px;
-            height: 100%;
-            width: calc(100% - #{$liHeight/$liRate} * 2 - 20px);
+            min-width: $liMetaWidth;
             overflow: hidden;
+            text-overflow: ellipsis;
 
             dl {
                 display: block;
                 margin-bottom: 0;
             }
 
-            dt,
-            dd {
+            dt {
                 display: inline-block;
                 margin-bottom: 5px;
                 line-height: $fontSize;
             }
 
-            dt {
+            input {
+                width: $liMetaWidth;
             }
 
-            dd {
-                margin-left: 5px;
-                padding: 5px;
-            }
         }
 
-        @media (max-width: calc(1470px / (1 - 0.083333))) {
-            > ul {
-                .hasTag {
-                    width: 100%;
-                }
-
-                .noTag {
-                    width: 50%;
-                }
-            }
-        }
-        @media (max-width: 980px) {
-            > ul {
-                .noTag {
-                    width: 100%;
-                }
-            }
-        }
-
-        @media (max-width: 799px) {
-
+        //(240+320+320*1.5+20)/0.9166667
+        @media (max-width: 1200px) {
             > ul > li {
-                flex-direction: row;
+                flex-wrap: wrap;
                 height: auto;
-                display: block;
-            }
-            .ct_alpha {
-                height: $liHeight;
             }
             .ct_tag {
-                height: auto;
-                width: 100%;
-                clear: both;
-            }
-            .ct_alpha, .ct_title,
-            .ct_description,
-            .ct_size,
-            .ct_hash,
-            .ct_type,
-            .ct_time_create,
-            .ct_time_update {
-                float: left;
-            }
-            .ct_title,
-            .ct_description,
-            .ct_size,
-            .ct_hash,
-            .ct_type,
-            .ct_time_create,
-            .ct_time_update {
-                width: calc(100% - #{$liHeight/$liRate} - 20px);
+                min-width: $liImgWidth + $liMetaWidth + 10px;
+                height: fit-content;
             }
         }
-        @media (max-width: 499px) {
-
-            .ct_alpha, .ct_title,
-            .ct_description,
-            .ct_size,
-            .ct_hash,
-            .ct_type,
-            .ct_time_create,
-            .ct_time_update {
-                clear: left;
-                width: calc(100%);
+        //(240+320+20)+15*2
+        @media (max-width: 610px) {
+            > ul{
+                flex-direction: column;
+            }
+            > ul > li {
+                flex-direction: column;
+            }
+            .ct_alpha {
+                width: 100%;
+                max-width: 100%;
+                min-width: 100%;
+                .ct_cover{
+                    max-width: 100%;
+                }
+            }
+            .ct_meta {
+                >div{
+                    width: 100%;
+                }
+            }
+            .ct_tag,.ct_meta {
+                height: fit-content;
+                min-width: auto;
             }
         }
     }
@@ -1211,7 +1186,7 @@
                 console.info('list: saveTag');
                 this.editTagId = 0;
             },
-            setCover       : function (itemId) {
+            setCover      : function (itemId) {
                 console.info('list: setCover');
             },
         },

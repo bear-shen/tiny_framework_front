@@ -94,14 +94,21 @@
                         <div class="ct_tag">
                             <dl v-for="group in item.tag" :data-id="group.id">
                                 <dt>{{group.name}}:</dt>
-                                <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
+                                <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark" v-on:click="delTag(item.id,tag.id)">
                                     {{tag.name}}
                                     <span class="sysIcon sysIcon_delete"></span>
                                 </dd>
                             </dl>
                             <dl>
                                 <dt>add:</dt>
-                                <dd><input type="text" v-model="addTagTxt" placeholder="separate by ,"></dd>
+                                <dd><input
+                                        type="text" v-model="addTagTxt"
+                                        placeholder="input tag and choose"
+                                >
+                                    <ul v-if="showTagSelector" class="ct_tag_hinter">
+                                        <li v-for="tag in tagSelector" v-on:click.stop="addTag(item.id,tag.id)">{{tag.group_name}}:{{tag.name}}</li>
+                                    </ul>
+                                </dd>
                             </dl>
                         </div>
                     </template>
@@ -263,50 +270,66 @@
         }
 
         > ul > li > div {
-            display: table-cell;
             line-height: 2.5 * $listFontSize;
             font-size: $listFontSize;
             vertical-align: middle;
+            display: contents;
+
+            > * {
+                display: table-cell;
+            }
         }
 
-        /*.ct_alpha,*/
-        /*.ct_icon,*/
-        .ct_cover,
-            /*.ct_title,*/
-        .ct_description,
-            /*.ct_size,*/
-            /*.ct_hash,*/
-        .ct_type,
-        .ct_time_create,
-            /*.ct_time_update,*/
+        .ct_alpha {
+            text-align: center;
+
+            * {
+                padding-right: 10px;
+            }
+        }
+
+        .ct_meta {
+            div {
+                /*display: inline-block;*/
+            }
+
+            .ct_description,
+                /*.ct_time_create,*/
+            .ct_hash,
+            .ct_operate {
+                display: none;
+            }
+        }
+
         .ct_tag {
             display: none;
         }
 
-        .ct_alpha, .ct_icon {
-            width: $listFontSize*2;
-            font-size: $listFontSize*2;
+        @media (max-width: 1200px) {
+            .ct_meta {
+                .ct_time_create {
+                    display: none;
+                }
+            }
         }
 
-        .ct_title {
+        @media (max-width: 800px) {
+            .ct_meta {
+                .ct_time_update {
+                    display: none;
+                }
+            }
         }
 
-        .ct_hash {
-            width: $listFontSize*20;
-        }
+        @media (max-width: 600px) {
+            .ct_meta {
+                .ct_size {
+                    display: none;
+                }
 
-        .ct_size {
-            width: $listFontSize*5;
-        }
-
-        .ct_time_update {
-            width: $listFontSize*10;
-        }
-
-        @media (max-width: 1199px) {
-            .ct_hash,
-            .ct_time_update {
-                display: none;
+                .ct_type {
+                    display: none;
+                }
             }
         }
     }
@@ -347,6 +370,7 @@
         .ct_type,
         .ct_time_create,
         .ct_time_update,
+        .ct_operate,
         .ct_tag {
             display: none;
         }
@@ -513,12 +537,13 @@
 
         .ct_tag {
             min-width: $liMetaWidth;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            /*overflow: hidden;*/
+            /*text-overflow: ellipsis;*/
 
             dl {
                 display: block;
                 margin-bottom: 0;
+                position: relative;
             }
 
             dt {
@@ -527,8 +552,31 @@
                 line-height: $fontSize;
             }
 
+            dd {
+                position: relative;
+            }
+
             input {
                 width: $liMetaWidth;
+                text-indent: 1em;
+            }
+
+            .ct_tag_hinter {
+                list-style: none;
+                padding: 10px 0;
+                background-color: rgba(0, 0, 0, 0.3);
+                position: absolute;
+                top: $fontSize*2;
+
+                li {
+                    width: $liMetaWidth - 20px;
+                    line-height: $fontSize*1.5;
+                    padding: 0 10px;
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.3);
+                    }
+                }
             }
 
         }
@@ -546,7 +594,7 @@
         }
         //(240+320+20)+15*2
         @media (max-width: 610px) {
-            > ul{
+            > ul {
                 flex-direction: column;
             }
             > ul > li {
@@ -556,16 +604,17 @@
                 width: 100%;
                 max-width: 100%;
                 min-width: 100%;
-                .ct_cover{
+
+                .ct_cover {
                     max-width: 100%;
                 }
             }
             .ct_meta {
-                >div{
+                > div {
                     width: 100%;
                 }
             }
-            .ct_tag,.ct_meta {
+            .ct_tag, .ct_meta {
                 height: fit-content;
                 min-width: auto;
             }
@@ -588,15 +637,18 @@
         },
         store     : store,
         watch     : {
-            $route: function (to, from) {
+            $route   : function (to, from) {
                 console.info(`list: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
                 this.currentRoute = router.currentRoute;
                 this.query();
             },
-            page  : function (to, from) {
+            page     : function (to, from) {
                 console.info('list: param:page compute watched');
+            },
+            addTagTxt: function (to, from) {
+                this.searchTag();
             }
         },
         data      : function () {
@@ -1103,14 +1155,16 @@
                 listData.push(listData[0]);
             }
             return {
-                param        : {},
+                param          : {},
                 // page: 1,
-                listTypeLocal: this.listType,
-                list         : listData,
-                detail       : listData[0],
-                editMetaId   : 0,
-                editTagId    : 0,
-                addTagTxt    : '',
+                listTypeLocal  : this.listType,
+                list           : listData,
+                detail         : listData[0],
+                editMetaId     : 0,
+                editTagId      : 0,
+                addTagTxt      : '',
+                showTagSelector: false,
+                tagSelector    : [],
             }
         },
         /*watch  : {
@@ -1144,7 +1198,7 @@
             },
         },
         created   : function () {
-            console.info('List.vue create');
+            console.debug('List.vue create');
             // console.info(this);
             // console.info(GenFunc);
             // console.info(UploaderLib);
@@ -1152,12 +1206,15 @@
             this.listTypeLocal = this.listType;
         },
         mounted   : function () {
-            console.info('List.vue mount');
+            console.debug('List.vue mount');
+            document.getElementById('app').addEventListener('click', () => {
+                this.searchTagClear();
+            });
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         updated   : function () {
-            console.info('List.vue update');
+            // console.info('List.vue update');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
@@ -1170,6 +1227,97 @@
                 this.listType      = listType;
                 this.listTypeLocal = listType;
             },
+            //
+            delTag        : function (itemId, tagId) {
+                console.info('list: del tag:' + itemId + '\t' + tagId);
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id !== itemId) continue;
+                    console.debug('list: hit item');
+                    // console.debug(this.list[i1]);
+                    for (let i2 = 0; i2 < this.list[i1].tag.length; i2++) {
+                        for (let i3 = 0; i3 < this.list[i1].tag[i2].sub.length; i3++) {
+                            if (this.list[i1].tag[i2].sub[i3].id !== tagId) continue;
+                            console.debug('list: hit tag');
+                            // console.debug(this.list[i1].tag[i2].sub);
+                            this.list[i1].tag[i2].sub.splice(i3, 1);
+                        }
+                    }
+                }
+            },
+            searchTag     : function () {
+                console.debug('list: searchTag ' + this.addTagTxt);
+                if (!this.addTagTxt) return;
+                this.showTagSelector = true;
+                this.tagSelector     = [
+                    {id: 4, group_id: 2, name: 'tentacles', group_name: 'male',},
+                    {id: 5, group_id: 2, name: 'dilf', group_name: 'male',},
+                    {id: 2, group_id: 1, name: 'rape', group_name: 'female',},
+                    {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
+                ];
+            },
+            searchTagClear: function () {
+                console.debug('list: searchTagClear ' + this.addTagTxt);
+                if (!this.showTagSelector) return false;
+                this.addTagTxt       = '';
+                this.showTagSelector = false;
+                this.tagSelector     = [];
+            },
+            addTag        : function (itemId, tagId) {
+                console.debug('list: addTag:' + itemId + '\t' + tagId);
+                let tag = false;
+                for (let i1 = 0; i1 < this.tagSelector.length; i1++) {
+                    if (this.tagSelector[i1].id !== tagId) continue;
+                    tag = this.tagSelector[i1];
+                }
+                if (!tag) {
+                    console.warn('tag not found');
+                    return false;
+                }
+                //查找 item
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id !== itemId) continue;
+                    console.debug(`item found ${i1}`);
+                    console.info(this.list[i1]);
+                    let hasGroup = false;
+                    let hasTag   = false;
+                    //查找 tag group
+                    for (let i2 = 0; i2 < this.list[i1].tag.length; i2++) {
+                        if (this.list[i1].tag[i2].id !== tag.group_id) continue;
+                        console.debug(`group found ${i1} ${i2}`);
+                        console.info(this.list[i1].tag[i2]);
+                        hasGroup = true;
+                        //查找 tag
+                        for (let i3 = 0; i3 < this.list[i1].tag[i2].sub.length; i3++) {
+                            if (this.list[i1].tag[i2].sub[i3].id !== tag.id) continue;
+                            console.debug(`tag found ${i1} ${i2} ${i3}`);
+                            console.info(this.list[i1].tag[i2].sub[i3]);
+                            hasTag = true;
+                            //如果存在 tag ，不写入
+                            break;
+                        }
+                        //无 tag 加 tag
+                        if (!hasTag) {
+                            this.list[i1].tag[i2].sub.push(
+                                {id: tag.id, name: tag.name,}
+                            );
+                        }
+                    }
+                    //无 group 加 group
+                    if (!hasGroup) {
+                        this.list[i1].tag.push(
+                            {
+                                id  : tag.group_id,
+                                name: tag.group_name,
+                                sub : [
+                                    {id: tag.id, name: tag.name,},
+                                ],
+                            })
+                    }
+                    // break;
+                }
+                this.searchTagClear();
+            },
+            //
             editMeta      : function (itemId) {
                 console.info('list: editMeta');
                 this.editMetaId = itemId;

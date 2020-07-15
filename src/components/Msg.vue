@@ -97,6 +97,8 @@
 </style>
 
 <script>
+    import router from "../router";
+
     /**
      * @var list        (internal)
      * @var detailTimer (internal)
@@ -107,15 +109,10 @@
     export default {
         name   : "Msg",
         // el     : '#msg',
+        props  : ['msg'],
         data   : function () {
             return {
                 list       : [
-                    {
-                        type  : 'info',
-                        msg   : 'success',
-                        hide  : false,
-                        detail: false,
-                    },
                     {
                         type  : 'info',
                         msg   : 'success',
@@ -127,7 +124,16 @@
                 detailTimer: 0,
             }
         },
+        watch  : {
+            msg: function (to, from) {
+                console.info(`msg: msg watched`);
+                this.push(to.data, to.type);
+            }
+        },
         created: function () {
+            if(this.msg){
+                this.push(this.msg.data,this.msg.type)
+            }
         },
         methods: {
             push      : function (data, type) {

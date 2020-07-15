@@ -27,7 +27,7 @@
         </div>
         <div id="footer" class="nav navbar-fixed-bottom">
             <!--            <div class="">-->
-            <Msg/>
+            <Msg v-bind:msg="msg"/>
             <Paginator/>
             <!--            </div>-->
         </div>
@@ -104,7 +104,7 @@
     }
 
     @media(min-width: 1200px) {
-        $iconSize:40px;
+        $iconSize: 40px;
         .col-lg-1.nav-col {
             flex-basis: $iconSize;
         }
@@ -252,24 +252,34 @@
     }
 </style>
 <script>
+    import router from "./router";
+    import store  from "./store";
+
+
     import Header    from "./components/Header";
-    import Loader    from "./components/Loader";
     import Msg       from "./components/Msg";
     import Paginator from "./components/Paginator";
+    import Loader    from "./components/Loader";
     import Popup     from "./components/Popup";
-    import router    from "./router";
-    import store     from "./store";
 
     console.log('Hello world');
 
     export default {
-        components: {Popup, Paginator, Msg, Loader, Header},
+        components: {
+            Header   : Header,
+            Msg      : Msg,
+            Paginator: Paginator,
+            Loader   : Loader,
+            Popup    : Popup
+        },
         data      : function () {
             return {
                 showTitle   : true,
                 routes      : [],
                 currentRoute: {},
                 query       : {},
+                //props
+                msg         : {},
             };
         },
         store     : store,
@@ -297,7 +307,12 @@
             this.routes       = router.options.routes;
             this.currentRoute = router.currentRoute;
             // globalDbg         = router;
-
+            globalDbg         = this;
+            //created 的时候watch不到
+            this.msg = {
+                type: 'info',
+                data: 'app props success',
+            };
         },
         methods   : {
             toggler: function () {

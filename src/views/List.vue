@@ -12,14 +12,11 @@
     <div class="list">
         <div class="listHeader">
             <ul class="listHeaderBread breadcrumb">
-                <li class="breadcrumb-item">root</li>
-                <li class="breadcrumb-item">dir a</li>
-                <li class="breadcrumb-item">dir b</li>
-                <li class="breadcrumb-item">dir c</li>
+                <li class="breadcrumb-item" v-for="bread in navi" v-on:click="goto(bread.type,bread.id)">{{bread.name}}</li>
             </ul>
             <div class="listHeaderSearch">
-                <input type="text" placeholder="search">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_search"></button>
+                <input type="text" placeholder="search" v-model="searchTxt">
+                <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
             </div>
             <div class="listHeaderOperates">
                 <button type="button" class="btn btn-dark sysIcon sysIcon_delete"></button>
@@ -34,7 +31,7 @@
         <div :class="['listContent','listType_'+listTypeLocal]">
             <ul>
                 <li v-for="item in list" :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
-                    <div class="ct_alpha">
+                    <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)">
                         <span v-if="!item.cover || listTypeLocal==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
                         <img v-if="item.cover && listTypeLocal!=='text'" class="ct_cover" :src="item.cover" alt="">
                     </div>
@@ -88,6 +85,9 @@
                                     <span class="sysIcon sysIcon_edit"></span>&nbsp;tag
                                 </div>
                             </template>
+                            <div :class="['btn', 'btn-dark']" v-on:click="deleteFile(item.id)">
+                                <span class="sysIcon sysIcon_delete"></span>&nbsp;delete
+                            </div>
                         </div>
                     </div>
                     <template v-if="editTagId===item.id">
@@ -116,7 +116,12 @@
                         <div v-if="item.tag.length" class="ct_tag">
                             <dl v-for="group in item.tag" :data-id="group.id">
                                 <dt>{{group.name}}:</dt>
-                                <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
+                                <dd
+                                        v-for="tag in group.sub"
+                                        :data-id="tag.id"
+                                        class="btn btn-dark"
+                                        v-on:click="goto('tag',tag.id)"
+                                >
                                     {{tag.name}}
                                 </dd>
                             </dl>
@@ -628,12 +633,11 @@
     import store      from "../store";
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
-    import Uploader   from "../components/Uploader";
+    // import Popup    from '../components/Popup'
 
     export default {
         name      : 'List',
         components: {
-            Uploader,
         },
         store     : store,
         watch     : {
@@ -652,514 +656,17 @@
             }
         },
         data      : function () {
-            let listData = [
-                {
-                    id         : '0',
-                    cover      : '/sample/cover.jpg',
-                    cover_id   : '1',
-                    // alpha      : 'binary',
-                    title      : 'this is title this is title this is title this is title this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'folder',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                                {id: 7, name: 'magical girl',},
-                                {id: 7, name: 'sleeping',},
-                                {id: 7, name: 'bunny girl',},
-                                {id: 7, name: 'animal ears',},
-                                {id: 7, name: 'tail',},
-                                {id: 7, name: 'small breast',},
-                                {id: 7, name: 'tiara',},
-                                {id: 7, name: 'pantyhose',},
-                                {id: 7, name: 'vampire',},
-                                {id: 7, name: 'baby',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                //
-
-                {
-                    id         : '1',
-                    cover      : '/sample/smp1.jpg',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'image',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                {
-                    id         : '0',
-                    cover      : '/sample/smp2.jpg',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                {
-                    id         : '0',
-                    cover      : '/sample/smp3.png',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'text',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'folder',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [],
-                },
-                //
-                {
-                    id         : '0',
-                    cover      : '/sample/smp1.jpg',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '/sample/smp2.jpg',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '/sample/smp3.png',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'text',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'binary',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'video',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'audio',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id         : '0',
-                    cover      : '',
-                    // alpha      : 'binary',
-                    title      : 'this is title',
-                    description: 'this is description',
-                    size       : '996 KB',
-                    hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                    type       : 'image',
-                    time_create: '1919-08-10 11:45:14',
-                    time_update: '1919-08-10 11:45:14',
-                    tag        : [
-                        {
-                            id  : 1,
-                            name: 'female',
-                            sub : [
-                                {id: 1, name: 'lolicon',},
-                                {id: 2, name: 'rape',},
-                                {id: 3, name: 'netorare',},
-                                {id: 4, name: 'defloration',},
-                                {id: 5, name: 'guro',},
-                                {id: 6, name: 'snuff',},
-                                {id: 7, name: 'drugs',},
-                            ],
-                        },
-                        {
-                            id  : 2,
-                            name: 'male',
-                            sub : [
-                                {id: 4, name: 'tencales',},
-                                {id: 5, name: 'dilf',},
-                                {id: 6, name: 'sole male',},
-                            ],
-                        },
-                        {
-                            id  : 3,
-                            name: 'misc',
-                            sub : [
-                                {id: 4, name: 'full censorship',},
-                                {id: 5, name: 'webtoon',},
-                                {id: 6, name: 'story arc',},
-                            ],
-                        },
-                    ],
-                },
-            ];
-            for (let i = 0; i < 10; i++) {
-                listData.push(listData[0]);
-            }
             return {
                 param          : {},
                 // page: 1,
                 listTypeLocal  : this.listType,
-                list           : listData,
-                detail         : listData[0],
+                // from query
+                navi           : [],
+                list           : [],
+                detail         : {},
+                //
+                searchTxt      : '',
+                //tag 部分
                 editMetaId     : 0,
                 editTagId      : 0,
                 addTagTxt      : '',
@@ -1204,6 +711,11 @@
             // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
             this.listTypeLocal = this.listType;
+            this.query();
+            this.$parent.msg={
+                type: 'info',
+                data: 'list props success',
+            };
         },
         mounted   : function () {
             console.debug('List.vue mount');
@@ -1219,8 +731,555 @@
             // this.page = this.$store.state.pageSet;
         },
         methods   : {
+            /**
+             * @todo api
+             * */
             query         : function () {
                 console.info('list: query');
+                console.info(this);
+                console.info(this.$parent);
+                // console.info(Popup);
+                // Popup.show();
+                let listData = [
+                    {
+                        id         : '0',
+                        cover      : '/sample/cover.jpg',
+                        cover_id   : '1',
+                        // alpha      : 'binary',
+                        title      : 'this is title this is title this is title this is title this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'folder',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                    {id: 7, name: 'magical girl',},
+                                    {id: 7, name: 'sleeping',},
+                                    {id: 7, name: 'bunny girl',},
+                                    {id: 7, name: 'animal ears',},
+                                    {id: 7, name: 'tail',},
+                                    {id: 7, name: 'small breast',},
+                                    {id: 7, name: 'tiara',},
+                                    {id: 7, name: 'pantyhose',},
+                                    {id: 7, name: 'vampire',},
+                                    {id: 7, name: 'baby',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    //
+
+                    {
+                        id         : '1',
+                        cover      : '/sample/smp1.jpg',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'image',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '/sample/smp2.jpg',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '/sample/smp3.png',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'text',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'folder',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [],
+                    },
+                    //
+                    {
+                        id         : '0',
+                        cover      : '/sample/smp1.jpg',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '/sample/smp2.jpg',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '/sample/smp3.png',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'text',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'video',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'audio',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '0',
+                        cover      : '',
+                        // alpha      : 'binary',
+                        title      : 'this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'image',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                ];
+                for (let i = 0; i < 10; i++) {
+                    listData.push(listData[0]);
+                }
+                this.list   = listData;
+                //detail目前也就一个判断封面的功能，其实可以省掉的
+                this.detail = listData[0];
+                //navi 导航
+                this.navi   = [
+                    {
+                        id  : 0,
+                        name: 'root',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 1,
+                        name: 'dir a',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 2,
+                        name: 'dir c',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 3,
+                        name: 'dir d',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 4,
+                        name: 'dir d',
+                        type: 'tag',
+                    },
+                    {
+                        id  : 0,
+                        name: 'dir d',
+                        type: 'search',
+                    },
+                ];
+                setTimeout(()=>{
+                },1000)
             },
             changeListType: function (listType) {
                 console.info('list: changeListType');
@@ -1228,6 +1287,9 @@
                 this.listTypeLocal = listType;
             },
             //
+            /**
+             * @todo api
+             * */
             delTag        : function (itemId, tagId) {
                 console.info('list: del tag:' + itemId + '\t' + tagId);
                 for (let i1 = 0; i1 < this.list.length; i1++) {
@@ -1244,6 +1306,9 @@
                     }
                 }
             },
+            /**
+             * @todo api
+             * */
             searchTag     : function () {
                 console.debug('list: searchTag ' + this.addTagTxt);
                 if (!this.addTagTxt) return;
@@ -1255,6 +1320,9 @@
                     {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
                 ];
             },
+            /**
+             * @todo api
+             * */
             searchTagClear: function () {
                 console.debug('list: searchTagClear ' + this.addTagTxt);
                 if (!this.showTagSelector) return false;
@@ -1262,6 +1330,9 @@
                 this.showTagSelector = false;
                 this.tagSelector     = [];
             },
+            /**
+             * @todo api
+             * */
             addTag        : function (itemId, tagId) {
                 console.debug('list: addTag:' + itemId + '\t' + tagId);
                 let tag = false;
@@ -1317,6 +1388,43 @@
                 }
                 this.searchTagClear();
             },
+            goto          : function (type, targetId) {
+                let query = {
+                    directory: 0,
+                    tag      : 0,
+                    keyword  : '',
+                };
+                switch (type) {
+                    //点文件夹，跳转文件夹
+                    case 'directory':
+                        query.directory = targetId;
+                        break;
+                    //tag 查询当前目录下的 tag
+                    case 'tag':
+                        query.directory = this.detail.id;
+                        query.tag       = targetId;
+                        break;
+                    //search 查询当前目录下的 txt
+                    case 'search':
+                        query.directory = this.detail.id;
+                        query.keyword   = this.searchTxt;
+                        break;
+                    //file 显示详情
+                    case 'file':
+                        return this.goDetail();
+                        break;
+                }
+                console.debug(query);
+                router.push(
+                    {path: '/', query: Object.assign(query, {page: 1})},
+                );
+            },
+            /**
+             * @todo api
+             * */
+            goDetail      : function () {
+
+            },
             //
             editMeta      : function (itemId) {
                 console.info('list: editMeta');
@@ -1326,16 +1434,35 @@
                 console.info('list: editTag');
                 this.editTagId = itemId;
             },
+            /**
+             * @todo api
+             * */
             saveMeta      : function (itemId) {
                 console.info('list: saveMeta');
                 this.editMetaId = 0;
             },
+            /**
+             * @todo api
+             * */
             saveTag       : function (itemId) {
                 console.info('list: saveTag');
                 this.editTagId = 0;
             },
+            /**
+             * @todo api
+             * */
             setCover      : function (itemId) {
                 console.info('list: setCover');
+            },
+            /**
+             * @todo api
+             * */
+            deleteFile      : function (itemId) {
+                console.info('list: deleteFile');
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if(this.list[i1].id!==itemId)continue;
+                    this.list.splice(i1, 1);
+                }
             },
         },
     }

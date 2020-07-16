@@ -27,12 +27,12 @@
         </div>
         <div id="footer" class="nav navbar-fixed-bottom">
             <!--            <div class="">-->
-            <Msg v-bind:msg="msg"/>
+            <Msg v-bind:msg="msgData"/>
             <Paginator/>
             <!--            </div>-->
         </div>
         <Loader/>
-        <Popup/>
+        <Popup v-bind:info="popupData"/>
     </div>
 </template>
 
@@ -278,8 +278,9 @@
                 routes      : [],
                 currentRoute: {},
                 query       : {},
-                //props
-                msg         : {},
+                //--- props ---
+                msgData     : {},
+                popupData   : {},
             };
         },
         store     : store,
@@ -309,15 +310,27 @@
             // globalDbg         = router;
             globalDbg         = this;
             //created 的时候watch不到
-            this.msg = {
-                type: 'info',
-                data: 'app props success',
-            };
+            this.pushMsg(
+                'app props success',
+                'info'
+            );
         },
         methods   : {
-            toggler: function () {
+            toggler  : function () {
                 this.showTitle = !this.showTitle;
-            }
+            },
+            pushMsg  : function (data, type) {
+                this.msgData = {
+                    data: data,
+                    type: type,
+                };
+            },
+            showPopup: function (data) {
+                this.popupData=data;
+            },
+            hidePopup: function () {
+                this.popupData={isShow:false,};
+            },
         },
     }
 </script>

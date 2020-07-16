@@ -20,7 +20,7 @@
             </div>
             <div class="listHeaderOperates">
                 <button type="button" class="btn btn-dark sysIcon sysIcon_delete"></button>
-                <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder"></button>
+                <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="listHeaderLayout">
                 <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listTypeLocal==='text'}]" v-on:click="changeListType('text')"></button>
@@ -179,6 +179,10 @@
             padding-top: 0;
             padding-bottom: 0;
             margin-bottom: 0;
+
+            li {
+                cursor: pointer;
+            }
         }
 
         .listHeaderSearch, .listHeaderOperates, .listHeaderLayout {
@@ -636,11 +640,10 @@
     // import Popup    from '../components/Popup'
 
     export default {
-        name      : 'List',
-        components: {
-        },
-        store     : store,
-        watch     : {
+        name         : 'List',
+        components   : {},
+        store        : store,
+        watch        : {
             $route   : function (to, from) {
                 console.info(`list: route to ${router.currentRoute.name}`);
                 // console.info(to);
@@ -655,7 +658,7 @@
                 this.searchTag();
             }
         },
-        data      : function () {
+        data         : function () {
             return {
                 param          : {},
                 // page: 1,
@@ -680,7 +683,7 @@
          return this.$store.state.pageSet;
          }
          },*/
-        computed  : {
+        computed     : {
             page    : {
                 get: function () {
                     console.info('list: param:page get');
@@ -704,7 +707,7 @@
                 },
             },
         },
-        created   : function () {
+        created      : function () {
             console.debug('List.vue create');
             // console.info(this);
             // console.info(GenFunc);
@@ -712,25 +715,26 @@
             // this.page = this.$store.state.pageSet;
             this.listTypeLocal = this.listType;
             this.query();
-            this.$parent.msg={
-                type: 'info',
-                data: 'list props success',
-            };
+            this.$parent.pushMsg(
+                'list props success',
+                'info'
+            );
         },
-        mounted   : function () {
+        mounted      : function () {
             console.debug('List.vue mount');
-            document.getElementById('app').addEventListener('click', () => {
-                this.searchTagClear();
-            });
+            document.getElementById('app').addEventListener('click', this.searchTagClear);
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
-        updated   : function () {
+        beforeDestroy: function () {
+            document.getElementById('app').removeEventListener('click', this.searchTagClear)
+        },
+        updated      : function () {
             // console.info('List.vue update');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
-        methods   : {
+        methods      : {
             /**
              * @todo api
              * */
@@ -1278,8 +1282,8 @@
                         type: 'search',
                     },
                 ];
-                setTimeout(()=>{
-                },1000)
+                setTimeout(() => {
+                }, 1000)
             },
             changeListType: function (listType) {
                 console.info('list: changeListType');
@@ -1324,8 +1328,8 @@
              * @todo api
              * */
             searchTagClear: function () {
-                console.debug('list: searchTagClear ' + this.addTagTxt);
                 if (!this.showTagSelector) return false;
+                console.debug('list: searchTagClear ' + this.addTagTxt);
                 this.addTagTxt       = '';
                 this.showTagSelector = false;
                 this.tagSelector     = [];
@@ -1457,13 +1461,47 @@
             /**
              * @todo api
              * */
-            deleteFile      : function (itemId) {
+            deleteFile    : function (itemId) {
                 console.info('list: deleteFile');
                 for (let i1 = 0; i1 < this.list.length; i1++) {
-                    if(this.list[i1].id!==itemId)continue;
+                    if (this.list[i1].id !== itemId) continue;
                     this.list.splice(i1, 1);
                 }
             },
+            /**
+             * @todo api
+             * */
+            addFolder     : function () {
+                console.info('list: addFolder');
+                /*this.$parent.showPopup(
+                    {
+                        type    : 'form',
+                        data    : {
+                            title      : '',
+                            description: '',
+                        },
+                        template: {
+                            title      : {type: 'text', default: '', editable: true,},
+                            description: {type: 'text', default: '', editable: true,},
+                        },
+                        success : function (data) {
+                            console.info('list: callback: success');
+                            console.info(data);
+                        },
+                        cancel  : function (data) {
+                            console.info('list: callback: cancel');
+                            console.info(data);
+                        },
+                        error   : function (data) {
+                            console.info('list: callback: error');
+                            console.info(data);
+                        },
+                    });*/
+                this.$parent.showPopup(
+                    {type:'loader'}
+                );
+            }
+
         },
     }
 </script>

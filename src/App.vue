@@ -313,10 +313,10 @@
             );
         },
         methods   : {
-            toggler    : function () {
+            toggler     : function () {
                 this.showTitle = !this.showTitle;
             },
-            pushMsg    : function (data, type) {
+            pushMsg     : function (data, type) {
                 this.msgData = {
                     data: data,
                     type: type,
@@ -327,45 +327,51 @@
              * {
              *          data    : {
              *              title      : '',
-             *              description: '',
              *          },
              *          template: {
-             *              title      : {type: 'text', default: '', editable: true,},
-             *              description: {type: 'text', default: '', editable: true,},
+             *              title      : {
+             *                  type: 'text|datetime|textarea|checkbox',
+             *                  default: '', editable: true,
+             *              },
              *          },
-             *          success : function (data) {
-             *              console.info('list: callback: success');
-             *              console.info(data);
+             *          submit : function (data) {
+             *              console.info('list: callback: submit');
              *          },
              *          cancel  : function (data) {
              *              console.info('list: callback: cancel');
-             *              console.info(data);
              *          },
              *          error   : function (data) {
              *              console.info('list: callback: error');
-             *              console.info(data);
              *          },
              *      }
              * */
-            showForm   : function (data) {
+            showForm    : function (data) {
                 this.popupData = {
                     type: 'form',
                     data: data,
                 };
             },
-            showLoader : function () {
+            showLoader  : function () {
                 this.popupData = {
                     type: 'loader',
                 };
             },
-            hideLoader : function () {
+            hideLoader  : function () {
                 this.popupData = {
                     type  : 'loader',
                     isShow: false,
                 };
             },
-            showConfirm: function (data) {
-
+            showConfirm : function (data) {
+                data           = {
+                    data  : 'this is confirm window',
+                    submit: () => {console.info('confirm: callback: submit');},
+                    cancel: () => {console.info('confirm: callback: error');},
+                };
+                this.popupData = {
+                    type: 'confirm',
+                    data: data,
+                };
             },
             showUploader: function (data) {
 

@@ -7,6 +7,7 @@
             <popup-loader></popup-loader>
         </template>
         <template v-else-if="type==='confirm'">
+            <popup-confirm v-bind:info="popupInfo"></popup-confirm>
         </template>
         <template v-else-if="type==='uploader'">
         </template>
@@ -48,8 +49,9 @@
 </style>
 
 <script>
-    import PopupLoader from "./PopupLoader";
-    import PopupForm   from "./PopupForm";
+    import PopupLoader  from "./PopupLoader";
+    import PopupForm    from "./PopupForm";
+    import PopupConfirm from "./PopupConfirm";
 
     /**
      * @var isShow          (internal)
@@ -66,7 +68,7 @@
      * */
     export default {
         name      : "Popup",
-        components: {PopupForm, PopupLoader},
+        components: {PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
         props     : ['info'],
         watch     : {

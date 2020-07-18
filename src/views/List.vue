@@ -719,6 +719,8 @@
                 'list props success',
                 'info'
             );
+
+            globalDbg=this;
         },
         mounted      : function () {
             console.debug('List.vue mount');
@@ -1483,8 +1485,8 @@
                             title      : {type: 'text', default: '', editable: true,},
                             description: {type: 'text', default: '', editable: true,},
                         },
-                        success : function (data) {
-                            console.info('list: callback: success');
+                        submit : function (data) {
+                            console.info('list: callback: submit');
                             console.info(data);
                         },
                         cancel  : function (data) {
@@ -1499,7 +1501,7 @@
                 /*this.$parent.showLoader(
                  {type:'loader'}
                  );*/
-                this.$parent.showConfirm();
+                // this.$parent.showConfirm();
             }
 
         },

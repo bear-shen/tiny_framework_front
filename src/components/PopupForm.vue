@@ -116,8 +116,6 @@
 </style>
 
 <script>
-    import PopupLoader from "./PopupLoader";
-
     /**
      * @var data            (internal)
      * @var callback        (internal)
@@ -143,15 +141,13 @@
                 data         : {},
                 template     : {},
                 callback     : {
-                    success: function () {
+                    submit: function () {
                     },
                     cancel : function () {
                     },
                     error  : function () {
                     },
                 },
-                //
-                isTransparent: false,
             }
         },
         created  : function () {
@@ -160,7 +156,7 @@
                 {
                     data    : {},
                     template: {},
-                    success : function () {},
+                    submit : function () {},
                     cancel  : function () {},
                     error   : function () {},
                 }, this.info);
@@ -185,7 +181,7 @@
             this.data             = data.data;
             this.template         = data.template;
             //
-            this.callback.success = data.success;
+            this.callback.submit = data.submit;
             this.callback.cancel  = data.cancel;
             this.callback.error   = data.error;
             //
@@ -195,7 +191,7 @@
             this.data             = {};
             this.template         = {};
             //
-            this.callback.success = () => {};
+            this.callback.submit = () => {};
             this.callback.cancel  = () => {};
             this.callback.error   = () => {};
         },
@@ -213,7 +209,7 @@
                 for (let k in this.data) {
                     data[k] = this.data[k].data;
                 }
-                this.callback.success(data);
+                this.callback.submit(data);
                 this.$parent.hide();
             },
             empty : function () {

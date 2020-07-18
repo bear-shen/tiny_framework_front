@@ -31,7 +31,6 @@
             <Paginator/>
             <!--            </div>-->
         </div>
-        <Loader/>
         <Popup v-bind:info="popupData"/>
     </div>
 </template>
@@ -259,7 +258,6 @@
     import Header    from "./components/Header";
     import Msg       from "./components/Msg";
     import Paginator from "./components/Paginator";
-    import Loader    from "./components/Loader";
     import Popup     from "./components/Popup";
 
     console.log('Hello world');
@@ -269,7 +267,6 @@
             Header   : Header,
             Msg      : Msg,
             Paginator: Paginator,
-            Loader   : Loader,
             Popup    : Popup
         },
         data      : function () {
@@ -316,20 +313,62 @@
             );
         },
         methods   : {
-            toggler  : function () {
+            toggler    : function () {
                 this.showTitle = !this.showTitle;
             },
-            pushMsg  : function (data, type) {
+            pushMsg    : function (data, type) {
                 this.msgData = {
                     data: data,
                     type: type,
                 };
             },
-            showPopup: function (data) {
-                this.popupData=data;
+            /**
+             * @param data Object
+             * {
+             *          data    : {
+             *              title      : '',
+             *              description: '',
+             *          },
+             *          template: {
+             *              title      : {type: 'text', default: '', editable: true,},
+             *              description: {type: 'text', default: '', editable: true,},
+             *          },
+             *          success : function (data) {
+             *              console.info('list: callback: success');
+             *              console.info(data);
+             *          },
+             *          cancel  : function (data) {
+             *              console.info('list: callback: cancel');
+             *              console.info(data);
+             *          },
+             *          error   : function (data) {
+             *              console.info('list: callback: error');
+             *              console.info(data);
+             *          },
+             *      }
+             * */
+            showForm   : function (data) {
+                this.popupData = {
+                    type: 'form',
+                    data: data,
+                };
             },
-            hidePopup: function () {
-                this.popupData={isShow:false,};
+            showLoader : function () {
+                this.popupData = {
+                    type: 'loader',
+                };
+            },
+            hideLoader : function () {
+                this.popupData = {
+                    type  : 'loader',
+                    isShow: false,
+                };
+            },
+            showConfirm: function (data) {
+
+            },
+            showUploader: function (data) {
+
             },
         },
     }

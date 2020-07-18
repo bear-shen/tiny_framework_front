@@ -1473,9 +1473,8 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
-                /*this.$parent.showPopup(
+                /*this.$parent.showForm(
                     {
-                        type    : 'form',
                         data    : {
                             title      : '',
                             description: '',
@@ -1497,9 +1496,10 @@
                             console.info(data);
                         },
                     });*/
-                this.$parent.showPopup(
-                    {type:'loader'}
-                );
+                /*this.$parent.showLoader(
+                 {type:'loader'}
+                 );*/
+                this.$parent.showConfirm();
             }
 
         },

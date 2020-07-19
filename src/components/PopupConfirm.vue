@@ -1,5 +1,5 @@
 <template>
-    <div v-on:click.stop="empty" class="popup_confirm">
+    <div class="popup_confirm">
         <table>
             <tr>
                 <th colspan="2">confirm</th>
@@ -11,8 +11,8 @@
             </tr>
             <tr>
                 <th colspan="2">
-                    <button type="button" class="btn btn-warning" v-on:click="callback.cancel">close</button>
-                    <button type="button" class="btn btn-success" v-on:click="callback.submit">submit</button>
+                    <button type="button" class="btn btn-warning" v-on:click="cancel">close</button>
+                    <button type="button" class="btn btn-success" v-on:click="submit">submit</button>
                 </th>
             </tr>
         </table>
@@ -129,6 +129,15 @@
             this.callback.submit = () => {};
             this.callback.cancel = () => {};
         },
-        methods  : {}
+        methods  : {
+            submit: function () {
+                this.callback.submit();
+                this.$parent.hide();
+            },
+            cancel: function () {
+                this.callback.cancel();
+                this.$parent.hide();
+            },
+        }
     }
 </script>

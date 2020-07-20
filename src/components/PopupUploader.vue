@@ -1,14 +1,23 @@
 <template>
     <div class="uploader">
-        <div class="dragWindow" ref="dragWindow"></div>
-        <div class="dragList" ref="dragList"></div>
-        <input class="dragInput" ref="dragInput">
-        <button v-on:click="upload" class="btn btn-danger">upload it</button>
+        <div class="dragWindow" ref="dragWindow">
+            <ul class="dragList" ref="dragList">
+                <li></li>
+            </ul>
+            <p>drag file/archive file here</p>
+<!--            <input class="dragInput" ref="dragInput">-->
+        </div>
+
+        <button type="button" class="btn btn-warning" v-on:click="cancel">close</button>
+        <button type="button" class="btn btn-success" v-on:click="upload">upload</button>
     </div>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+    .uploader{
+
+    }
     .dragWindow {
         background: white;
         width: 200px;
@@ -21,10 +30,8 @@
     import config      from '../config';
 
     export default {
-        name     : 'Uploader',
-        props    : {
-            pid: Number,
-        },
+        name     : 'PopupUploader',
+        props    : ['info'],
         data     : function () {
             return {
                 uploader: null,
@@ -69,7 +76,7 @@
             );
         },
         created  : function () {
-
+            console.info(`popup uploader: created`);
         },
         destroyed: function () {
             this.uploader.public.removePrevent();

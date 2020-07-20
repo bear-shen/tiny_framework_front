@@ -366,14 +366,14 @@
                 data           = {
                     data  : 'this is confirm window',
                     submit: () => {console.info('confirm: callback: submit');},
-                    cancel: () => {console.info('confirm: callback: error');},
+                    cancel: () => {console.info('confirm: callback: cancel');},
                 };
                 this.popupData = {
                     type: 'confirm',
                     data: data,
                 };
             },
-            showUploader: function (data) {
+            showUploader: function (dirDetail) {
 
             },
         },

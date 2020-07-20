@@ -10,6 +10,7 @@
             <popup-confirm v-bind:info="popupInfo"></popup-confirm>
         </template>
         <template v-else-if="type==='uploader'">
+            <popup-uploader v-bind:info="popupInfo"></popup-uploader>
         </template>
     </div>
 </template>
@@ -49,9 +50,10 @@
 </style>
 
 <script>
-    import PopupLoader  from "./PopupLoader";
-    import PopupForm    from "./PopupForm";
-    import PopupConfirm from "./PopupConfirm";
+    import PopupLoader   from "./PopupLoader";
+    import PopupForm     from "./PopupForm";
+    import PopupConfirm  from "./PopupConfirm";
+    import PopupUploader from "./PopupUploader";
 
     /**
      * @var isShow          (internal)
@@ -68,7 +70,7 @@
      * */
     export default {
         name      : "Popup",
-        components: {PopupConfirm, PopupForm, PopupLoader},
+        components: {PopupUploader, PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
         props     : ['info'],
         watch     : {

@@ -19,7 +19,7 @@
                 <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
             </div>
             <div class="listHeaderOperates">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_delete"></button>
+                <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="$parent.showUploader(detail)"></button>
                 <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="listHeaderLayout">

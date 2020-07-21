@@ -2,7 +2,11 @@
     <div class="uploader">
         <div class="dragWindow" ref="dragWindow">
             <ul class="dragList" ref="dragList">
-                <li></li>
+                <li>
+                    <p>filename</p>
+                    <p>waiting...</p>
+                    <p>25Kb</p>
+                </li>
             </ul>
             <p>drag file/archive file here</p>
 <!--            <input class="dragInput" ref="dragInput">-->

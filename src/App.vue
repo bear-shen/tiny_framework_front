@@ -249,6 +249,26 @@
 
     #content {
     }
+
+
+    /*
+     *  @see https://www.cnblogs.com/amylis_chen/p/11995324.html
+     *  @see https://www.cnblogs.com/ertingbo/p/7151566.html
+     */
+
+    ::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(127, 127, 127, 0.5);
+        border-radius: 3px;
+    }
 </style>
 <script>
     import router from "./router";
@@ -362,19 +382,49 @@
                     isShow: false,
                 };
             },
+            /**
+             * @param data Object
+             * {
+             *          data    : '',
+             *          submit : function (data) {
+             *              console.info('list: callback: submit');
+             *          },
+             *          cancel  : function (data) {
+             *              console.info('list: callback: cancel');
+             *          },
+             *      }
+             * */
             showConfirm : function (data) {
-                data           = {
-                    data  : 'this is confirm window',
-                    submit: () => {console.info('confirm: callback: submit');},
-                    cancel: () => {console.info('confirm: callback: cancel');},
-                };
+                /*data           = {
+                 data  : 'this is confirm window',
+                 submit: () => {console.info('confirm: callback: submit');},
+                 cancel: () => {console.info('confirm: callback: cancel');},
+                 };*/
                 this.popupData = {
                     type: 'confirm',
                     data: data,
                 };
             },
+            /**
+             * @param dirDetail Object
+             * {
+             *          data    : {
+             *              id      :0,
+                            title   :'',
+             *          },
+             *          submit : function (data) {
+             *              console.info('list: callback: submit');
+             *          },
+             *          cancel  : function (data) {
+             *              console.info('list: callback: cancel');
+             *          },
+             *      }
+             * */
             showUploader: function (dirDetail) {
-
+                this.popupData = {
+                    type: 'uploader',
+                    data: dirDetail,
+                };
             },
         },
     }

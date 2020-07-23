@@ -19,7 +19,7 @@
                 <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
             </div>
             <div class="listHeaderOperates">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="$parent.showUploader(detail)"></button>
+                <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="addFile"></button>
                 <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="listHeaderLayout">
@@ -1475,7 +1475,7 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
-                /*this.$parent.showForm(
+                this.$parent.showForm(
                     {
                         data    : {
                             title      : '',
@@ -1497,7 +1497,33 @@
                             console.info('list: callback: error');
                             console.info(data);
                         },
-                    });*/
+                    });
+                /*this.$parent.showLoader(
+                 {type:'loader'}
+                 );*/
+                // this.$parent.showConfirm();
+            },
+            /**
+             * @todo api
+             * */
+            addFile     : function () {
+                console.info('list: addFile');
+                this.$parent.showUploader(
+                    {
+                        data    : this.detail,
+                        submit : function (data) {
+                            console.info('list: callback: submit');
+                            console.info(data);
+                        },
+                        cancel  : function (data) {
+                            console.info('list: callback: cancel');
+                            console.info(data);
+                        },
+                        error   : function (data) {
+                            console.info('list: callback: error');
+                            console.info(data);
+                        },
+                    });
                 /*this.$parent.showLoader(
                  {type:'loader'}
                  );*/

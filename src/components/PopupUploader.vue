@@ -155,7 +155,14 @@
                 fileList.push(fileList[i]);
             }
             return {
-                fileList: fileList
+                fileList: fileList,
+                preventEventList: [
+                    'drag',
+                    'dragleave',
+                    'dragenter',
+                    'dragover',
+                    'drop',
+                ],
             };
         },
         mounted  : function () {
@@ -175,29 +182,23 @@
             upload: function () {
                 console.info(`popup uploader: upload`);
             },
-            preventEventList: [
-                'drag',
-                'dragleave',
-                'dragenter',
-                'dragover',
-                'drop',
-            ],
+            //
             preventEvent    : (e) => {
                 e.preventDefault();
                 e.stopPropagation();
             },
             callPrevent     : () => {
-                for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
-                    console.debug('set prevent event:' + this.internal.preventEventList[ia]);
+                for (let ia = 0; ia < this.preventEventList.length; ia++) {
+                    console.debug('set prevent event:' + this.preventEventList[ia]);
                     document.addEventListener(
-                        this.internal.preventEventList[ia], this.internal.preventEvent)
+                        this.preventEventList[ia], this.preventEvent)
                 }
             },
             removePrevent   : () => {
-                for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
-                    console.debug('set prevent event:' + this.internal.preventEventList[ia]);
+                for (let ia = 0; ia < this.preventEventList.length; ia++) {
+                    console.debug('set prevent event:' + this.preventEventList[ia]);
                     document.removeEventListener(
-                        this.internal.preventEventList[ia], this.internal.preventEvent)
+                        this.preventEventList[ia], this.preventEvent)
                 }
             },
         },

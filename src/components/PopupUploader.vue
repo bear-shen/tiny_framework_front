@@ -175,6 +175,31 @@
             upload: function () {
                 console.info(`popup uploader: upload`);
             },
+            preventEventList: [
+                'drag',
+                'dragleave',
+                'dragenter',
+                'dragover',
+                'drop',
+            ],
+            preventEvent    : (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+            callPrevent     : () => {
+                for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
+                    console.debug('set prevent event:' + this.internal.preventEventList[ia]);
+                    document.addEventListener(
+                        this.internal.preventEventList[ia], this.internal.preventEvent)
+                }
+            },
+            removePrevent   : () => {
+                for (let ia = 0; ia < this.internal.preventEventList.length; ia++) {
+                    console.debug('set prevent event:' + this.internal.preventEventList[ia]);
+                    document.removeEventListener(
+                        this.internal.preventEventList[ia], this.internal.preventEvent)
+                }
+            },
         },
     }
 </script>

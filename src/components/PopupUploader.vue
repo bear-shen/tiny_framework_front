@@ -1,8 +1,11 @@
 <template>
     <div class="uploader">
-        <div class="dragWindow" ref="dragWindow">
+        <div
+                :class="['dragWindow',{dragging:dragging}]"
+                ref="dragWindow"
+        >
             <ul class="dragList" ref="dragList">
-                <li v-for="file in fileList">
+                <li v-for="file in fileList" :class="[file.status]">
                     <p>{{file.name}}</p>
                     <p>{{file.size}}</p>
                     <p>{{file.status}}</p>
@@ -38,6 +41,7 @@
             .dragList {
                 list-style: none;
                 padding: 0;
+                pointer-events: none;
 
                 li {
                     line-height: $fontSize*2;
@@ -84,6 +88,14 @@
                     background: rgba(51, 122, 183, 0.25);
                 }
 
+                .failed .statusBar {
+                    background: rgba(183, 51, 51, 0.25);
+                }
+
+            }
+
+            &.dragging {
+                background: rgba(255, 255, 255, 0.5);
             }
         }
 
@@ -107,12 +119,15 @@
 
 <script>
     import config from '../config';
+    import GenFuncLib from '../lib/GenFuncLib';
 
     /**
      * UploaderLib.js 里的分片功能正在考虑要不要去掉，想想都觉得烦。。。
      * 而且这么个功能本质上属于卵用没有，你又没做断点续传。。。
      * 但是做都做了。。。
      *
+     * status:
+     * uploaded  uploading  failed  waiting
      * */
 
     export default {
@@ -155,7 +170,8 @@
                 fileList.push(fileList[i]);
             }
             return {
-                fileList: fileList,
+                fileList        : fileList,
+                dragging        : false,
                 preventEventList: [
                     'drag',
                     'dragleave',
@@ -165,38 +181,79 @@
                 ],
             };
         },
-        mounted  : function () {
-            console.info(`popup uploader: mounted`);
-            console.info(this.$refs);
-        },
         created  : function () {
             console.info(`popup uploader: created`);
+            console.info(this.$refs);
         },
         destroyed: function () {
             console.info(`popup uploader: destroyed`);
+            this.removePrevent();
+        },
+        mounted  : function () {
+            console.info(`popup uploader: mounted`);
+            this.callPrevent();
+            console.info(this.$refs);
+            this.$refs.dragWindow.addEventListener('dragenter', this.onDragEnter);
+            this.$refs.dragWindow.addEventListener('dragleave', this.onDragLeave);
+            this.$refs.dragWindow.addEventListener('drop', this.onDragDrop);
+            this.$refs.dragWindow.addEventListener('paste', this.onDragPaste);
         },
         methods  : {
-            cancel: function () {
+            cancel       : function () {
                 console.info(`popup uploader: cancel`);
+                this.$parent.hide();
             },
-            upload: function () {
+            upload       : function () {
                 console.info(`popup uploader: upload`);
+                for (let i1 = 0; i1 < this.fileList.length; i1++) {
+
+                }
             },
             //
-            preventEvent    : (e) => {
+            onDragEnter  : function (e) {
+                console.info(`popup uploader: onDragEnter`);
+                this.dragging = true;
+            },
+            onDragLeave  : function (e) {
+                console.info(`popup uploader: onDragLeave`);
+                this.dragging = false;
+            },
+            onDragDrop   : function (e) {
+                console.info(`popup uploader: onDragDrop`);
+                this.dragging = false;
+                console.info(e);
+                let fileList = e.dataTransfer.files;
+                for (let i1 = 0; i1 < fileList.length; i1++) {
+                    console.info(fileList[i1]);
+                    this.fileList.push(
+                        {
+                            name   : fileList[i1].name,
+                            size   : GenFuncLib.kmgt(fileList[i1].size,2),
+                            bin    : fileList[i1],
+                            process: 0,
+                            status : 'waiting',
+                        });
+                }
+            },
+            onDragPaste  : function (e) {
+                console.info(`popup uploader: onDragPaste`);
+            },
+            //
+            preventEvent : function (e) {
                 e.preventDefault();
                 e.stopPropagation();
             },
-            callPrevent     : () => {
+            callPrevent  : function () {
+                // console.info(this);
+                // console.info(this.preventEventList);
                 for (let ia = 0; ia < this.preventEventList.length; ia++) {
                     console.debug('set prevent event:' + this.preventEventList[ia]);
-                    document.addEventListener(
-                        this.preventEventList[ia], this.preventEvent)
+                    document.addEventListener(this.preventEventList[ia], this.preventEvent)
                 }
             },
-            removePrevent   : () => {
+            removePrevent: function () {
                 for (let ia = 0; ia < this.preventEventList.length; ia++) {
-                    console.debug('set prevent event:' + this.preventEventList[ia]);
+                    console.debug('cls prevent event:' + this.preventEventList[ia]);
                     document.removeEventListener(
                         this.preventEventList[ia], this.preventEvent)
                 }

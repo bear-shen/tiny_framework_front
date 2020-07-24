@@ -153,15 +153,13 @@ const GenFunc = {
                 if (currentEle["child"]) {
                     GenFunc.createNodeList(target, currentEle["child"]);
                 }
-            }
-            else if (currentEle && typeof currentEle == "string") {
+            } else if (currentEle && typeof currentEle == "string") {
                 //console.warn("string");
                 //console.warn(GenFunc.getParentNode(parentNode));
                 parentNode = GenFunc.getParentNode(parentNode);
                 parentNode.insertAdjacentHTML("beforeEnd", currentEle);
                 //parentNode.innerHTML=parentNode.innerHTML+currentEle;
-            }
-            else {
+            } else {
             }
         }
     },
@@ -212,8 +210,7 @@ const GenFunc = {
                     //// header["Content-Type"] = "multipart/form-data";
                     // }
                     isPost = true;
-                }
-                else {
+                } else {
                     //console.warn("====////====2");
                     var formData = new FormData;
                     for (var k in requestData) {
@@ -240,11 +237,9 @@ const GenFunc = {
 
             } else if (getReq.__proto__ === String.prototype) {
                 getRequest = getReq;
-            }
-            else if (getReq.__proto__ === Array.prototype) {
+            } else if (getReq.__proto__ === Array.prototype) {
                 getRequest = GenFunc.implode(getReq, "&");
-            }
-            else {
+            } else {
                 var getArray = [];
                 for (var ia in getReq) {
                     if (getReq.hasOwnProperty(ia)) {
@@ -290,16 +285,14 @@ const GenFunc = {
             console.warn(requestData);
             if (method != "get") {
                 xmlhttp.send(requestData);
-            }
-            else {
+            } else {
                 xmlhttp.send();
             }
         }
         if (!async) {
             return xmlhttp.responseText;
             // return result;
-        }
-        else {
+        } else {
             return xmlhttp;
         }
     },
@@ -348,7 +341,7 @@ const GenFunc = {
             'onUploadProgress': null,
             'onProgress'      : null,
         };
-        var localConfig        = {};
+        var localConfig    = {};
         Object.assign(localConfig, localConfigTmp, input);
         console.warn('fileList on ajax:');
         console.info(localConfig.post);
@@ -521,8 +514,7 @@ const GenFunc = {
     removeVal     : function (sourceArr, val) {
         if (typeof val == "string") {
             val = [val];
-        }
-        else if (typeof val != "object" || !val.length) {
+        } else if (typeof val != "object" || !val.length) {
             return [];
         }
         var arr = sourceArr.slice();
@@ -559,17 +551,14 @@ const GenFunc = {
                 if (isNum) {
                     if (direction) {
                         return a[sortCol] - b[sortCol];
-                    }
-                    else {
+                    } else {
                         return b[sortCol] - a[sortCol];
                     }
-                }
-                else {
+                } else {
                     //字符串比较
                     if (direction) {
                         return a[sortCol].localeCompare(b[sortCol]);
-                    }
-                    else {
+                    } else {
                         return b[sortCol].localeCompare(a[sortCol]);
                     }
                 }
@@ -596,8 +585,8 @@ const GenFunc = {
         if (document.cookie.length > 0) {
             var c_start = document.cookie.indexOf(c_name + "=");
             if (c_start != -1) {
-                c_start = c_start + c_name.length + 1;
-                var c_end   = document.cookie.indexOf(";", c_start);
+                c_start   = c_start + c_name.length + 1;
+                var c_end = document.cookie.indexOf(";", c_start);
                 if (c_end == -1) c_end = document.cookie.length;
                 return unescape(document.cookie.substring(c_start, c_end))
             }
@@ -613,8 +602,8 @@ const GenFunc = {
         var url        = location.search; //获取url中"?"符后的字串
         var theRequest = [];
         if (url.indexOf("?") !== -1) {
-            var str = url.substr(1);
-            var strs    = str.split("&");
+            var str  = url.substr(1);
+            var strs = str.split("&");
             for (var i = 0; i < strs.length; i++) {
                 var pair = strs[i].split("=");
                 if (pair.length === 2) {
@@ -704,6 +693,25 @@ const GenFunc = {
             pwd += chars.charAt(Math.floor(Math.random() * maxPos));
         }
         return pwd;
+    },
+    kmgt          : function (num, decimal) {
+        if (typeof num !== "number") num = parseFloat(num);
+        if (!decimal) decimal = 0;
+        //
+        let minus = false;
+        if (num < 0) minus = true;
+
+        let refNum = num;
+        if (num < 1000) {
+            refNum = num.toFixed(decimal);
+        } else if (num < 1000 * 1000) {
+            refNum = (num / (1000)).toFixed(decimal) + ' K';
+        } else if (num < 1000 * 1000 * 1000) {
+            refNum = (num / (1000 * 1000)).toFixed(decimal) + ' M';
+        } else {
+            refNum = (num / (1000 * 1000 * 1000)).toFixed(decimal) + ' G';
+        }
+        return refNum;
     },
     //other////////////////////////////////////////////////////////////////////////////////////////
     /**
@@ -841,8 +849,7 @@ const GenFunc = {
                             || sourceReq[key].__proto__ === Blob.prototype
                         ) {
                             targetFormData.append(parseString(key, parseType), sourceReq[key]);
-                        }
-                        else {
+                        } else {
                             targetFormData.append(parseString(key, parseType), parseString(sourceReq[key], parseType));
                         }
                         targetFormData.length++;
@@ -861,16 +868,14 @@ const GenFunc = {
             var getString = "";
             if (typeof getReq == "string") {
                 getString = getReq;
-            }
-            else if (typeof getReq == "object") {
+            } else if (typeof getReq == "object") {
                 getString = processQuery(getReq, currentParseType);
             }
             //post////////////////////////////////////////////////////////
             var postValue = "";
             if (typeof postReq == "string") {
                 postValue = postReq;
-            }
-            else if (typeof postReq == "object") {
+            } else if (typeof postReq == "object") {
                 postValue = processQuery(postReq, currentParseType);
             }
             //method////////////////////////////////////////////////////////
@@ -917,8 +922,7 @@ const GenFunc = {
                     }
                     xmlhttp.setRequestHeader(key, header[key]);
                 }
-            }
-            else {
+            } else {
                 xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xmlhttp.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
             }
@@ -931,8 +935,7 @@ const GenFunc = {
                 //}else{
                 //	xmlhttp.send(postReq);
                 //}
-            }
-            else {
+            } else {
                 xmlhttp.send();
             }
             //console.error(result);
@@ -1002,8 +1005,7 @@ const GenFunc = {
                                 eventName, eventListener[eventName][ia]
                             );
                         }
-                    }
-                    else {
+                    } else {
                         newNode.addEventListener(
                             eventName, eventListener[eventName]
                         );

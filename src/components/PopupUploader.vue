@@ -4,20 +4,25 @@
                 :class="['dragWindow',{dragging:dragging}]"
                 ref="dragWindow"
         >
+
             <ul class="dragList" ref="dragList">
-                <li v-for="file in fileList" :class="[file.status]">
+                <li v-for="(file,i) in fileList" :class="[file.status]">
                     <p>{{file.name}}</p>
                     <p>{{file.size}}</p>
                     <p>{{file.status}}</p>
                     <div class="statusBar" :style="{width:`${file.process*100}%`}"></div>
+                    <template v-if="file.status==='waiting'">
+                        <div v-on:click="delFile(i)" class="delBtn">[x]</div>
+                    </template>
                 </li>
-                <li>drag file/archive file here ...</li>
+                <li><label>drag file/archive here or click ...<input type="file" multiple ref="dragInput"></label></li>
             </ul>
+
             <!--            <input class="dragInput" ref="dragInput">-->
         </div>
         <div class="btnList">
             <button type="button" class="btn btn-warning" v-on:click="cancel">close</button>
-            <button type="button" class="btn btn-success" v-on:click="upload">upload</button>
+            <button type="button" :class="['btn','btn-success',{disabled:uploading}]" v-on:click="upload">upload</button>
         </div>
     </div>
 </template>
@@ -41,7 +46,7 @@
             .dragList {
                 list-style: none;
                 padding: 0;
-                pointer-events: none;
+                /*pointer-events: none;*/
 
                 li {
                     line-height: $fontSize*2;
@@ -50,6 +55,10 @@
                     display: flex;
                     justify-content: space-between;
                     position: relative;
+                }
+
+                input {
+                    display: none;
                 }
 
                 li:nth-child(2n) {
@@ -94,8 +103,19 @@
 
             }
 
+            label {
+                font-weight: normal;
+                margin-bottom: 0;
+                width: 100%;
+                height: 100%;
+            }
+
             &.dragging {
                 background: rgba(255, 255, 255, 0.5);
+            }
+
+            .delBtn {
+                pointer-events: all;
             }
         }
 
@@ -118,7 +138,7 @@
 </style>
 
 <script>
-    import config from '../config';
+    import config     from '../config';
     import GenFuncLib from '../lib/GenFuncLib';
 
     /**
@@ -172,6 +192,7 @@
             return {
                 fileList        : fileList,
                 dragging        : false,
+                uploading       : false,
                 preventEventList: [
                     'drag',
                     'dragleave',
@@ -197,6 +218,7 @@
             this.$refs.dragWindow.addEventListener('dragleave', this.onDragLeave);
             this.$refs.dragWindow.addEventListener('drop', this.onDragDrop);
             this.$refs.dragWindow.addEventListener('paste', this.onDragPaste);
+            this.$refs.dragInput.addEventListener('change', this.onInputChange);
         },
         methods  : {
             cancel       : function () {
@@ -205,8 +227,15 @@
             },
             upload       : function () {
                 console.info(`popup uploader: upload`);
+                if (this.uploading) return;
+                this.uploading  = true;
+                let hasUploader = false;
                 for (let i1 = 0; i1 < this.fileList.length; i1++) {
-
+                    if (this.fileList[i1].status !== 'waiting') continue;
+                    hasUploader = true;
+                }
+                if (!hasUploader) {
+                    this.uploading = false;
                 }
             },
             //
@@ -216,6 +245,11 @@
             },
             onDragLeave  : function (e) {
                 console.info(`popup uploader: onDragLeave`);
+                //path中含有dragWindow，不拖拽
+                for (let i1 = 0; i1 < e.path.length; i1++) {
+                    if(e.path[i1].className.indexOf('dragWindow')===-1)continue;
+                    return;
+                }
                 this.dragging = false;
             },
             onDragDrop   : function (e) {
@@ -224,25 +258,71 @@
                 console.info(e);
                 let fileList = e.dataTransfer.files;
                 for (let i1 = 0; i1 < fileList.length; i1++) {
-                    console.info(fileList[i1]);
-                    this.fileList.push(
-                        {
-                            name   : fileList[i1].name,
-                            size   : GenFuncLib.kmgt(fileList[i1].size,2),
-                            bin    : fileList[i1],
-                            process: 0,
-                            status : 'waiting',
-                        });
+                    this.addFile(fileList[i1]);
                 }
             },
             onDragPaste  : function (e) {
                 console.info(`popup uploader: onDragPaste`);
             },
+            onInputChange: function (e) {
+                console.info(`popup uploader: onInputChange`);
+                let fileList = e.target.files;
+                for (let i1 = 0; i1 < fileList.length; i1++) {
+                    this.addFile(fileList[i1]);
+                }
+            },
+            //
+            delFile      : function (index) {
+                console.info(`popup uploader: delFile ${index}`);
+            },
+            addFile      : function (file) {
+                console.info(`popup uploader: addFile`);
+                console.info(file);
+                this.checkFile(file).then(() => {
+                    this.fileList.push(
+                        {
+                            name   : file.name,
+                            size   : GenFuncLib.kmgt(file.size, 2),
+                            bin    : file,
+                            process: 0,
+                            status : 'waiting',
+                        });
+                }).catch((msg) => {
+                    console.warn(msg);
+                });
+            },
+            checkFile    : function (file) {
+                /**
+                 * @see https://segmentfault.com/a/1190000013298317
+                 * 仅支持文件上传，文件夹上传没支持
+                 * */
+                return new Promise(
+                    (resolve, reject) => {
+                        // console.info(file);
+                        if (file.type) { return resolve();}
+                        if (!file.size) { return reject('checkFile: empty file not allowed'); }
+                        try {
+                            let fileReader = new FileReader();
+                            fileReader.addEventListener('load', function (e) {
+                                resolve();
+                            }, false);
+
+                            fileReader.addEventListener('error', function (e) {
+                                reject('checkFile: file unreadable');
+                            }, false);
+                            fileReader.readAsDataURL(file.slice(0, 16));
+                        } catch (e) {
+                            return reject(`checkFile: error:${e.toString()}`);
+                        }
+                    }
+                );
+            },
             //
             preventEvent : function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-            },
+            }
+            ,
             callPrevent  : function () {
                 // console.info(this);
                 // console.info(this.preventEventList);
@@ -250,14 +330,16 @@
                     console.debug('set prevent event:' + this.preventEventList[ia]);
                     document.addEventListener(this.preventEventList[ia], this.preventEvent)
                 }
-            },
+            }
+            ,
             removePrevent: function () {
                 for (let ia = 0; ia < this.preventEventList.length; ia++) {
                     console.debug('cls prevent event:' + this.preventEventList[ia]);
                     document.removeEventListener(
                         this.preventEventList[ia], this.preventEvent)
                 }
-            },
+            }
+            ,
         },
     }
 </script>

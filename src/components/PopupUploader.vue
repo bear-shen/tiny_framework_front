@@ -225,9 +225,13 @@
                 console.info(`popup uploader: cancel`);
                 this.$parent.hide();
             },
+            /**
+             * @todo api
+             * */
             upload       : function () {
                 console.info(`popup uploader: upload`);
                 if (this.uploading) return;
+                console.info(this.info.data);
                 this.uploading  = true;
                 let hasUploader = false;
                 for (let i1 = 0; i1 < this.fileList.length; i1++) {
@@ -247,7 +251,7 @@
                 console.info(`popup uploader: onDragLeave`);
                 //path中含有dragWindow，不拖拽
                 for (let i1 = 0; i1 < e.path.length; i1++) {
-                    if(e.path[i1].className.indexOf('dragWindow')===-1)continue;
+                    if (e.path[i1].className.indexOf('dragWindow') === -1) continue;
                     return;
                 }
                 this.dragging = false;
@@ -274,6 +278,7 @@
             //
             delFile      : function (index) {
                 console.info(`popup uploader: delFile ${index}`);
+                this.fileList.splice(index, 1);
             },
             addFile      : function (file) {
                 console.info(`popup uploader: addFile`);

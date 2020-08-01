@@ -495,7 +495,7 @@
 
         > ul > li > div {
             margin-right: 10px;
-            height: $liHeight;
+            height: $liHeight - 20px;
 
             &:last-child {
                 margin-right: 0;
@@ -637,8 +637,23 @@
     import store      from "../store";
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
+    import Helper     from '../lib/Helper'
     // import Popup    from '../components/Popup'
 
+    /**
+     * fileType:
+     * folder
+     * image
+     * binary
+     * text
+     * video
+     * audio
+     *
+     * naviType:
+     * directory
+     * tag
+     * search
+     * */
     export default {
         name         : 'List',
         components   : {},
@@ -720,7 +735,7 @@
                 'info'
             );
 
-            globalDbg=this;
+            globalDbg = this;
         },
         mounted      : function () {
             console.debug('List.vue mount');
@@ -1417,19 +1432,315 @@
                         break;
                     //file 显示详情
                     case 'file':
-                        return this.goDetail();
+                        return this.goDetail(targetId);
                         break;
                 }
-                console.debug(query);
-                router.push(
-                    {path: '/', query: Object.assign(query, {page: 1})},
-                );
+                let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
+                if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
+                    console.debug(`isSameRoute`);
+                    return false;
+                }
+                router.push(targetRoute);
             },
             /**
              * @todo api
              * */
             goDetail      : function () {
-
+                console.info('list: goDetail');
+                //比正常文件列表多raw和normal字段用于显示大图
+                let targetFileList = [
+                    {
+                        id         : '0',
+                        raw        : '/sample/cover.jpg',
+                        normal     : '/sample/cover.jpg',
+                        cover      : '/sample/cover.jpg',
+                        cover_id   : '1',
+                        title      : 'this is title this is title this is title this is title this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'image',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                    {id: 7, name: 'magical girl',},
+                                    {id: 7, name: 'sleeping',},
+                                    {id: 7, name: 'bunny girl',},
+                                    {id: 7, name: 'animal ears',},
+                                    {id: 7, name: 'tail',},
+                                    {id: 7, name: 'small breast',},
+                                    {id: 7, name: 'tiara',},
+                                    {id: 7, name: 'pantyhose',},
+                                    {id: 7, name: 'vampire',},
+                                    {id: 7, name: 'baby',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '1',
+                        raw        : '/sample/test.mp3',
+                        normal     : '/sample/test.mp3',
+                        cover      : '',
+                        cover_id   : '1',
+                        // alpha      : 'binary',
+                        title      : 'this is title this is title this is title this is title this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'audio',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                    {id: 7, name: 'magical girl',},
+                                    {id: 7, name: 'sleeping',},
+                                    {id: 7, name: 'bunny girl',},
+                                    {id: 7, name: 'animal ears',},
+                                    {id: 7, name: 'tail',},
+                                    {id: 7, name: 'small breast',},
+                                    {id: 7, name: 'tiara',},
+                                    {id: 7, name: 'pantyhose',},
+                                    {id: 7, name: 'vampire',},
+                                    {id: 7, name: 'baby',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '2',
+                        raw        : '/sample/test.mp4',
+                        normal     : '/sample/test.mp4',
+                        cover      : '',
+                        cover_id   : '1',
+                        // alpha      : 'binary',
+                        title      : 'this is title this is title this is title this is title this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'video',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                    {id: 7, name: 'magical girl',},
+                                    {id: 7, name: 'sleeping',},
+                                    {id: 7, name: 'bunny girl',},
+                                    {id: 7, name: 'animal ears',},
+                                    {id: 7, name: 'tail',},
+                                    {id: 7, name: 'small breast',},
+                                    {id: 7, name: 'tiara',},
+                                    {id: 7, name: 'pantyhose',},
+                                    {id: 7, name: 'vampire',},
+                                    {id: 7, name: 'baby',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '3',
+                        raw        : '/sample/test.md',
+                        normal     : '',
+                        cover      : '',
+                        cover_id   : '1',
+                        // alpha      : 'binary',
+                        title      : 'this is title this is title this is title this is title this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'binary',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                    {id: 7, name: 'magical girl',},
+                                    {id: 7, name: 'sleeping',},
+                                    {id: 7, name: 'bunny girl',},
+                                    {id: 7, name: 'animal ears',},
+                                    {id: 7, name: 'tail',},
+                                    {id: 7, name: 'small breast',},
+                                    {id: 7, name: 'tiara',},
+                                    {id: 7, name: 'pantyhose',},
+                                    {id: 7, name: 'vampire',},
+                                    {id: 7, name: 'baby',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        id         : '4',
+                        raw        : '/sample/test.md',
+                        normal     : '/sample/test.md',
+                        cover      : '',
+                        cover_id   : '1',
+                        // alpha      : 'binary',
+                        title      : 'this is title this is title this is title this is title this is title',
+                        description: 'this is description',
+                        size       : '996 KB',
+                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                        type       : 'text',
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                        tag        : [
+                            {
+                                id  : 1,
+                                name: 'female',
+                                sub : [
+                                    {id: 1, name: 'lolicon',},
+                                    {id: 2, name: 'rape',},
+                                    {id: 3, name: 'netorare',},
+                                    {id: 4, name: 'defloration',},
+                                    {id: 5, name: 'guro',},
+                                    {id: 6, name: 'snuff',},
+                                    {id: 7, name: 'drugs',},
+                                    {id: 7, name: 'magical girl',},
+                                    {id: 7, name: 'sleeping',},
+                                    {id: 7, name: 'bunny girl',},
+                                    {id: 7, name: 'animal ears',},
+                                    {id: 7, name: 'tail',},
+                                    {id: 7, name: 'small breast',},
+                                    {id: 7, name: 'tiara',},
+                                    {id: 7, name: 'pantyhose',},
+                                    {id: 7, name: 'vampire',},
+                                    {id: 7, name: 'baby',},
+                                ],
+                            },
+                            {
+                                id  : 2,
+                                name: 'male',
+                                sub : [
+                                    {id: 4, name: 'tencales',},
+                                    {id: 5, name: 'dilf',},
+                                    {id: 6, name: 'sole male',},
+                                ],
+                            },
+                            {
+                                id  : 3,
+                                name: 'misc',
+                                sub : [
+                                    {id: 4, name: 'full censorship',},
+                                    {id: 5, name: 'webtoon',},
+                                    {id: 6, name: 'story arc',},
+                                ],
+                            },
+                        ],
+                    },
+                ];
+                this.$parent.showFileList(
+                    {list: targetFileList, current: 1});
             },
             //
             editMeta      : function (itemId) {
@@ -1485,7 +1796,7 @@
                             title      : {type: 'text', default: '', editable: true,},
                             description: {type: 'text', default: '', editable: true,},
                         },
-                        submit : function (data) {
+                        submit  : function (data) {
                             console.info('list: callback: submit');
                             console.info(data);
                         },
@@ -1506,20 +1817,20 @@
             /**
              * @todo api
              * */
-            addFile     : function () {
+            addFile       : function () {
                 console.info('list: addFile');
                 this.$parent.showUploader(
                     {
-                        data    : this.detail,
-                        submit : function (data) {
+                        data  : this.detail,
+                        submit: function (data) {
                             console.info('list: callback: submit');
                             console.info(data);
                         },
-                        cancel  : function (data) {
+                        cancel: function (data) {
                             console.info('list: callback: cancel');
                             console.info(data);
                         },
-                        error   : function (data) {
+                        error : function (data) {
                             console.info('list: callback: error');
                             console.info(data);
                         },

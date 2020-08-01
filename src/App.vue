@@ -426,6 +426,12 @@
                     data: dirDetail,
                 };
             },
+            showFileList: function (fileList) {
+                this.popupData = {
+                    type: 'file',
+                    data: fileList,
+                };
+            }
         },
     }
 </script>

@@ -19,17 +19,17 @@
                     <audio :src="current.normal" controls></audio>
                 </template>
             </div>
-            <div class="contentDetail" v-on:click="toggleDetail">
+            <div class="contentDetail">
                 <div class="contentMain">
                     <div class="contentIndex">
                         {{currentIndex+1}} / {{list.length}}
                     </div>
-                    <div class="contentCover">
+                    <div class="contentCover" v-on:click="toggleDetail">
                         <span v-if="!current.cover" :class="['ct_icon','listIcon','listIcon_file_'+current.type]"></span>
                         <img v-if="current.cover" class="ct_cover" :src="current.cover" :alt="current.title">
                     </div>
                     <div class="contentTxt">
-                        <div class="contentTitle">{{current.title}}</div>
+                        <div class="contentTitle" v-on:click="toggleDetail">{{current.title}}</div>
                         <div class="contentDescription">{{current.description}}</div>
                     </div>
                 </div>
@@ -109,6 +109,7 @@
                 justify-content: center;
                 align-items: center;
                 align-content: center;
+                padding: 20px;
 
                 > * {
                     max-width: 100%;
@@ -123,6 +124,7 @@
                     width: 90%;
                     height: 90%;
                     text-align: left;
+                    @include smallScroll;
                 }
             }
         }
@@ -151,6 +153,10 @@
                         padding-left: $fontSize*1.25;
                         line-height: $footerHeight*2;
                         font-size: $fontSize*1.25;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        max-width: 60vw;
                     }
 
                     .contentCover, .contentDescription {
@@ -173,7 +179,6 @@
 
             .contentBody {
                 height: $contentBodyHeight;
-                padding: 10px;
 
                 > * {
                 }
@@ -189,6 +194,7 @@
             .contentDetail {
                 height: calc(100vh - #{$footerHeight} - #{$contentBodyHeight});
                 overflow-y: auto;
+                padding-bottom: $footerHeight;
 
                 .contentMain {
                     display: flex;
@@ -220,6 +226,7 @@
                     }
 
                     .contentTxt {
+                        margin-left: 20px;
                     }
 
                     //
@@ -283,19 +290,7 @@
                     }
                 }
 
-                &::-webkit-scrollbar-track {
-                    background-color: rgba(0, 0, 0, 0.5);
-                }
-
-                &::-webkit-scrollbar {
-                    width: 5px;
-                    background-color: rgba(0, 0, 0, 0);
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: rgba(127, 127, 127, 0.5);
-                    border-radius: 3px;
-                }
+                @include smallScroll;
             }
         }
     }
@@ -386,6 +381,7 @@
                     return false;
                 }
                 router.push(targetRoute);
+                this.close();
             },
         },
     }

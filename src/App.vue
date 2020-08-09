@@ -257,18 +257,8 @@
      */
 
 
-        html::-webkit-scrollbar-track {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        html::-webkit-scrollbar {
-            width: 5px;
-            background-color: rgba(0, 0, 0, 0);
-        }
-
-        html::-webkit-scrollbar-thumb {
-            background-color: rgba(127, 127, 127, 0.5);
-            border-radius: 3px;
+        html {
+            @include smallScroll;
         }
 </style>
 <script>

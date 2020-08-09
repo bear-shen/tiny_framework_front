@@ -15,13 +15,20 @@
         background-image: linear-gradient(0deg, #202020 0%, #2f2f2f 100%);
         border: none;
 
+        .navbar-nav, .navbar-brand, .navbar-text, .nav.navbar-nav > li > a {
+            height: $footerHeight;
+            line-height: $footerHeight;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
         .navbar-nav {
             flex-direction: row;
         }
 
         .navbar-text {
-            padding-top: 0;
-            padding-bottom: 0;
         }
 
         .navbar-nav {
@@ -43,7 +50,7 @@
             }
         }
 
-         .active {
+        .active {
             background-color: #666;
             color: #fff;
         }
@@ -69,7 +76,7 @@
         data   : function () {
             return {
                 list   : {
-                    'Toshokan'     : 'javascript:void(0)',
+                    'Toshokan'  : 'javascript:void(0)',
                     'Nas'       : 'javascript:void(0)',
                     'Router'    : 'javascript:void(0)',
                     'Hypervisor': 'javascript:void(0)',

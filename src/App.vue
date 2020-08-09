@@ -238,7 +238,7 @@
         }
         #leftNavi.nav {
             top: 0;
-            overflow-x: scroll;
+            overflow-x: auto;
             overflow-y: hidden;
         }
         #footer {
@@ -256,19 +256,20 @@
      *  @see https://www.cnblogs.com/ertingbo/p/7151566.html
      */
 
-    ::-webkit-scrollbar-track {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
 
-    ::-webkit-scrollbar {
-        width: 5px;
-        background-color: rgba(0, 0, 0, 0);
-    }
+        html::-webkit-scrollbar-track {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-    ::-webkit-scrollbar-thumb {
-        background-color: rgba(127, 127, 127, 0.5);
-        border-radius: 3px;
-    }
+        html::-webkit-scrollbar {
+            width: 5px;
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        html::-webkit-scrollbar-thumb {
+            background-color: rgba(127, 127, 127, 0.5);
+            border-radius: 3px;
+        }
 </style>
 <script>
     import router from "./router";

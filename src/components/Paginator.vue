@@ -33,8 +33,12 @@
             font-size: $footerHeight/4;
             padding-left: 0;
             padding-right: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            line-height: $footerHeight;
         }
     }
+
     @media(max-width: 767px) {
         #paginator {
             width: 90%;
@@ -84,7 +88,7 @@
                 // console.info(to);
                 // console.info(from);
                 // console.info(this.page);
-                if (!Helper.isSameRoute(from,to)) {
+                if (!Helper.isSameRoute(from, to)) {
                     console.info('paginator: page modified');
                     this.page = 1;
                     this.pagination();

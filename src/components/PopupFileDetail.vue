@@ -47,7 +47,7 @@
                                 v-for="tag in group.sub"
                                 :data-id="tag.id"
                                 class="btn btn-dark"
-                                v-on:click="goto('tag',tag.id)"
+                                v-on:click.stop="goto('tag',tag.id)"
                         >
                             {{tag.name}}
                         </dd>
@@ -369,28 +369,15 @@
             goto        : function (type, targetId) {
                 console.info(`popup FileDetail: goto`);
                 let query = {
-                    directory: 0,
-                    tag      : 0,
-                    keyword  : '',
+                    from   : 0,
+                    tag    : 0,
+                    keyword: '',
                 };
                 switch (type) {
-                    //点文件夹，跳转文件夹
-                    case 'directory':
-                        query.directory = targetId;
-                        break;
                     //tag 查询当前目录下的 tag
                     case 'tag':
-                        query.directory = this.detail.id;
-                        query.tag       = targetId;
-                        break;
-                    //search 查询当前目录下的 txt
-                    case 'search':
-                        query.directory = this.detail.id;
-                        query.keyword   = this.searchTxt;
-                        break;
-                    //file 显示详情
-                    case 'file':
-                        return this.goDetail(targetId);
+                        query.from = this.current.id;
+                        query.tag  = targetId;
                         break;
                 }
                 let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};

@@ -1411,23 +1411,23 @@
             },
             goto          : function (type, targetId) {
                 let query = {
-                    directory: 0,
+                    from: 0,
                     tag      : 0,
                     keyword  : '',
                 };
                 switch (type) {
                     //点文件夹，跳转文件夹
                     case 'directory':
-                        query.directory = targetId;
+                        query.from = targetId;
                         break;
                     //tag 查询当前目录下的 tag
                     case 'tag':
-                        query.directory = this.detail.id;
+                        query.from = this.detail.id;
                         query.tag       = targetId;
                         break;
                     //search 查询当前目录下的 txt
                     case 'search':
-                        query.directory = this.detail.id;
+                        query.from = this.detail.id;
                         query.keyword   = this.searchTxt;
                         break;
                     //file 显示详情

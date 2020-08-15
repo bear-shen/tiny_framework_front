@@ -307,18 +307,14 @@
 </style>
 
 <script>
-    import config     from '../config';
-    import GenFuncLib from '../lib/GenFuncLib';
     import Helper     from "../lib/Helper";
     import router     from "../router";
 
     /**
-     * UploaderLib.js 里的分片功能正在考虑要不要去掉，想想都觉得烦。。。
-     * 而且这么个功能本质上属于卵用没有，你又没做断点续传。。。
-     * 但是做都做了。。。
-     *
-     * status:
-     * uploaded  uploading  failed  waiting
+     * 文件详细页
+     * 已知两个问题，
+     * 历史版本不知道摆哪
+     * 文件计数的体验不大好，要做好需要传文件夹的文件总数和对应位置然后想怎么处理文件数组
      * */
 
     export default {

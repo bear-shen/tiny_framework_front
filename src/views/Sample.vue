@@ -1,6 +1,6 @@
 <template>
-    <div class="tagGroup">
-        <div>in tagGroup.vue</div>
+    <div class="sample">
+        <div>in Sample.vue</div>
     </div>
 </template>
 
@@ -12,19 +12,19 @@
     import GenFunc    from '../lib/GenFuncLib'
 
     export default {
-        name      : 'TagGroup',
+        name      : 'Sample',
         components: {},
         store     : store,
         watch     : {
             $route: function (to, from) {
-                console.info(`TagGroup: route to ${router.currentRoute.name}`);
+                console.info(`Sample: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
                 this.fillParam(router.currentRoute.query);
                 this.query(this.param, this.page).then(this.fillData);
             },
             page  : function (to, from) {
-                console.info('TagGroup: param:page compute watched');
+                console.info('Sample: param:page compute watched');
             }
         },
         data      : function () {
@@ -43,17 +43,17 @@
         computed  : {
             page: {
                 get: function () {
-                    console.info('TagGroup: param:page get');
+                    console.info('Sample: param:page get');
                     return this.$store.state.page;
                 },
                 set: function (val) {
-                    console.info('TagGroup: param:page set');
+                    console.info('Sample: param:page set');
                     this.$store.commit('setPage', val);
                 },
             }
         },
         created   : function () {
-            console.info('TagGroup.vue create');
+            console.info('Sample.vue create');
             // console.info(this);
             // console.info(GenFunc);
             // console.info(UploaderLib);
@@ -62,12 +62,12 @@
             this.query(this.param, this.page).then(this.fillData);
         },
         mounted   : function () {
-            console.info('TagGroup.vue mount');
+            console.info('Sample.vue mount');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
         updated   : function () {
-            console.info('TagGroup.vue update');
+            console.info('Sample.vue update');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
         },
@@ -76,7 +76,7 @@
              * 查询方法，返回的 promise
              * */
             query    : function (param, page) {
-                console.info('TagGroup: query');
+                console.info('Sample: query');
                 param    = Object.assign(param, {page: typeof page === 'undefined' ? 1 : page})
                 //
                 let data = [];
@@ -92,7 +92,7 @@
              * 然后 page 字段另做
              * */
             fillParam: function (param) {
-                console.info('TagGroup: fillParam');
+                console.info('Sample: fillParam');
                 // console.warn(param);
                 for (let key in this.param) {
                     if (typeof param[key] === 'undefined') continue;
@@ -107,7 +107,7 @@
              * 拆开写是为了方便 query 方法注入到外部以便共用
              * */
             fillData : function (resolveData) {
-                console.info('TagGroup: fillData');
+                console.info('Sample: fillData');
                 this.list = resolveData;
             },
         },

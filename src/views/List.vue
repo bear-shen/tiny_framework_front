@@ -22,6 +22,18 @@
                 <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="addFile"></button>
                 <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
+            <div class="listHeaderSort">
+                <select v-model="param.sort">
+                    <option value="id_asc">id ↑</option>
+                    <option value="id_desc">id ↓</option>
+                    <option value="name_asc">name ↑</option>
+                    <option value="name_desc">name ↓</option>
+                    <option value="crt_asc">crt time ↑</option>
+                    <option value="crt_desc">crt time ↓</option>
+                    <option value="upd_asc">upd time ↑</option>
+                    <option value="upd_desc">upd time ↓</option>
+                </select>
+            </div>
             <div class="listHeaderLayout">
                 <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listTypeLocal==='text'}]" v-on:click="changeListType('text')"></button>
                 <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_detail',{active:listTypeLocal==='detail'}]" v-on:click="changeListType('detail')"></button>
@@ -59,7 +71,7 @@
                         </template>
                         <div class="ct_operate">
                             <div v-if="item.cover"
-                                 :class="['btn', 'btn-dark', {'active':detail.cover_id===item.id}]"
+                                 :class="['btn', 'btn-dark', {'active':dir.cover_id===item.id}]"
                                  v-on:click="setCover(item.id)"
                             ><span class="sysIcon sysIcon_edit"></span>&nbsp;cover
                             </div>
@@ -185,8 +197,14 @@
             }
         }
 
-        .listHeaderSearch, .listHeaderOperates, .listHeaderLayout {
+        .listHeaderSearch, .listHeaderOperates, .listHeaderSort, .listHeaderLayout {
             margin-left: 1em;
+        }
+
+        .listHeaderSort {
+            option {
+                text-align: center;
+            }
         }
 
         .listHeaderLayout button {
@@ -202,9 +220,11 @@
             white-space: normal;
             // height: $fontSize*4.5;
             height: auto;
+            justify-content: flex-end;
 
             input[type="text"] {
-                width: calc(100vw - #{$fontSize *2 *7} - 40px);
+                //width: calc(100vw - #{$fontSize *2 *7} - 40px);
+                width: calc(100% - #{$fontSize*2});
                 border-radius: $fontSize*0.25;
                 height: $fontSize*2;
                 text-indent: 0.5em;
@@ -213,12 +233,18 @@
             .listHeaderBread,
             .listHeaderSearch,
             .listHeaderOperates,
+            .listHeaderSort,
             .listHeaderLayout {
                 width: auto;
             }
 
-            .listHeaderSearch, .listHeaderOperates, .listHeaderLayout {
+            .listHeaderSearch {
                 margin-left: 0;
+            }
+
+            .listHeaderOperates, .listHeaderSort, .listHeaderLayout {
+                margin-left: 8px;
+                //margin-right: 8px;
             }
 
             .listHeaderBread {
@@ -229,10 +255,16 @@
 
             .listHeaderSearch {
                 order: 1;
+                margin-bottom: 8px;
+                width: 100%;
             }
 
             .listHeaderOperates {
                 order: 2;
+            }
+
+            .listHeaderSort {
+                order: 3;
             }
 
             .listHeaderLayout {
@@ -663,8 +695,10 @@
                 console.info(`list: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
-                this.currentRoute = router.currentRoute;
-                this.query();
+                // console.info(router.currentRoute.params);
+                this.fillParam(router.currentRoute.query);
+                // this.currentRoute = router.currentRoute;
+                this.query(this.param, this.page).then(this.fillData);
             },
             page     : function (to, from) {
                 console.info('list: param:page compute watched');
@@ -675,13 +709,18 @@
         },
         data         : function () {
             return {
-                param          : {},
-                // page: 1,
+                param          : {
+                    from   : 0,
+                    tag    : 0,
+                    keyword: '',
+                    sort   : 'id_asc',
+                },
                 listTypeLocal  : this.listType,
                 // from query
                 navi           : [],
                 list           : [],
-                detail         : {},
+                dir            : {},
+                // page: 1,
                 //
                 searchTxt      : '',
                 //tag 部分
@@ -725,11 +764,13 @@
         created      : function () {
             console.debug('List.vue create');
             // console.info(this);
+            console.info(router.currentRoute);
             // console.info(GenFunc);
             // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
             this.listTypeLocal = this.listType;
-            this.query();
+            this.fillParam(router.currentRoute.query);
+            this.query(this.param, this.page).then(this.fillData);
             this.$parent.pushMsg(
                 'list props success',
                 'info'
@@ -754,701 +795,25 @@
         methods      : {
             /**
              * @todo api
+             * @param param object
+             * @param page int 分开写是因为 page 是计算参数
+             * @return Promise
+             *  {
+             *      list  :'',
+             *      dir   :'',
+             *      navi  :'',
+             *      param :'',
+             *  }
              * */
-            query         : function () {
+            query         : function (param, page) {
                 console.info('list: query');
                 console.info(this);
-                console.info(this.$parent);
+                // console.info(page);
+                // console.info(typeof page);
+                param = Object.assign(param, {page: typeof page === 'undefined' ? 1 : page})
                 // console.info(Popup);
                 // Popup.show();
                 let listData = [
-                    {
-                        id         : '0',
-                        cover      : '/sample/cover.jpg',
-                        cover_id   : '1',
-                        // alpha      : 'binary',
-                        title      : 'this is title this is title this is title this is title this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'folder',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                    {id: 7, name: 'magical girl',},
-                                    {id: 7, name: 'sleeping',},
-                                    {id: 7, name: 'bunny girl',},
-                                    {id: 7, name: 'animal ears',},
-                                    {id: 7, name: 'tail',},
-                                    {id: 7, name: 'small breast',},
-                                    {id: 7, name: 'tiara',},
-                                    {id: 7, name: 'pantyhose',},
-                                    {id: 7, name: 'vampire',},
-                                    {id: 7, name: 'baby',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    //
-
-                    {
-                        id         : '1',
-                        cover      : '/sample/smp1.jpg',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'image',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '/sample/smp2.jpg',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '/sample/smp3.png',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'text',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'folder',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [],
-                    },
-                    //
-                    {
-                        id         : '0',
-                        cover      : '/sample/smp1.jpg',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '/sample/smp2.jpg',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '/sample/smp3.png',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'text',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'binary',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'video',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'audio',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        id         : '0',
-                        cover      : '',
-                        // alpha      : 'binary',
-                        title      : 'this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'image',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                            {
-                                id  : 1,
-                                name: 'female',
-                                sub : [
-                                    {id: 1, name: 'lolicon',},
-                                    {id: 2, name: 'rape',},
-                                    {id: 3, name: 'netorare',},
-                                    {id: 4, name: 'defloration',},
-                                    {id: 5, name: 'guro',},
-                                    {id: 6, name: 'snuff',},
-                                    {id: 7, name: 'drugs',},
-                                ],
-                            },
-                            {
-                                id  : 2,
-                                name: 'male',
-                                sub : [
-                                    {id: 4, name: 'tencales',},
-                                    {id: 5, name: 'dilf',},
-                                    {id: 6, name: 'sole male',},
-                                ],
-                            },
-                            {
-                                id  : 3,
-                                name: 'misc',
-                                sub : [
-                                    {id: 4, name: 'full censorship',},
-                                    {id: 5, name: 'webtoon',},
-                                    {id: 6, name: 'story arc',},
-                                ],
-                            },
-                        ],
-                    },
-                ];
-                for (let i = 0; i < 10; i++) {
-                    listData.push(listData[0]);
-                }
-                this.list   = listData;
-                //detail目前也就一个判断封面的功能，其实可以省掉的
-                this.detail = listData[0];
-                //navi 导航
-                this.navi   = [
-                    {
-                        id  : 0,
-                        name: 'root',
-                        type: 'directory',
-                    },
-                    {
-                        id  : 1,
-                        name: 'dir a',
-                        type: 'directory',
-                    },
-                    {
-                        id  : 2,
-                        name: 'dir c',
-                        type: 'directory',
-                    },
-                    {
-                        id  : 3,
-                        name: 'dir d',
-                        type: 'directory',
-                    },
-                    {
-                        id  : 4,
-                        name: 'dir d',
-                        type: 'tag',
-                    },
-                    {
-                        id  : 0,
-                        name: 'dir d',
-                        type: 'search',
-                    },
-                ];
-                setTimeout(() => {
-                }, 1000)
-            },
-            changeListType: function (listType) {
-                console.info('list: changeListType');
-                this.listType      = listType;
-                this.listTypeLocal = listType;
-            },
-            //
-            /**
-             * @todo api
-             * */
-            delTag        : function (itemId, tagId) {
-                console.info('list: del tag:' + itemId + '\t' + tagId);
-                for (let i1 = 0; i1 < this.list.length; i1++) {
-                    if (this.list[i1].id !== itemId) continue;
-                    console.debug('list: hit item');
-                    // console.debug(this.list[i1]);
-                    for (let i2 = 0; i2 < this.list[i1].tag.length; i2++) {
-                        for (let i3 = 0; i3 < this.list[i1].tag[i2].sub.length; i3++) {
-                            if (this.list[i1].tag[i2].sub[i3].id !== tagId) continue;
-                            console.debug('list: hit tag');
-                            // console.debug(this.list[i1].tag[i2].sub);
-                            this.list[i1].tag[i2].sub.splice(i3, 1);
-                        }
-                    }
-                }
-            },
-            /**
-             * @todo api
-             * */
-            searchTag     : function () {
-                console.debug('list: searchTag ' + this.addTagTxt);
-                if (!this.addTagTxt) return;
-                this.showTagSelector = true;
-                this.tagSelector     = [
-                    {id: 4, group_id: 2, name: 'tentacles', group_name: 'male',},
-                    {id: 5, group_id: 2, name: 'dilf', group_name: 'male',},
-                    {id: 2, group_id: 1, name: 'rape', group_name: 'female',},
-                    {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
-                ];
-            },
-            /**
-             * @todo api
-             * */
-            searchTagClear: function () {
-                if (!this.showTagSelector) return false;
-                console.debug('list: searchTagClear ' + this.addTagTxt);
-                this.addTagTxt       = '';
-                this.showTagSelector = false;
-                this.tagSelector     = [];
-            },
-            /**
-             * @todo api
-             * */
-            addTag        : function (itemId, tagId) {
-                console.debug('list: addTag:' + itemId + '\t' + tagId);
-                let tag = false;
-                for (let i1 = 0; i1 < this.tagSelector.length; i1++) {
-                    if (this.tagSelector[i1].id !== tagId) continue;
-                    tag = this.tagSelector[i1];
-                }
-                if (!tag) {
-                    console.warn('tag not found');
-                    return false;
-                }
-                //查找 item
-                for (let i1 = 0; i1 < this.list.length; i1++) {
-                    if (this.list[i1].id !== itemId) continue;
-                    console.debug(`item found ${i1}`);
-                    console.info(this.list[i1]);
-                    let hasGroup = false;
-                    let hasTag   = false;
-                    //查找 tag group
-                    for (let i2 = 0; i2 < this.list[i1].tag.length; i2++) {
-                        if (this.list[i1].tag[i2].id !== tag.group_id) continue;
-                        console.debug(`group found ${i1} ${i2}`);
-                        console.info(this.list[i1].tag[i2]);
-                        hasGroup = true;
-                        //查找 tag
-                        for (let i3 = 0; i3 < this.list[i1].tag[i2].sub.length; i3++) {
-                            if (this.list[i1].tag[i2].sub[i3].id !== tag.id) continue;
-                            console.debug(`tag found ${i1} ${i2} ${i3}`);
-                            console.info(this.list[i1].tag[i2].sub[i3]);
-                            hasTag = true;
-                            //如果存在 tag ，不写入
-                            break;
-                        }
-                        //无 tag 加 tag
-                        if (!hasTag) {
-                            this.list[i1].tag[i2].sub.push(
-                                {id: tag.id, name: tag.name,}
-                            );
-                        }
-                    }
-                    //无 group 加 group
-                    if (!hasGroup) {
-                        this.list[i1].tag.push(
-                            {
-                                id  : tag.group_id,
-                                name: tag.group_name,
-                                sub : [
-                                    {id: tag.id, name: tag.name,},
-                                ],
-                            })
-                    }
-                    // break;
-                }
-                this.searchTagClear();
-            },
-            goto          : function (type, targetId) {
-                let query = {
-                    from: 0,
-                    tag      : 0,
-                    keyword  : '',
-                };
-                switch (type) {
-                    //点文件夹，跳转文件夹
-                    case 'directory':
-                        query.from = targetId;
-                        break;
-                    //tag 查询当前目录下的 tag
-                    case 'tag':
-                        query.from = this.detail.id;
-                        query.tag       = targetId;
-                        break;
-                    //search 查询当前目录下的 txt
-                    case 'search':
-                        query.from = this.detail.id;
-                        query.keyword   = this.searchTxt;
-                        break;
-                    //file 显示详情
-                    case 'file':
-                        return this.goDetail(targetId);
-                        break;
-                }
-                let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
-                if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
-                    console.debug(`isSameRoute`);
-                    return false;
-                }
-                router.push(targetRoute);
-            },
-            /**
-             * @todo api
-             * */
-            goDetail      : function () {
-                console.info('list: goDetail');
-                //比正常文件列表多raw和normal字段用于显示大图
-                let targetFileList = [
                     {
                         id         : '0',
                         raw        : '/sample/cover.jpg',
@@ -1910,8 +1275,231 @@
                         ],
                     },
                 ];
+                for (let i = 0; i < 10; i++) {
+                    listData.push(listData[0]);
+                }
+                let navi = [
+                    {
+                        id  : 0,
+                        name: 'root',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 1,
+                        name: 'dir a',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 2,
+                        name: 'dir c',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 3,
+                        name: 'dir d',
+                        type: 'directory',
+                    },
+                    {
+                        id  : 4,
+                        name: 'dir d',
+                        type: 'tag',
+                    },
+                    {
+                        id  : 0,
+                        name: 'dir d',
+                        type: 'search',
+                    },
+                ];
+                let dir  = listData[0];
+                return new Promise((resolve, reject) => {
+                    console.warn({list: listData, dir, navi, param});
+                    return resolve({list: listData, dir, navi, param});
+                });
+            },
+            /**
+             * 写入参数
+             * */
+            fillParam     : function (param) {
+                console.info('list: fillParam');
+                // console.warn(param);
+                for (let key in this.param) {
+                    if (typeof param[key] === 'undefined') continue;
+                    this.param[key] = param[key];
+                }
+                if (param.page) {
+                    this.page = parseInt(param.page);
+                }
+            },
+            fillData      : function (resolveData) {
+                console.info('list: fillData');
+                this.list = resolveData.list;
+                //detail目前也就一个判断封面的功能，其实可以省掉的
+                this.dir  = resolveData.dir;
+                //navi 导航
+                this.navi = resolveData.navi;
+                //这边理论上不用重写,但是总之写都写了
+                this.fillParam(resolveData.param);
+            },
+            changeListType: function (listType) {
+                console.info('list: changeListType');
+                this.listType      = listType;
+                this.listTypeLocal = listType;
+            },
+            //
+            /**
+             * @todo api
+             * */
+            delTag        : function (itemId, tagId) {
+                console.info('list: del tag:' + itemId + '\t' + tagId);
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id !== itemId) continue;
+                    console.debug('list: hit item');
+                    // console.debug(this.list[i1]);
+                    for (let i2 = 0; i2 < this.list[i1].tag.length; i2++) {
+                        for (let i3 = 0; i3 < this.list[i1].tag[i2].sub.length; i3++) {
+                            if (this.list[i1].tag[i2].sub[i3].id !== tagId) continue;
+                            console.debug('list: hit tag');
+                            // console.debug(this.list[i1].tag[i2].sub);
+                            this.list[i1].tag[i2].sub.splice(i3, 1);
+                        }
+                    }
+                }
+            },
+            /**
+             * @todo api
+             * */
+            searchTag     : function () {
+                console.debug('list: searchTag ' + this.addTagTxt);
+                if (!this.addTagTxt) return;
+                this.showTagSelector = true;
+                this.tagSelector     = [
+                    {id: 4, group_id: 2, name: 'tentacles', group_name: 'male',},
+                    {id: 5, group_id: 2, name: 'dilf', group_name: 'male',},
+                    {id: 2, group_id: 1, name: 'rape', group_name: 'female',},
+                    {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
+                ];
+            },
+            /**
+             * @todo api
+             * */
+            searchTagClear: function () {
+                if (!this.showTagSelector) return false;
+                console.debug('list: searchTagClear ' + this.addTagTxt);
+                this.addTagTxt       = '';
+                this.showTagSelector = false;
+                this.tagSelector     = [];
+            },
+            /**
+             * @todo api
+             * */
+            addTag        : function (itemId, tagId) {
+                console.debug('list: addTag:' + itemId + '\t' + tagId);
+                let tag = false;
+                for (let i1 = 0; i1 < this.tagSelector.length; i1++) {
+                    if (this.tagSelector[i1].id !== tagId) continue;
+                    tag = this.tagSelector[i1];
+                }
+                if (!tag) {
+                    console.warn('tag not found');
+                    return false;
+                }
+                //查找 item
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id !== itemId) continue;
+                    console.debug(`item found ${i1}`);
+                    console.info(this.list[i1]);
+                    let hasGroup = false;
+                    let hasTag   = false;
+                    //查找 tag group
+                    for (let i2 = 0; i2 < this.list[i1].tag.length; i2++) {
+                        if (this.list[i1].tag[i2].id !== tag.group_id) continue;
+                        console.debug(`group found ${i1} ${i2}`);
+                        console.info(this.list[i1].tag[i2]);
+                        hasGroup = true;
+                        //查找 tag
+                        for (let i3 = 0; i3 < this.list[i1].tag[i2].sub.length; i3++) {
+                            if (this.list[i1].tag[i2].sub[i3].id !== tag.id) continue;
+                            console.debug(`tag found ${i1} ${i2} ${i3}`);
+                            console.info(this.list[i1].tag[i2].sub[i3]);
+                            hasTag = true;
+                            //如果存在 tag ，不写入
+                            break;
+                        }
+                        //无 tag 加 tag
+                        if (!hasTag) {
+                            this.list[i1].tag[i2].sub.push(
+                                {id: tag.id, name: tag.name,}
+                            );
+                        }
+                    }
+                    //无 group 加 group
+                    if (!hasGroup) {
+                        this.list[i1].tag.push(
+                            {
+                                id  : tag.group_id,
+                                name: tag.group_name,
+                                sub : [
+                                    {id: tag.id, name: tag.name,},
+                                ],
+                            })
+                    }
+                    // break;
+                }
+                this.searchTagClear();
+            },
+            goto          : function (type, targetId) {
+                let query = {
+                    from   : 0,
+                    tag    : 0,
+                    keyword: '',
+                };
+                switch (type) {
+                    //点文件夹，跳转文件夹
+                    case 'directory':
+                        query.from = targetId;
+                        break;
+                    //tag 查询当前目录下的 tag
+                    case 'tag':
+                        query.from = this.dir.id;
+                        query.tag  = targetId;
+                        break;
+                    //search 查询当前目录下的 txt
+                    case 'search':
+                        query.from    = this.dir.id;
+                        query.keyword = this.searchTxt;
+                        break;
+                    //file 显示详情
+                    case 'file':
+                        let targetIndex = 0;
+                        for (let i1 = 0; i1 < this.list.length; i1++) {
+                            if (this.list[i1].id !== targetId) continue;
+                            targetIndex = i1;
+                            break;
+                        }
+                        return this.goDetail(targetIndex);
+                        break;
+                }
+                let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
+                if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
+                    console.debug(`isSameRoute`);
+                    return false;
+                }
+                router.push(targetRoute);
+            },
+            /**
+             * @todo api
+             * */
+            goDetail      : function (targetIndex) {
+                console.info('list: goDetail');
+                //比正常文件列表多raw和normal字段用于显示大图
                 this.$parent.showFileList(
-                    {list: targetFileList, current: 1});
+                    {
+                        list   : this.list,
+                        current: targetIndex,
+                        query  : this.query,
+                        param  : this.param,
+                        page   : this.page
+                    });
             },
             //
             editMeta      : function (itemId) {
@@ -1992,7 +1580,7 @@
                 console.info('list: addFile');
                 this.$parent.showUploader(
                     {
-                        data  : this.detail,
+                        data  : this.dir,
                         submit: function (data) {
                             console.info('list: callback: submit');
                             console.info(data);

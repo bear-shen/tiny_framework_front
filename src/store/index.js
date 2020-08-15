@@ -6,14 +6,25 @@ Vue.use(Vuex)
 export default new Vuex.Store(
     {
         state    : {
-            page : 1,
-            query: {},
+            query            : {},
+            //
+            page             : 1,
+            paginatorCallback: function (page) {
+            }
         },
         mutations: {
-            setPage : (state, page) => {
+            setPage             : (state, page) => {
+                console.info(`Store setPage: ${page}`);
+                if (state.page === page) return;
                 state.page = page;
+                state.paginatorCallback(page);
             },
-            setQuery: (state, query) => {
+            setPaginatorCallback: (state, callback) => {
+                console.info(`Store setPaginatorCallback: `);
+                state.paginatorCallback = callback;
+            },
+            setQuery            : (state, query) => {
+                console.info(`Store setQuery: `);
                 state.query = query;
             },
         },

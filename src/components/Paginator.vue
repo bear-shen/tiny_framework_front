@@ -5,7 +5,9 @@
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
-        <li v-for="offset in pageOffsets" :class="{active:page===offset}" v-on:click="goto(offset)"><a href="javascript:void(0)">{{offset}}</a></li>
+        <li v-for="offset in pageOffsets" :class="{active:page===offset}" v-on:click="goto(offset)">
+            <a href="javascript:void(0)">{{offset}}</a>
+        </li>
         <!--<li c0.lass="disabled"><a href="javascript:void(0)">3</a></li>-->
         <li>
             <a href="javascript:void(0)" v-on:click="next">
@@ -106,6 +108,11 @@
             };
         },
         created : function () {
+            //专门写一个回调函数是为了对应事件无法获取的情况
+            this.$store.commit('setPaginatorCallback', this.callback);
+            //首次回调时使用的是请求里得到的page，列表加载早于分页加载
+            //之后的回调则使用内部函数了
+            this.pagination();
         },
         computed: {
             page: {
@@ -134,7 +141,7 @@
             },
             /** @private 切换分页 */
             switch    : function () {
-                console.info('switcher');
+                console.info('paginator: switcher');
                 let path  = router.currentRoute.path;
                 let param = router.currentRoute.params;
                 let page  = this.page;
@@ -146,20 +153,25 @@
                 );
             },
             goto      : function (page) {
-                console.info('reset');
+                console.info('paginator: reset');
                 this.$store.commit('setPage', page ? page : 1);
                 this.switch();
             },
             prev      : function () {
-                console.info('prev');
+                console.info('paginator: prev');
                 this.$store.commit('setPage', this.page - 1);
                 this.switch();
             },
             next      : function () {
-                console.info('next');
+                console.info('paginator: next');
                 this.$store.commit('setPage', this.page + 1);
                 this.switch();
             },
+            callback  : function (page) {
+                console.info('paginator: callback');
+                this.page = page;
+                this.pagination();
+            }
         }
     }
 </script>

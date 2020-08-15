@@ -55,12 +55,22 @@
                 </div>
             </div>
         </div>
-        <div class="naviBtn naviLeft" v-on:click="prev">
-            <span class="sysIcon sysIcon_arrowleft"></span>
-        </div>
-        <div class="naviBtn naviRight" v-on:click="next">
-            <span class="sysIcon sysIcon_arrowright"></span>
-        </div>
+        <template v-if="!loading">
+            <div class="naviBtn naviLeft" v-on:click="prev">
+                <span class="sysIcon sysIcon_arrowleft"></span>
+            </div>
+            <div class="naviBtn naviRight" v-on:click="next">
+                <span class="sysIcon sysIcon_arrowright"></span>
+            </div>
+        </template>
+        <template v-else>
+            <div class="naviBtn naviLeft">
+                <span class="sysIcon sysIcon_sync"></span>
+            </div>
+            <div class="naviBtn naviRight">
+                <span class="sysIcon sysIcon_sync"></span>
+            </div>
+        </template>
         <div class="btnClose" v-on:click="close">
             <span class="sysIcon sysIcon_close"></span>
         </div>
@@ -317,22 +327,42 @@
         data     : function () {
             return {
                 detailOn    : false,
+                loading     : false,
+                //
                 currentIndex: 0,
                 current     : {},
                 list        : [],
+                //
+                query       : false,
+                param       : {},
+                page        : 1,
             };
         },
         created  : function () {
             console.info(`popup FileDetail: created`);
-            let current = false;
-            for (let i1 = 0; i1 < this.info.list.length; i1++) {
-                current = this.info.list[this.info.current];
-            }
-            if (!current) current = this.info.list[0];
+            console.info(this.info.list)
+            let info = {};
+            Object.assign(info, {
+                list   : [],
+                current: 0,
+                query  : false,
+                param  : {},
+                page   : 1,
+            });
+            Object.assign(info, this.info);
+            console.debug(info.list);
+            let current = info.list[info.current];
+            if (!info.list[info.current]) current = info.list[0];
             //
             this.current      = current;
-            this.currentIndex = this.info.current;
-            this.list         = this.info.list;
+            this.currentIndex = info.current;
+            this.list         = info.list;
+            //
+            this.query        = info.query;
+            this.param        = info.param;
+            this.page         = info.page;
+            console.info(info.list);
+            console.info(current);
         },
         destroyed: function () {
             console.info(`popup FileDetail: destroyed`);
@@ -346,16 +376,96 @@
                 this.$parent.hide();
             },
             next        : function () {
+                this.loading = true;
                 console.info(`popup FileDetail: next`);
-                if (this.list.length - 1 <= this.currentIndex) return false;
+                if (this.list.length - 1 <= this.currentIndex) {
+                    if (!this.query) {
+                        console.info(`popup FileDetail: next: query not defined`);
+                        this.loading = false;
+                        return false;
+                    }
+                    //查询后写入下一组
+                    this.query(this.param, this.page + 1).then((resolveData) => {
+                        this.fillParam(resolveData.param);
+                        for (let i1 = 0; i1 < resolveData.list.length; i1++) {
+                            this.list.push(resolveData.list[i1]);
+                        }
+                        if (this.list.length - 1 <= this.currentIndex) {
+                            this.loading = false;
+                            console.info(`popup FileDetail: next: query success, but nothing`);
+                            return false;
+                        }
+                        this.currentIndex += 1;
+                        this.current = this.list[this.currentIndex];
+                        this.loading = false;
+                        console.info(`popup FileDetail: next: query success, go next`);
+                        return true;
+                    });
+                    console.info(`popup FileDetail: next: querying`);
+                    return true;
+                }
                 this.currentIndex += 1;
                 this.current = this.list[this.currentIndex];
+                this.loading = false;
+                console.info(`popup FileDetail: next: success`);
+                return true;
             },
             prev        : function () {
+                this.loading = true;
                 console.info(`popup FileDetail: prev`);
-                if (this.currentIndex <= 0) return false;
+                console.debug(this.page);
+                if (this.currentIndex <= 0) {
+                    if (!this.query || this.page <= 1) {
+                        console.info(`popup FileDetail: prev: query not defined or no pages`);
+                        this.loading = false;
+                        return false;
+                    }
+                    //查询后写入下一组
+                    this.query(this.param, this.page - 1).then((resolveData) => {
+                        this.fillParam(resolveData.param);
+                        for (let i1 = resolveData.list.length - 1; i1 >= 0; i1--) {
+                            this.list.unshift(resolveData.list[i1]);
+                            this.currentIndex += 1;
+                        }
+                        if (this.currentIndex <= 0) {
+                            this.loading = false;
+                            console.info(`popup FileDetail: prev: query success, but nothing`);
+                            return false;
+                        }
+                        this.currentIndex -= 1;
+                        this.current = this.list[this.currentIndex];
+                        this.loading = false;
+                        console.info(`popup FileDetail: prev: query success, go prev`);
+                        return true;
+                    });
+                    console.info(`popup FileDetail: prev: querying`);
+                    return true;
+                }
                 this.currentIndex -= 1;
                 this.current = this.list[this.currentIndex];
+                this.loading = false;
+                console.info(`popup FileDetail: prev: success`);
+                return true;
+            },
+            /**
+             * 写入参数
+             * */
+            fillParam   : function (param) {
+                console.info('popup FileDetail: fillParam');
+                // console.warn(param);
+                for (let key in param) {
+                    if (!param.hasOwnProperty(key)) continue;
+                    if (key === 'page') {
+                        this.page = param[key];
+                        continue;
+                    }
+                    this.param[key] = param[key];
+                }
+            },
+            fillData    : function (resolveData) {
+                console.info('popup FileDetail: fillData');
+                this.list = resolveData.list;
+                this.fillParam(resolveData.param);
             },
             toggleDetail: function () {
                 console.info(`popup FileDetail: showDetail`);

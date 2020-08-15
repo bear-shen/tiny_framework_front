@@ -417,10 +417,10 @@
                     data: dirDetail,
                 };
             },
-            showFileList: function (fileList) {
+            showFileList: function (fileInfo) {
                 this.popupData = {
                     type: 'file',
-                    data: fileList,
+                    data: fileInfo,
                 };
             }
         },

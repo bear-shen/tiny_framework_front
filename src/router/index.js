@@ -2,7 +2,7 @@ import Vue       from 'vue'
 import VueRouter from 'vue-router'
 import Home      from '../views/Home.vue'
 import List      from "../views/List";
-import TagGroup  from "../views/TagGroup";
+import Tag  from "../views/Tag";
 
 Vue.use(VueRouter)
 
@@ -11,13 +11,13 @@ const routes = [
         name: 'List', title: 'List',
         icon: 'sysIcon_listType_detail', path: '/', component: List, props: true,
     },
-    {
+    /*{
         name: 'TagGroup', title: 'TagGroup',
         icon: 'sysIcon_tagso', path: '/tag_group', component: TagGroup, props: true,
-    },
+    },*/
     {
         name: 'Tag', title: 'Tag',
-        icon: 'sysIcon_tag-o', path: '/tag', component: Home, props: true,
+        icon: 'sysIcon_tag-o', path: '/tag', component: Tag, props: true,
     },
     {
         name: 'Favourite', title: 'Favourite',

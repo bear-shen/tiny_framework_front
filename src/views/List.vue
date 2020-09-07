@@ -23,7 +23,7 @@
                 <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="listHeaderSort">
-                <select v-model="param.sort">
+                <select v-model="sort">
                     <option value="id_asc">id ↑</option>
                     <option value="id_desc">id ↓</option>
                     <option value="name_asc">name ↑</option>
@@ -78,7 +78,7 @@
 
                             <template v-if="editMetaId===item.id">
                                 <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta(item.id)">
-                                    <span class="sysIcon sysIcon_sync"></span>&nbsp;info
+                                    <span class="sysIcon sysIcon_save"></span>&nbsp;info
                                 </div>
                             </template>
                             <template v-else>
@@ -89,7 +89,7 @@
 
                             <template v-if="editTagId===item.id">
                                 <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveTag(item.id)">
-                                    <span class="sysIcon sysIcon_sync"></span>&nbsp;tag
+                                    <span class="sysIcon sysIcon_save"></span>&nbsp;tag
                                 </div>
                             </template>
                             <template v-else>
@@ -705,6 +705,10 @@
             },
             addTagTxt: function (to, from) {
                 this.searchTag();
+            },
+            param    : function (to, from) {
+                console.info(to);
+                console.info(from);
             }
         },
         data         : function () {
@@ -713,7 +717,7 @@
                     from   : 0,
                     tag    : 0,
                     keyword: '',
-                    sort   : 'id_asc',
+                    sort   : this.sort,
                 },
                 listTypeLocal  : this.listType,
                 // from query
@@ -758,6 +762,18 @@
                 set: function (val) {
                     console.info('list: param:listType set:' + val);
                     localStorage.setItem('toshokan_framework_var_listType', val);
+                },
+            },
+            sort: {
+                get: function () {
+                    console.info('list: param:sort get');
+                    let data = localStorage.getItem('toshokan_framework_var_list_sort');
+                    data     = data ? data : 'id_desc';
+                    return data;
+                },
+                set: function (val) {
+                    console.info('list: param:sort set:' + val);
+                    localStorage.setItem('toshokan_framework_var_list_sort', val);
                 },
             },
         },

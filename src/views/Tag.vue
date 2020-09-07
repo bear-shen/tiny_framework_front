@@ -2,34 +2,232 @@
     <div class="tagGroup">
         <ul class="groupList">
             <li v-for="group in list">
-                <div class="groupMain">
-                    <span class="">{{group.id}}</span>
-                    <span class="">{{group.name}}</span>
-                    <span class="">{{group.sort}}</span>
-                    <span class="">{{group.time_create}}</span>
-                    <span class="">{{group.time_update}}</span>
-                </div>
-                <div class="groupDescription">
-                    {{group.description}}
-                </div>
+                <template v-if="editMode===1 && group.id===editId">
+                    <div class="groupMain editMode">
+                        <span class="">ID:{{group.id}}</span>
+                        <input type="text" v-model="group.name">
+                        <input type="text" v-model="group.sort">
+                        <!--<span class="">{{group.sort}}</span>-->
+                        <!--<span class="">{{group.time_create}}</span>-->
+                        <!--<span class="">{{group.time_update}}</span>-->
+                        <span class="operator">
+                        <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
+                        <span class="sysIcon sysIcon_edit" v-on:click="saveGroup(group.id)"></span>
+                        </span>
+                    </div>
+                    <textarea class="groupAlt" v-model="group.alt"></textarea>
+                    <textarea class="groupDescription" v-model="group.description"></textarea>
+                </template>
+                <template v-else>
+                    <div class="groupMain">
+                        <!--<span class="">ID:{{group.id}}</span>-->
+                        <span class="">{{group.name}}</span>
+                        <!--<span class="">{{group.sort}}</span>-->
+                        <!--<span class="">{{group.time_create}}</span>-->
+                        <!--<span class="">{{group.time_update}}</span>-->
+                        <span class="operator">
+                        <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
+                        <span class="sysIcon sysIcon_edit" v-on:click="modGroup(group.id)"></span>
+                        <span class="sysIcon sysIcon_delete" v-on:click="delGroup(group.id)"></span>
+                        </span>
+                    </div>
+                    <div class="groupAlt">
+                        {{group.alt}}
+                    </div>
+                    <div class="groupDescription">
+                        {{group.description}}
+                    </div>
+                </template>
                 <ul class="tagList">
                     <li v-for="tag in group.child">
-                        <div class="tagMain">
-                            <span class="">{{tag.id}}</span>
-                            <span class="">{{tag.name}}</span>
-                            <span class="">{{tag.sort}}</span>
-                            <span class="">{{tag.time_create}}</span>
-                            <span class="">{{tag.time_update}}</span>
-                        </div>
-                        <div class="tagDescription">
-                            {{tag.description}}
-                        </div>
+                        <template v-if="editMode===2 && tag.id===editId">
+                            <div class="tagMain editMode">
+                                <!--<span class="">ID:{{tag.id}}</span>-->
+                                <input type="text" v-model="tag.name">
+                                <!--<span class=""><input v-model="tag.sort"></span>-->
+                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(tag.id)"></span>
+                            </div>
+                            <textarea class="tagAlt" v-model="tag.alt"></textarea>
+                            <textarea class="tagDescription" v-model="tag.description"></textarea>
+                        </template>
+                        <template v-else>
+                            <div class="tagMain">
+                                <!--<span class="">ID:{{tag.id}}. {{tag.name}}</span>-->
+                                <span class="">{{tag.name}}</span>
+                                <!--<span class="">{{tag.sort}}</span>-->
+                                <!--<span class="">{{tag.time_create}}<br>{{tag.time_update}}</span>-->
+                                <span class="operator">
+                                <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
+                                <span class="sysIcon sysIcon_edit" v-on:click="modTag(tag.id)"></span>
+                                <span class="sysIcon sysIcon_delete" v-on:click="delTag(tag.id)"></span>
+                                </span>
+                            </div>
+                            <div class="tagAlt">
+                                {{tag.alt}}
+                            </div>
+                            <div class="tagDescription">
+                                {{tag.description}}
+                            </div>
+                        </template>
+                    </li>
+                    <li>
+                        <template v-if="editMode===2 && editId===0">
+                            <div class="tagMain">
+                                <span class=""></span>
+                                <span class=""><input v-model="tag.name"></span>
+                                <span class=""><input v-model="tag.sort"></span>
+                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(tag.id)"></span>
+                            </div>
+                            <textarea class="tagAlt" v-model="tag.alt"></textarea>
+                            <textarea class="tagDescription" v-model="tag.description"></textarea>
+                        </template>
+                        <template v-else>
+                        </template>
                     </li>
                 </ul>
             </li>
         </ul>
     </div>
 </template>
+
+<style lang="scss">
+    .tagGroup {
+        ul {
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+
+            .operator {
+                span {
+                    padding-left: 0.5em;
+
+                    &:hover {
+                        color: rgba(255, 255, 255, 0.4);
+                    }
+                }
+            }
+        }
+    }
+
+    .tagGroup {
+
+        .groupList {
+            display: flex;
+            flex-wrap: wrap;
+            font-size: $fontSize*1.2;
+            line-height: $fontSize*1.5;
+
+            > li {
+                width: 32%;
+                background-color: rgba(0, 0, 0, 0.2);
+
+                &:nth-child(2n) {
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
+
+                margin: $fontSize*0.5;
+                padding: $fontSize*0.5;
+
+                .groupMain {
+                    display: flex;
+                    justify-content: space-between;
+                    vertical-align: middle;
+                    align-items: center;
+                    white-space: nowrap;
+                    height: $fontSize*1.25;
+                    line-height: $fontSize*1.25;
+
+                    &.editMode {
+                        margin-bottom: $fontSize*0.5;
+
+                        * {
+                            height: $fontSize*1.5;
+                            line-height: $fontSize*1.5;
+                        }
+
+                        *:nth-child(1) {
+                            margin-right: 0.5em;
+                            font-size: $fontSize*0.75;
+                        }
+
+                        *:nth-child(2) {width: 70%;}
+
+                        *:nth-child(3) {width: 20%;}
+
+                        *:nth-child(4) {width: 1em;}
+                    }
+                }
+
+                .groupAlt, .groupDescription {
+                    color: rgba(100, 100, 100, 1);
+                    display: block;
+                    width: 100%;
+                }
+
+                .groupAlt {}
+
+                .groupDescription {}
+            }
+        }
+
+        .tagList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: $fontSize*0.25;
+            padding: $fontSize*0.25;
+            font-size: $fontSize;
+
+            > li {
+                background-color: rgba(0, 0, 0, 0.2);
+                margin: $fontSize*0.25 0;
+                padding: 0 $fontSize*0.5;
+                width: 32%;
+
+                .tagMain {
+                    display: flex;
+                    justify-content: space-between;
+                    *:nth-child(1){}
+                    *:nth-child(2){}
+                }
+
+                .tagAlt, .tagDescription {
+                    color: rgba(100, 100, 100, 1);
+                    width: 100%;
+                }
+
+                .tagAlt {
+                }
+
+                .tagDescription {
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1600px) {
+        .tagGroup {
+            .groupList {
+                > li {
+                    width: 48%;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 960px) {
+        .tagGroup {
+            .groupList {
+                > li {
+                    width: 96%;
+                }
+            }
+        }
+    }
+</style>
 
 <script>
     // @ is an alias to /src
@@ -56,11 +254,13 @@
         },
         data      : function () {
             return {
-                param: {
+                param   : {
                     name: '',
                 },
                 // page: 1,
-                list : [],
+                editMode: 0,//0 none 1 group 2 tag
+                editId  : 0,//targetId
+                list    : [],
             }
         },
         /*watch  : {
@@ -112,6 +312,7 @@
                     {
                         id         : 1,
                         name       : 'group1',
+                        alt        : 'group1,group1,group1',
                         description: 'this is group 1',
                         sort       : 1,
                         time_create: '1919-08-10 11:45:14',
@@ -120,6 +321,7 @@
                             {
                                 id         : 1,
                                 name       : 'tag1',
+                                alt        : 'tag1,tag1,tag1',
                                 description: 'this is tag 1',
                                 sort       : 1,
                                 time_create: '1919-08-10 11:45:14',
@@ -164,6 +366,26 @@
                 console.info('Tag: fillData');
                 this.list = resolveData.list;
                 this.fillParam(resolveData.param);
+            },
+            modGroup : function (id) {
+                this.editMode = 1;
+                this.editId   = id;
+            },
+            saveGroup: function (id) {
+                this.editMode = 0;
+                this.editId   = 0;
+            },
+            delGroup : function (id) {
+            },
+            modTag   : function (id) {
+                this.editMode = 2;
+                this.editId   = id;
+            },
+            saveTag  : function (id) {
+                this.editMode = 0;
+                this.editId   = 0;
+            },
+            delTag   : function (id) {
             },
         },
     }

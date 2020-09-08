@@ -12,7 +12,7 @@
                         <!--<span class="">{{group.time_update}}</span>-->
                         <span class="operator">
                         <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_edit" v-on:click="saveGroup(group.id)"></span>
+                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup(group.id)"></span>
                         </span>
                     </div>
                     <textarea class="groupAlt" v-model="group.alt"></textarea>
@@ -27,8 +27,8 @@
                         <!--<span class="">{{group.time_update}}</span>-->
                         <span class="operator">
                         <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_edit" v-on:click="modGroup(group.id)"></span>
                         <span class="sysIcon sysIcon_delete" v-on:click="delGroup(group.id)"></span>
+                        <span class="sysIcon sysIcon_edit" v-on:click="modGroup(group.id)"></span>
                         </span>
                     </div>
                     <div class="groupAlt">
@@ -58,8 +58,8 @@
                                 <!--<span class="">{{tag.time_create}}<br>{{tag.time_update}}</span>-->
                                 <span class="operator">
                                 <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                                <span class="sysIcon sysIcon_edit" v-on:click="modTag(tag.id)"></span>
                                 <span class="sysIcon sysIcon_delete" v-on:click="delTag(tag.id)"></span>
+                                <span class="sysIcon sysIcon_edit" v-on:click="modTag(tag.id)"></span>
                                 </span>
                             </div>
                             <div class="tagAlt">
@@ -72,19 +72,41 @@
                     </li>
                     <li>
                         <template v-if="editMode===2 && editId===0">
-                            <div class="tagMain">
-                                <span class=""></span>
-                                <span class=""><input v-model="tag.name"></span>
-                                <span class=""><input v-model="tag.sort"></span>
-                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(tag.id)"></span>
+                            <div class="tagMain editMode">
+                                <!--<span class="">ID:{{tag.id}}</span>-->
+                                <input type="text" v-model="newTag.name">
+                                <!--<span class=""><input v-model="tag.sort"></span>-->
+                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(newTag.id)"></span>
                             </div>
-                            <textarea class="tagAlt" v-model="tag.alt"></textarea>
-                            <textarea class="tagDescription" v-model="tag.description"></textarea>
+                            <textarea class="tagAlt" v-model="newTag.alt"></textarea>
+                            <textarea class="tagDescription" v-model="newTag.description"></textarea>
                         </template>
                         <template v-else>
+                            <div class="sysIcon sysIcon_plus-square-o addBtn" v-on:click="modTag(0)"></div>
                         </template>
                     </li>
                 </ul>
+            </li>
+            <li>
+                <template v-if="editMode===1 && editId===0">
+                    <div class="groupMain editMode">
+                        <span class="">ID:0</span>
+                        <input type="text" v-model="newGroup.name">
+                        <input type="text" v-model="newGroup.sort">
+                        <!--<span class="">{{group.sort}}</span>-->
+                        <!--<span class="">{{group.time_create}}</span>-->
+                        <!--<span class="">{{group.time_update}}</span>-->
+                        <span class="operator">
+                        <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
+                        <span class="sysIcon sysIcon_edit" v-on:click="saveGroup(newGroup.id)"></span>
+                        </span>
+                    </div>
+                    <textarea class="groupAlt" v-model="newGroup.alt"></textarea>
+                    <textarea class="groupDescription" v-model="newGroup.description"></textarea>
+                </template>
+                <template v-else>
+                    <div class="sysIcon sysIcon_plus-square-o addBtn" v-on:click="modGroup(0)"></div>
+                </template>
             </li>
         </ul>
     </div>
@@ -136,27 +158,26 @@
                     vertical-align: middle;
                     align-items: center;
                     white-space: nowrap;
-                    height: $fontSize*1.25;
-                    line-height: $fontSize*1.25;
+                    height: $fontSize*1.5;
+                    line-height: $fontSize*1.5;
 
                     &.editMode {
                         margin-bottom: $fontSize*0.5;
 
-                        * {
+                        & > * {
                             height: $fontSize*1.5;
                             line-height: $fontSize*1.5;
                         }
 
-                        *:nth-child(1) {
+                        & > *:nth-child(1) {
                             margin-right: 0.5em;
-                            font-size: $fontSize*0.75;
                         }
 
-                        *:nth-child(2) {width: 70%;}
+                        & > *:nth-child(2) {width: 70%;}
 
-                        *:nth-child(3) {width: 20%;}
+                        & > *:nth-child(3) {width: 20%;}
 
-                        *:nth-child(4) {width: 1em;}
+                        & > *:nth-child(4) {width: 1.5em;}
                     }
                 }
 
@@ -169,6 +190,14 @@
                 .groupAlt {}
 
                 .groupDescription {}
+
+                > .addBtn {
+                    font-size: $fontSize*5;
+                    width: $fontSize*5;
+                    height: $fontSize*5;
+                    line-height: $fontSize*5;
+                    color: rgba(100, 100, 100, 1);
+                }
             }
         }
 
@@ -190,8 +219,24 @@
                 .tagMain {
                     display: flex;
                     justify-content: space-between;
-                    *:nth-child(1){}
-                    *:nth-child(2){}
+                    align-items: center;
+                    margin-bottom: $fontSize*0.5;
+
+                    * {
+                        height: $fontSize*1.5;
+                        line-height: $fontSize*1.5;
+                    }
+
+                    *:nth-child(1) {
+                        margin-right: 0.5em;
+                        font-size: $fontSize*0.75;
+                    }
+
+                    *:nth-child(2) {}
+
+                    input {
+                        width: calc(100% - #{$fontSize});
+                    }
                 }
 
                 .tagAlt, .tagDescription {
@@ -203,6 +248,15 @@
                 }
 
                 .tagDescription {
+                }
+
+                > .addBtn {
+                    margin: $fontSize*0.5 0;
+                    font-size: $fontSize*1.5;
+                    width: $fontSize*1.5;
+                    height: $fontSize*1.5;
+                    line-height: $fontSize*1.5;
+                    color: rgba(100, 100, 100, 1);
                 }
             }
         }
@@ -261,6 +315,18 @@
                 editMode: 0,//0 none 1 group 2 tag
                 editId  : 0,//targetId
                 list    : [],
+                newTag  : {
+                    name       : '',
+                    sort       : '',
+                    alt        : '',
+                    description: '',
+                },
+                newGroup: {
+                    name       : '',
+                    sort       : '',
+                    alt        : '',
+                    description: '',
+                },
             }
         },
         /*watch  : {
@@ -320,6 +386,7 @@
                         child      : [
                             {
                                 id         : 1,
+                                group_id   : 1,
                                 name       : 'tag1',
                                 alt        : 'tag1,tag1,tag1',
                                 description: 'this is tag 1',
@@ -330,11 +397,15 @@
                         ],
                     }
                 ];
-                for (let i = 0; i < 10; i++) {
-                    list[0].child.push(list[0].child[0]);
-                }
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < Math.floor(Math.random() * 7); i++) {
                     list.push(list[0]);
+                }
+                for (let i = 0; i < list.length; i++) {
+                    let sub=[];
+                    for (let j = 0; j < Math.floor(Math.random() * 7); j++) {
+                        sub.push(list[i].child[0]);
+                        list[i].child=sub;
+                    }
                 }
                 //
                 return new Promise((resolve, reject) => {
@@ -370,6 +441,17 @@
             modGroup : function (id) {
                 this.editMode = 1;
                 this.editId   = id;
+                if (!id) {
+                    Object.assign(
+                        this.newGroup,
+                        {
+                            name       : '',
+                            sort       : '',
+                            alt        : '',
+                            description: '',
+                        }
+                    )
+                }
             },
             saveGroup: function (id) {
                 this.editMode = 0;
@@ -380,6 +462,17 @@
             modTag   : function (id) {
                 this.editMode = 2;
                 this.editId   = id;
+                if (!id) {
+                    Object.assign(
+                        this.newTag,
+                        {
+                            name       : '',
+                            sort       : '',
+                            alt        : '',
+                            description: '',
+                        }
+                    )
+                }
             },
             saveTag  : function (id) {
                 this.editMode = 0;

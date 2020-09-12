@@ -97,6 +97,16 @@
                                     <span class="sysIcon sysIcon_edit"></span>&nbsp;tag
                                 </div>
                             </template>
+                            <template v-if="item.favourite">
+                                <div :class="['btn', 'btn-dark']" v-on:click="favourite(item.id)">
+                                    <span class="sysIcon sysIcon_heart-o"></span>&nbsp;fave
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div :class="['btn', 'btn-dark','is_favourite']" v-on:click="favourite(item.id)">
+                                    <span class="sysIcon sysIcon_heart-o"></span>&nbsp;unfav
+                                </div>
+                            </template>
                             <div :class="['btn', 'btn-dark']" v-on:click="deleteFile(item.id)">
                                 <span class="sysIcon sysIcon_delete"></span>&nbsp;delete
                             </div>
@@ -573,6 +583,9 @@
             }
 
             .ct_operate {
+                .is_favourite {
+                    color: hsla(333, 70%, 70%, 1);
+                }
             }
         }
 
@@ -764,7 +777,7 @@
                     localStorage.setItem('toshokan_framework_var_listType', val);
                 },
             },
-            sort: {
+            sort    : {
                 get: function () {
                     console.info('list: param:sort get');
                     let data = localStorage.getItem('toshokan_framework_var_list_sort');
@@ -841,6 +854,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'image',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -899,6 +913,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'audio',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -957,6 +972,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'video',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -1015,6 +1031,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'binary',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -1073,6 +1090,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'text',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -1130,6 +1148,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'image',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -1187,6 +1206,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'image',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -1244,6 +1264,7 @@
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
                         type       : 'image',
+                        favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
                         tag        : [
@@ -1545,6 +1566,16 @@
              * */
             setCover      : function (itemId) {
                 console.info('list: setCover');
+            },
+            /**
+             * @todo api
+             * */
+            favourite     : function (itemId) {
+                console.info(`list: favourite ${itemId}`);
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id !== itemId) continue;
+                    this.list[i1].favourite = this.list[i1].favourite ? 0 : 1;
+                }
             },
             /**
              * @todo api

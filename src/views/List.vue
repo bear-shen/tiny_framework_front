@@ -176,398 +176,6 @@
             }
         }
     }
-
-    .listContent {
-        > ul {
-            width: 100%;
-            margin-left: 0;
-            padding-left: 0;
-            list-style: none;
-        }
-
-        > ul > li {
-            &:nth-child(2n) {
-                background-color: rgba(0, 0, 0, 0.25);
-            }
-        }
-
-        > ul > li > div {
-        }
-
-        .btn {
-            margin-left: 5px;
-            padding: 5px;
-            display: inline-block;
-            margin-bottom: 5px;
-            line-height: $fontSize;
-        }
-    }
-
-    .listContent.listType_text {
-        $listFontSize: $fontSize*1;
-
-        > ul {
-            display: table;
-        }
-
-        > ul > li {
-            display: table-row;
-        }
-
-        > ul > li > div {
-            line-height: 2.5 * $listFontSize;
-            font-size: $listFontSize;
-            vertical-align: middle;
-            display: contents;
-
-            > * {
-                display: table-cell;
-            }
-        }
-
-        .ct_alpha {
-            text-align: center;
-
-            * {
-                padding-right: 10px;
-            }
-        }
-
-        .ct_meta {
-            div {
-                /*display: inline-block;*/
-            }
-
-            .ct_description,
-                /*.ct_time_create,*/
-            .ct_hash,
-            .ct_operate {
-                display: none;
-            }
-        }
-
-        .ct_tag {
-            display: none;
-        }
-
-        @media (max-width: 1200px) {
-            .ct_meta {
-                .ct_time_create {
-                    display: none;
-                }
-            }
-        }
-
-        @media (max-width: 800px) {
-            .ct_meta {
-                .ct_time_update {
-                    display: none;
-                }
-            }
-        }
-
-        @media (max-width: 600px) {
-            .ct_meta {
-                .ct_size {
-                    display: none;
-                }
-
-                .ct_type {
-                    display: none;
-                }
-            }
-        }
-    }
-
-    .listContent.listType_img {
-        > ul {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        $liWidth: 12vw;
-        $liMinWidth: 120px;
-        $liMaxWidth: 180px;
-        $liRate: 4/3;
-
-        > ul > li {
-            width: $liWidth;
-            height: $liWidth*$liRate;
-            min-width: $liMinWidth;
-            min-height: $liMinWidth*$liRate;
-            max-width: $liMaxWidth;
-            max-height: $liMaxWidth*$liRate;
-            position: relative;
-            margin-bottom: 5px;
-        }
-
-        > ul > li > div {
-        }
-
-        /*.ct_alpha,*/
-        /*.ct_icon,*/
-        /*.ct_cover,*/
-        /*.ct_title,*/
-        .ct_description,
-        .ct_size,
-        .ct_hash,
-        .ct_type,
-        .ct_time_create,
-        .ct_time_update,
-        .ct_operate,
-        .ct_tag {
-            display: none;
-        }
-
-        .ct_alpha,
-            /*.ct_icon,*/
-            /*.ct_cover,*/
-        .ct_title {
-            width: 100%;
-        }
-
-        .ct_title {
-            line-height: $fontSize*1.125;
-            height: $fontSize*1.125*2;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .ct_icon,
-        .ct_cover {
-            max-width: calc(#{$liMaxWidth} * 0.9);
-            max-height: calc(#{$liMaxWidth} * 0.9);
-            position: absolute;
-            left: 5%;
-            top: 15px;
-            margin-left: auto;
-            margin-right: auto;
-            right: 5%;
-        }
-
-        .ct_icon {
-            z-index: 1;
-            font-size: $liMaxWidth*0.6;
-            text-align: center;
-            width: 90%;
-        }
-
-        .ct_cover {
-            z-index: 2;
-        }
-
-        .ct_title {
-            text-align: center;
-            position: absolute;
-            top: calc(#{$liMaxWidth} * 0.9 + 30px);
-
-        }
-
-        //这俩是根据宽度比例计算的
-        @media (max-width: 1499px) {
-            .ct_icon,
-            .ct_cover {
-                top: 10px;
-                max-width: calc(#{$liWidth} * 0.9);
-                max-height: calc(#{$liWidth} * 0.9);
-            }
-            .ct_title {
-                top: calc(#{$liWidth} * 0.9 + 20px);
-            }
-            .ct_icon {
-                font-size: $liWidth*0.6;
-            }
-        }
-
-        @media (max-width: 999px) {
-            .ct_icon,
-            .ct_cover {
-                top: 5px;
-                max-width: calc(#{$liMinWidth} * 0.9);
-                max-height: calc(#{$liMinWidth} * 0.9);
-            }
-            .ct_title {
-                top: calc(#{$liMinWidth} * 0.9 + 10px);
-            }
-            .ct_icon {
-                font-size: $liMinWidth*0.6;
-            }
-        }
-
-        @media (max-width: 1199px) {
-            .ct_icon {
-                z-index: 1;
-                font-size: 80px;
-                text-align: center;
-                width: 90%;
-            }
-        }
-
-    }
-
-    .listContent.listType_detail {
-        > ul {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: row;
-            justify-content: flex-start;
-        }
-
-        $liHeight: 320px;
-        $liContentHeight: $liHeight - 20px;
-        $liImgRate: 4/3;
-        $liImgWidth: $liHeight/$liImgRate;
-        $liMetaWidth: $liHeight;
-
-        > ul > li {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            height: $liHeight;
-
-            padding: 10px ;
-        }
-
-        > ul > li > div {
-            margin-right: 10px;
-            height: $liHeight - 20px;
-
-            &:last-child {
-                margin-right: 0;
-            }
-        }
-
-        .ct_alpha {
-            width: $liImgWidth;
-            max-width: $liImgWidth;
-            min-width: $liImgWidth;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            align-content: center;
-
-            .ct_icon {
-                width: $liImgWidth;
-                font-size: $liImgWidth * 0.8;
-                line-height: $liImgWidth;
-                display: block;
-                text-align: center;
-            }
-
-            .ct_cover {
-                max-width: $liImgWidth - 20px;
-                max-height: $liContentHeight - 20px;
-            }
-        }
-
-        .ct_meta {
-            > div {
-                width: $liMetaWidth - 20px;
-                display: block;
-            }
-
-            input, textarea {
-                width: $liMetaWidth;
-            }
-
-            textarea {
-                height: $fontSize*6;
-            }
-
-            .ct_operate {
-                .is_favourite {
-                    color: hsla(333, 70%, 70%, 1);
-                }
-            }
-        }
-
-        .ct_tag {
-            min-width: $liMetaWidth;
-            /*overflow: hidden;*/
-            /*text-overflow: ellipsis;*/
-
-            dl {
-                display: block;
-                margin-bottom: 0;
-                position: relative;
-            }
-
-            dt {
-                display: inline-block;
-                margin-bottom: 5px;
-                line-height: $fontSize;
-            }
-
-            dd {
-                position: relative;
-            }
-
-            input {
-                width: $liMetaWidth;
-                text-indent: 1em;
-            }
-
-            .ct_tag_hinter {
-                list-style: none;
-                padding: 10px 0;
-                background-color: rgba(0, 0, 0, 0.3);
-                position: absolute;
-                top: $fontSize*2;
-
-                li {
-                    width: $liMetaWidth - 20px;
-                    line-height: $fontSize*1.5;
-                    padding: 0 10px;
-
-                    &:hover {
-                        background-color: rgba(255, 255, 255, 0.3);
-                    }
-                }
-            }
-
-        }
-
-        //(240+320+320*1.5+20)/0.9166667
-        @media (max-width: 1200px) {
-            > ul > li {
-                flex-wrap: wrap;
-                height: auto;
-            }
-            .ct_tag {
-                min-width: $liImgWidth + $liMetaWidth + 10px;
-                height: fit-content;
-            }
-        }
-        //(240+320+20)+15*2
-        @media (max-width: 610px) {
-            > ul {
-                flex-direction: column;
-            }
-            > ul > li {
-                flex-direction: column;
-            }
-            .ct_alpha {
-                width: 100%;
-                max-width: 100%;
-                min-width: 100%;
-
-                .ct_cover {
-                    max-width: 100%;
-                }
-            }
-            .ct_meta {
-                > div {
-                    width: 100%;
-                }
-            }
-            .ct_tag, .ct_meta {
-                height: fit-content;
-                min-width: auto;
-            }
-        }
-    }
 </style>
 
 <script>
@@ -599,7 +207,7 @@
         components   : {File},
         store        : store,
         watch        : {
-            $route   : function (to, from) {
+            $route: function (to, from) {
                 console.info(`list: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
@@ -608,33 +216,30 @@
                 // this.currentRoute = router.currentRoute;
                 this.query(this.param, this.page).then(this.fillData);
             },
-            page     : function (to, from) {
+            page  : function (to, from) {
                 console.info('list: param:page compute watched');
             },
-            addTagTxt: function (to, from) {
-                this.searchTag();
-            },
-            param    : function (to, from) {
+            param : function (to, from) {
                 console.info(to);
                 console.info(from);
             }
         },
         data         : function () {
             return {
-                param          : {
+                param        : {
                     from   : 0,
                     tag    : 0,
                     keyword: '',
                     sort   : this.sort,
                 },
-                listTypeLocal  : this.listType,
+                listTypeLocal: this.listType,
                 // from query
-                navi           : [],
-                list           : [],
-                dir            : {},
+                navi         : [],
+                list         : [],
+                dir          : {},
                 // page: 1,
                 //
-                searchTxt      : '',
+                searchTxt    : '',
             }
         },
         /*watch  : {
@@ -921,8 +526,7 @@
                         favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                        ],
+                        tag        : [],
                     },
                     {
                         id         : '4',
@@ -939,8 +543,7 @@
                         favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                        ],
+                        tag        : [],
                     },
                     {
                         id         : '5',
@@ -956,8 +559,7 @@
                         favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
-                        tag        : [
-                        ],
+                        tag        : [],
                     },
                     {
                         id         : '6',
@@ -1193,6 +795,7 @@
                 console.info('list: addFolder');
                 this.$parent.showForm(
                     {
+                        title   : 'addFolder',
                         data    : {
                             title      : '',
                             description: '',

@@ -257,9 +257,9 @@
      */
 
 
-        html {
-            @include smallScroll;
-        }
+    html {
+        @include smallScroll;
+    }
 </style>
 <script>
     import router from "./router";
@@ -336,6 +336,7 @@
             /**
              * @param data Object
              * {
+             *          title   : ''
              *          data    : {
              *              title      : '',
              *          },
@@ -358,8 +359,8 @@
              * */
             showForm    : function (data) {
                 this.popupData = {
-                    type: 'form',
-                    data: data,
+                    type : 'form',
+                    data : data,
                 };
             },
             showLoader  : function () {

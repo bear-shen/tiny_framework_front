@@ -111,7 +111,6 @@
                 setTimeout(() => {
                     this.isTransparent = false;
                 }, 10);
-                popup.hide();
             },
             hide      : function () {
                 this.isTransparent = true;

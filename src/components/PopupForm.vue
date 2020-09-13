@@ -2,7 +2,7 @@
     <div v-on:click.stop="empty" class="popup_form">
         <table>
             <tr>
-                <th colspan="2">editor</th>
+                <th colspan="2">{{title?title:'Editor'}}</th>
             </tr>
             <tr v-for="(val,key) in data">
                 <td>{{key}}</td>
@@ -138,14 +138,15 @@
         },
         data     : function () {
             return {
-                data         : {},
-                template     : {},
-                callback     : {
+                title   : '',
+                data    : {},
+                template: {},
+                callback: {
                     submit: function () {
                     },
-                    cancel : function () {
+                    cancel: function () {
                     },
-                    error  : function () {
+                    error : function () {
                     },
                 },
             }
@@ -154,9 +155,10 @@
             console.info(`popup form: created`);
             let data = Object.assign(
                 {
+                    title   : '',
                     data    : {},
                     template: {},
-                    submit : function () {},
+                    submit  : function () {},
                     cancel  : function () {},
                     error   : function () {},
                 }, this.info);
@@ -178,22 +180,23 @@
                 };
             }
             //
-            this.data             = data.data;
-            this.template         = data.template;
+            this.title           = data.title;
+            this.data            = data.data;
+            this.template        = data.template;
             //
             this.callback.submit = data.submit;
-            this.callback.cancel  = data.cancel;
-            this.callback.error   = data.error;
+            this.callback.cancel = data.cancel;
+            this.callback.error  = data.error;
             //
             console.info(this);
         },
         destroyed: function () {
-            this.data             = {};
-            this.template         = {};
+            this.data            = {};
+            this.template        = {};
             //
             this.callback.submit = () => {};
-            this.callback.cancel  = () => {};
-            this.callback.error   = () => {};
+            this.callback.cancel = () => {};
+            this.callback.error  = () => {};
         },
         methods  : {
             reset : function () {

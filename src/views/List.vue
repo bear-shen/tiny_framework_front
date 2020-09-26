@@ -42,7 +42,7 @@
         </div>
         <div :class="['listContent','listType_'+listTypeLocal]">
             <ul>
-                <File v-for="item in list" :item="item" :dir="dir" :listType="listTypeLocal"></File>
+                <File v-for="item in list" :item="item" :dir="dir" :listType="listTypeLocal" :fromList="true"></File>
 
             </ul>
         </div>

@@ -418,12 +418,6 @@
                     data: dirDetail,
                 };
             },
-            showFileList: function (fileInfo) {
-                this.popupData = {
-                    type: 'file',
-                    data: fileInfo,
-                };
-            }
         },
     }
 </script>

@@ -105,6 +105,8 @@
             }
         },
         created   : function () {
+            console.info(this);
+            this.$store.commit('registerPopupDOM',this)
         },
         methods   : {
             show : function () {

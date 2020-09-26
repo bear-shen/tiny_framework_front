@@ -1,6 +1,6 @@
 <template>
     <li :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
-        <div class="ct_alpha" v-on:click="$parent.goto(item.type==='folder'?'directory':'file',item.id)">
+        <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)">
             <span v-if="!item.cover || listType==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
             <img v-if="item.cover && listType!=='text'" class="ct_cover" :src="item.cover" alt="">
         </div>
@@ -27,20 +27,22 @@
                 <div class="ct_time_update">{{item.time_update}}</div>
             </template>
             <div class="ct_operate">
-                <div v-if="item.cover"
-                     :class="['btn', 'btn-dark', {'active':dir.cover_id===item.id}]"
-                     v-on:click="setCover()"
-                ><span class="sysIcon sysIcon_edit"></span>&nbsp;cover
-                </div>
+                <template v-if="fromList">
+                    <div v-if="item.cover"
+                         :class="['btn', 'btn-dark', {'active':dir.cover_id===item.id}]"
+                         v-on:click="setCover()"
+                    ><span class="sysIcon sysIcon_edit"></span>&nbsp;cov
+                    </div>
+                </template>
 
                 <template v-if="editMetaFlag">
                     <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta()">
-                        <span class="sysIcon sysIcon_save"></span>&nbsp;info
+                        <span class="sysIcon sysIcon_save"></span>&nbsp;inf
                     </div>
                 </template>
                 <template v-else>
                     <div :class="['btn', 'btn-dark']" v-on:click="editMeta()">
-                        <span class="sysIcon sysIcon_edit"></span>&nbsp;info
+                        <span class="sysIcon sysIcon_edit"></span>&nbsp;inf
                     </div>
                 </template>
 
@@ -61,11 +63,11 @@
                 </template>
                 <template v-else>
                     <div :class="['btn', 'btn-dark','is_favourite']" v-on:click="favourite()">
-                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;unfav
+                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;fav
                     </div>
                 </template>
                 <div :class="['btn', 'btn-dark']" v-on:click="deleteFile()">
-                    <span class="sysIcon sysIcon_delete"></span>&nbsp;delete
+                    <span class="sysIcon sysIcon_delete"></span>&nbsp;del
                 </div>
             </div>
         </div>
@@ -99,7 +101,7 @@
                             v-for="tag in group.sub"
                             :data-id="tag.id"
                             class="btn btn-dark"
-                            v-on:click="$parent.goto('tag',tag.id)"
+                            v-on:click="goto('tag',tag.id)"
                     >
                         {{tag.name}}
                     </dd>
@@ -504,10 +506,13 @@
 </style>
 
 <script>
+    import store from '../store';
+
     export default {
         name         : "File",
         // el     : '#msg',
-        props        : ['item', 'dir', 'listType'],
+        store        : store,
+        props        : ['item', 'dir', 'listType', 'fromList'],
         data         : function () {
             return {
                 editMetaFlag   : 0,
@@ -538,36 +543,17 @@
             /**
              * @todo api
              * */
-            goDetail      : function (targetIndex) {
-                console.info('list: goDetail');
+            goto      : function (targetIndex) {
+                console.info('file: goDetail');
                 //比正常文件列表多raw和normal字段用于显示大图
-                this.$parent.showFileList(
-                    {
-                        list   : this.list,
-                        current: targetIndex,
-                        query  : this.query,
-                        param  : this.param,
-                        page   : this.page
-                    });
+                this.$store.commit('showFileList',{
+
+                });
             },
             //
             editMeta      : function () {
                 console.info('list: editMeta');
                 this.editMetaFlag = 1;
-            },
-            /**
-             * @todo api
-             * */
-            searchTag     : function () {
-                console.debug('list: searchTag ' + this.addTagTxt);
-                if (!this.addTagTxt) return;
-                this.showTagSelector = true;
-                this.tagSelector     = [
-                    {id: 4, group_id: 2, name: 'tentacles', group_name: 'male',},
-                    {id: 5, group_id: 2, name: 'dilf', group_name: 'male',},
-                    {id: 2, group_id: 1, name: 'rape', group_name: 'female',},
-                    {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
-                ];
             },
             /**
              * @todo api
@@ -584,6 +570,37 @@
                     }
                 }
             },
+            /**
+             * @todo api
+             * */
+            saveMeta      : function () {
+                console.info('list: saveMeta');
+                this.editMetaFlag = 0;
+            },
+            /**
+             * @todo api
+             * */
+            setCover      : function () {
+                console.info('list: setCover');
+            },
+            /**
+             * @todo api
+             * */
+            favourite     : function () {
+                console.info(`list: favourite ${this.item.id}`);
+                this.item.favourite = this.item.favourite ? 0 : 1;
+            },
+            /**
+             * @todo api @use $parent
+             * */
+            deleteFile    : function () {
+                console.info('list: deleteFile');
+                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
+                    if (this.item.id !== this.item.id) continue;
+                    this.$parent.list.splice(i1, 1);
+                }
+            },
+            // -------------------------------------------
             /**
              * @todo api
              * */
@@ -645,13 +662,6 @@
             /**
              * @todo api
              * */
-            saveMeta      : function () {
-                console.info('list: saveMeta');
-                this.editMetaFlag = 0;
-            },
-            /**
-             * @todo api
-             * */
             saveTag       : function () {
                 console.info('list: saveTag');
                 this.editTagFlag = 0;
@@ -659,25 +669,16 @@
             /**
              * @todo api
              * */
-            setCover      : function () {
-                console.info('list: setCover');
-            },
-            /**
-             * @todo api
-             * */
-            favourite     : function () {
-                console.info(`list: favourite ${this.item.id}`);
-                this.item.favourite = this.item.favourite ? 0 : 1;
-            },
-            /**
-             * @todo api
-             * */
-            deleteFile    : function () {
-                console.info('list: deleteFile');
-                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
-                    if (this.item.id !== this.item.id) continue;
-                    this.$parent.list.splice(i1, 1);
-                }
+            searchTag     : function () {
+                console.debug('list: searchTag ' + this.addTagTxt);
+                if (!this.addTagTxt) return;
+                this.showTagSelector = true;
+                this.tagSelector     = [
+                    {id: 4, group_id: 2, name: 'tentacles', group_name: 'male',},
+                    {id: 5, group_id: 2, name: 'dilf', group_name: 'male',},
+                    {id: 2, group_id: 1, name: 'rape', group_name: 'female',},
+                    {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
+                ];
             },
             /**
              * @todo api

@@ -90,11 +90,12 @@
                 // console.info(to);
                 // console.info(from);
                 // console.info(this.page);
-                if (!Helper.isSameRoute(from, to)) {
-                    console.info('paginator: page modified');
-                    this.page = 1;
-                    this.pagination();
+                if (Helper.isSameRoute(from, to)) {
+                    return;
                 }
+                console.info('paginator: page modified');
+                this.page = 1;
+                this.pagination();
             },
             page  : function (to, from) {
                 console.info('paginator: param:page compute watched');

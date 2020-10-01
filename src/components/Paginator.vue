@@ -71,8 +71,8 @@
     import GenFunc from '../lib/GenFuncLib';
 
     /**
-     * 除去点击分页以后分页自行切换的部分
      * 分页通过监听路由的修改来自己实现自动切换
+     * 这边只实现通过点击分页的分页
      *
      * @var page
      * @method goto                 (page) 重置分页
@@ -139,7 +139,11 @@
                 let path      = router.currentRoute.path;
                 let query     = GenFunc.copyObject(router.currentRoute.query);
                 let routeData = {path: path, query: Object.assign(query, {page: page})};
-                console.info(routeData);
+                if (Helper.isSameRoute({path, query: router.currentRoute.query}, routeData)) {
+                    console.info('is same route, pass');
+                    return;
+                }
+                // console.info(routeData);
                 router.push(routeData);
             },
             goto      : function (page) {

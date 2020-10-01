@@ -27,11 +27,11 @@
         </div>
         <div id="footer" class="nav navbar-fixed-bottom">
             <!--            <div class="">-->
-            <Msg v-bind:msg="msgData"/>
+            <Msg/>
             <Paginator/>
             <!--            </div>-->
         </div>
-        <Popup v-bind:info="popupData"/>
+        <Popup/>
     </div>
 </template>
 
@@ -285,10 +285,6 @@
                 showTitle   : true,
                 routes      : [],
                 currentRoute: {},
-                query       : {},
-                //--- props ---
-                msgData     : {},
-                popupData   : {},
             };
         },
         store     : store,
@@ -303,12 +299,6 @@
              console.info('app: param:page compute watched');
              }*/
         },
-        /*computed: {
-         page: function () {
-         console.info('app: param:page computed');
-         return this.$store.state.page;
-         }
-         },*/
         created   : function () {
             console.info('app created');
             // console.info(router);
@@ -317,106 +307,10 @@
             this.currentRoute = router.currentRoute;
             // globalDbg         = router;
             globalDbg         = this;
-            //created 的时候watch不到
-            this.pushMsg(
-                'app props success',
-                'info'
-            );
         },
         methods   : {
             toggler     : function () {
                 this.showTitle = !this.showTitle;
-            },
-            pushMsg     : function (data, type) {
-                this.msgData = {
-                    data: data,
-                    type: type,
-                };
-            },
-            /**
-             * @param data Object
-             * {
-             *          title   : ''
-             *          data    : {
-             *              title      : '',
-             *          },
-             *          template: {
-             *              title      : {
-             *                  type: 'text|datetime|textarea|checkbox',
-             *                  default: '', editable: true,
-             *              },
-             *          },
-             *          submit : function (data) {
-             *              console.info('list: callback: submit');
-             *          },
-             *          cancel  : function (data) {
-             *              console.info('list: callback: cancel');
-             *          },
-             *          error   : function (data) {
-             *              console.info('list: callback: error');
-             *          },
-             *      }
-             * */
-            showForm    : function (data) {
-                this.popupData = {
-                    type : 'form',
-                    data : data,
-                };
-            },
-            showLoader  : function () {
-                this.popupData = {
-                    type: 'loader',
-                };
-            },
-            hideLoader  : function () {
-                this.popupData = {
-                    type  : 'loader',
-                    isShow: false,
-                };
-            },
-            /**
-             * @param data Object
-             * {
-             *          data    : '',
-             *          submit : function (data) {
-             *              console.info('list: callback: submit');
-             *          },
-             *          cancel  : function (data) {
-             *              console.info('list: callback: cancel');
-             *          },
-             *      }
-             * */
-            showConfirm : function (data) {
-                /*data           = {
-                 data  : 'this is confirm window',
-                 submit: () => {console.info('confirm: callback: submit');},
-                 cancel: () => {console.info('confirm: callback: cancel');},
-                 };*/
-                this.popupData = {
-                    type: 'confirm',
-                    data: data,
-                };
-            },
-            /**
-             * @param dirDetail Object
-             * {
-             *          data    : {
-             *              id      :0,
-                            title   :'',
-             *          },
-             *          submit : function (data) {
-             *              console.info('list: callback: submit');
-             *          },
-             *          cancel  : function (data) {
-             *              console.info('list: callback: cancel');
-             *          },
-             *      }
-             * */
-            showUploader: function (dirDetail) {
-                this.popupData = {
-                    type: 'uploader',
-                    data: dirDetail,
-                };
             },
         },
     }

@@ -743,6 +743,14 @@ const GenFunc = {
         if (!exist) classArr.push(className);
         element.className = Array.prototype.join.call(classArr, " ");  //把数组转成字符串并赋值
     },
+    copyObject    : function (object) {
+        let target = {};
+        for (var key in object) {
+            if (!object.hasOwnProperty(key)) continue;
+            target[key] = object[key];
+        }
+        return target;
+    },
     zzz           : {
         /**
          * 1.5 收集数据并发送ajax

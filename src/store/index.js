@@ -1,47 +1,52 @@
-import Vue  from 'vue'
-import Vuex from 'vuex'
-import App  from "../App";
+import Vue    from 'vue'
+import Vuex   from 'vuex'
+import App    from "../App";
+import router from "../router";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store(
     {
         state    : {
-            query            : {},
+            paginatorDOM: null,
             //
-            page             : 1,
-            paginatorCallback: function (page) {
-            },
-            popupDOM         : null,
+            msgDOM      : null,
+            //
+            popupDOM    : null,
         },
         mutations: {
-            setPage             : (state, page) => {
-                console.info(`Store setPage: ${page}`);
-                if (state.page === page) return;
-                state.page = page;
-                state.paginatorCallback(page);
+            // -------------------------------
+            registerPaginator: (state, dom) => {
+                console.info(`Store registerPaginator`);
+                state.paginatorDOM = dom;
             },
-            setPaginatorCallback: (state, callback) => {
-                console.info(`Store setPaginatorCallback: `);
-                state.paginatorCallback = callback;
+            // -------------------------------
+            goto             : (state, query) => {
+                console.info(`Store goto`);
+                if (!state.paginatorDOM) return false;
+                //
+                let routeData = Object.assign({path: '', query: {}}, query);
+                router.push(routeData);
             },
-            setQuery            : (state, query) => {
-                console.info(`Store setQuery: `);
-                state.query = query;
+            // -------------------------------
+            pushMsg          : (state, payload) => {
+                console.info('store pushMsg');
+                if (!state.msgDOM) return false;
+                state.msgDOM.push(payload.type, payload.data);
             },
-            showFileList        : function (state, payload) {
-                console.info('store showFileList');
-                console.info(state.popupDOM);
-                console.info(state.popupDOM.show());
-                /*this.popupData = {
-                 type: 'file',
-                 data: payload,
-                 };*/
+            registerMsgDOM   : (state, dom) => {
+                console.info('store registerMsgDOM');
+                state.msgDOM = dom;
             },
-            registerPopupDOM    : function (state, payload) {
+            // -------------------------------
+            popup            : (state, payload) => {
+                console.info('store popup');
+                if (!state.popupDOM) return false;
+            },
+            registerPopupDOM : (state, dom) => {
                 console.info('store registerPopupDOM');
-                state.popupDOM = payload;
-            }
+                state.popupDOM = dom;
+            },
         },
         actions  : {},
         modules  : {}

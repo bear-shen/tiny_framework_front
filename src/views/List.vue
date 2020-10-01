@@ -294,9 +294,9 @@
             this.listTypeLocal = this.listType;
             this.fillParam(router.currentRoute.query);
             this.query(this.param, this.page).then(this.fillData);
-            this.$parent.pushMsg(
-                'list props success',
-                'info'
+            store.commit(
+                'pushMsg',
+                {type: 'info', data: 'list props success'}
             );
 
             globalDbg = this;

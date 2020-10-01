@@ -98,6 +98,7 @@
 
 <script>
     import router from "../router";
+    import store  from '../store'
 
     /**
      * @var list        (internal)
@@ -109,7 +110,6 @@
     export default {
         name   : "Msg",
         // el     : '#msg',
-        props  : ['msg'],
         data   : function () {
             return {
                 list       : [
@@ -125,15 +125,9 @@
             }
         },
         watch  : {
-            msg: function (to, from) {
-                console.info(`msg: msg watched`);
-                this.push(to.data, to.type);
-            }
         },
         created: function () {
-            if(this.msg){
-                this.push(this.msg.data,this.msg.type)
-            }
+            store.commit('registerMsgDOM', this);
         },
         methods: {
             push      : function (data, type) {

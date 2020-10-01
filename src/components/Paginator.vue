@@ -5,7 +5,7 @@
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
-        <li v-for="offset in pageOffsets" :class="{active:page===offset}" v-on:click="goto(offset)">
+        <li v-for="offset in pageOffsets" :class="{active:getPage()===offset}" v-on:click="goto(offset)">
             <a href="javascript:void(0)">{{offset}}</a>
         </li>
         <!--<li c0.lass="disabled"><a href="javascript:void(0)">3</a></li>-->
@@ -65,9 +65,10 @@
 </style>
 
 <script>
-    import store  from '../store';
-    import router from '../router';
-    import Helper from '../lib/Helper';
+    import store   from '../store';
+    import router  from '../router';
+    import Helper  from '../lib/Helper';
+    import GenFunc from '../lib/GenFuncLib';
 
     /**
      * 除去点击分页以后分页自行切换的部分
@@ -85,54 +86,46 @@
         store   : store,
         // el     : '#paginator',
         watch   : {
+            //route 看起来不能监听到翻页
             $route: function (to, from) {
                 console.info(`paginator: route to ${router.currentRoute.name}`);
-                // console.info(to);
-                // console.info(from);
-                // console.info(this.page);
-                if (Helper.isSameRoute(from, to)) {
-                    return;
-                }
-                console.info('paginator: page modified');
-                this.page = 1;
                 this.pagination();
             },
-            page  : function (to, from) {
-                console.info('paginator: param:page compute watched');
-            }
         },
         data    : function () {
             return {
-                pageOffsets: [
+                pageOffsets  : [
                     1, 2, 3, 4, 5,
                 ],
+                usePagination: true,
             };
         },
         created : function () {
             //专门写一个回调函数是为了对应事件无法获取的情况
-            this.$store.commit('setPaginatorCallback', this.callback);
+            this.$store.commit('registerPaginator', this.callback);
             //首次回调时使用的是请求里得到的page，列表加载早于分页加载
             //之后的回调则使用内部函数了
             this.pagination();
         },
-        computed: {
-            page: {
-                get: function () {
-                    console.info('paginator: param:page get');
-                    return this.$store.state.page;
-                },
-                set: function (val) {
-                    console.info('paginator: param:page set');
-                    this.$store.commit('setPage', val);
-                },
-            }
-        },
+        computed: {},
         methods : {
+            /**
+             *  computed 的不更新，可能是 get 方法收不到消息的原因
+             *  这样写不够原生，性能影响不详
+             *  先不做缓存，就这样
+             *  */
+            getPage   : function () {
+                console.info('paginator: param:page get');
+                let query = router.currentRoute.query;
+                return query.page ? parseInt(query.page) : 1;
+            },
             /** @private 生成新的分页 */
             pagination: function () {
-                console.info('paginator: go pagination, page:' + this.page);
+                console.info('paginator: go pagination, page:' + this.getPage());
+                console.debug(router);
+                console.debug(router.currentRoute.query);
                 //生成页数
-                let start        = Math.max(this.page - 2, 1);
+                let start        = Math.max(this.getPage() - 2, 1);
                 let end          = start + 4;
                 let targetOffset = [];
                 for (let i1 = start; i1 <= end; i1++) {
@@ -141,38 +134,26 @@
                 this.pageOffsets = targetOffset;
             },
             /** @private 切换分页 */
-            switch    : function () {
-                console.info('paginator: switcher');
-                let path  = router.currentRoute.path;
-                let param = router.currentRoute.params;
-                let page  = this.page;
-                router.push(
-                    {path: path, query: Object.assign(param, {page: page})},
-                    () => {
-                        this.pagination();
-                    }
-                );
+            switch    : function (page) {
+                console.info(`paginator: switcher ${page}`);
+                let path      = router.currentRoute.path;
+                let query     = GenFunc.copyObject(router.currentRoute.query);
+                let routeData = {path: path, query: Object.assign(query, {page: page})};
+                console.info(routeData);
+                router.push(routeData);
             },
             goto      : function (page) {
-                console.info('paginator: reset');
-                this.$store.commit('setPage', page ? page : 1);
-                this.switch();
+                console.info(`paginator: goto ${page}`);
+                this.switch(page ? page : 1);
             },
             prev      : function () {
                 console.info('paginator: prev');
-                this.$store.commit('setPage', this.page - 1);
-                this.switch();
+                this.switch(this.getPage() - 1);
             },
             next      : function () {
                 console.info('paginator: next');
-                this.$store.commit('setPage', this.page + 1);
-                this.switch();
+                this.switch(this.getPage() + 1);
             },
-            callback  : function (page) {
-                console.info('paginator: callback');
-                this.page = page;
-                this.pagination();
-            }
         }
     }
 </script>

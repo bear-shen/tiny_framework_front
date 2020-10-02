@@ -29,7 +29,7 @@
             <div class="ct_operate">
                 <template v-if="fromList">
                     <div v-if="item.cover"
-                         :class="['btn', 'btn-dark', {'active':dir.cover_id===item.id}]"
+                         :class="['btn', 'btn-dark', {'active':dir && dir.cover_id===item.id}]"
                          v-on:click="setCover()"
                     ><span class="sysIcon sysIcon_edit"></span>&nbsp;cov
                     </div>
@@ -62,7 +62,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div :class="['btn', 'btn-dark','is_favourite']" v-on:click="favourite()">
+                    <div :class="['btn', 'btn-dark','active']" v-on:click="favourite()">
                         <span class="sysIcon sysIcon_heart-o"></span>&nbsp;fav
                     </div>
                 </template>
@@ -412,7 +412,7 @@
             }
 
             .ct_operate {
-                .is_favourite {
+                .active {
                     color: hsla(333, 70%, 70%, 1);
                 }
             }
@@ -512,7 +512,13 @@
         name         : "File",
         // el     : '#msg',
         store        : store,
-        props        : ['item', 'dir', 'listType', 'fromList'],
+        //dir是可选的，从收藏夹进入不传入dir
+        props        : [
+            'item',
+            'dir',
+            'listType',
+            'fromList'
+        ],
         data         : function () {
             return {
                 editMetaFlag   : 0,
@@ -539,16 +545,8 @@
             document.getElementById('app').removeEventListener('click', this.searchTagClear)
         },
         methods      : {
-
-            /**
-             * @todo api
-             * */
-            goto      : function (targetIndex) {
-                console.info('file: goDetail');
-                //比正常文件列表多raw和normal字段用于显示大图
-                this.$store.commit('showFileList',{
-
-                });
+            goto          : function (type, targetId) {
+                this.$parent.goto(type, targetId);
             },
             //
             editMeta      : function () {
@@ -582,6 +580,8 @@
              * */
             setCover      : function () {
                 console.info('list: setCover');
+                if (this.dir)
+                    this.dir.cover_id = this.item.id;
             },
             /**
              * @todo api

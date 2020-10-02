@@ -8,6 +8,9 @@ Vue.use(Vuex)
 export default new Vuex.Store(
     {
         state    : {
+            //列表页用的跳转方法，想了想还是用 $parent 干脆一些
+            gotoFunc    : null,
+            //
             paginatorDOM: null,
             //
             msgDOM      : null,
@@ -21,13 +24,17 @@ export default new Vuex.Store(
                 state.paginatorDOM = dom;
             },
             // -------------------------------
-            goto             : (state, query) => {
-                console.info(`Store goto`);
-                if (!state.paginatorDOM) return false;
-                //
-                let routeData = Object.assign({path: '', query: {}}, query);
-                router.push(routeData);
-            },
+            /*goto             : (state, query) => {
+             console.info(`Store goto`);
+             if (!state.paginatorDOM) return false;
+             //
+             let routeData = Object.assign({path: '', query: {}}, query);
+             router.push(routeData);
+             },
+             registerGoto     : (state, func) => {
+             console.info(`Store registerGoto`);
+             state.gotoFunc = func;
+             },*/
             // -------------------------------
             pushMsg          : (state, payload) => {
                 console.info('store pushMsg');
@@ -41,7 +48,55 @@ export default new Vuex.Store(
             // -------------------------------
             popup            : (state, payload) => {
                 console.info('store popup');
+                /**
+                 * ----
+                 * type:'form'
+                 * info:{
+                 *     title   : '',
+                 *     data    : {name:value},
+                 *     template: {
+                 *          name        :{
+                 *          type        :('text'|'datetime'|'textarea'|'checkbox'),
+                 *          default     :'',
+                 *          editable    :(true|false)
+                 *          }
+                 *     },
+                 *     submit  : function ({name:value}) {},
+                 *     cancel  : function () {},
+                 *     error   : function () {},
+                 * }
+                 * ----
+                 * type:'loader'
+                 * info:null
+                 * ----
+                 * type:'confirm'
+                 * info:{
+                 *     data    : '',
+                 *     submit  : function ({name:value}) {},
+                 *     cancel  : function () {},
+                 * }
+                 * ----
+                 * type:'uploader'
+                 * info:{
+                 *     dir_id  : '',
+                 * }
+                 * ----
+                 * type:'file'
+                 * info:{
+                 *     list   : [],
+                 *     current: 0,
+                 *     query  : false,
+                 *     param  : {
+                 *         id:'',raw:'',normal:'',cover:'',cover_id:'',title:'',description:'',size:'',hash:'',type:'',favourite:'',time_create:'',time_update:'',tag:[{
+                 *             id  :'',name:'',sub :[{id  :'',name:''}],
+                 *         }],
+                 *     },
+                 *     page   : 1,
+                 * }
+                 * ----
+                 * */
                 if (!state.popupDOM) return false;
+                state.popupDOM.show(payload);
             },
             registerPopupDOM : (state, dom) => {
                 console.info('store registerPopupDOM');

@@ -15,15 +15,11 @@
                 <li class="breadcrumb-item" v-for="bread in navi" v-on:click="goto(bread.type,bread.id)">{{bread.name}}</li>
             </ul>
             <div class="listHeaderSearch">
-                <input type="text" placeholder="search" v-model="searchTxt">
+                <input type="text" placeholder="search" v-model="queryData.keyword">
                 <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
             </div>
-            <div class="listHeaderOperates">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="addFile"></button>
-                <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
-            </div>
             <div class="listHeaderSort">
-                <select v-model="sort">
+                <select v-model="queryData.sort">
                     <option value="id_asc">id ↑</option>
                     <option value="id_desc">id ↓</option>
                     <option value="name_asc">name ↑</option>
@@ -33,6 +29,10 @@
                     <option value="upd_asc">upd time ↑</option>
                     <option value="upd_desc">upd time ↓</option>
                 </select>
+            </div>
+            <div class="listHeaderOperates">
+                <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="addFile"></button>
+                <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="listHeaderLayout">
                 <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
@@ -207,15 +207,19 @@
         components   : {File},
         store        : store,
         watch        : {
-            $route   : function (to, from) {
+            $route          : function (to, from) {
                 console.info(`list: route to ${router.currentRoute.name}`);
                 this.fillQuery(router.currentRoute.query);
-                this.query().then(this.fillData);
+                this.query(this.queryData, this.page).then(this.fillData);
             },
-            queryData: function (to, from) {
+            /*queryData       : function (to, from) {
                 console.info(to);
                 console.info(from);
-            }
+            },*/
+            'queryData.sort': function (to, from) {
+                console.info(`list: queryData.sort moded`);
+                this.goto('search');
+            },
         },
         data         : function () {
             return {
@@ -223,7 +227,7 @@
                     from   : 0,
                     tag    : 0,
                     keyword: '',
-                    sort   : this.sort,
+                    sort   : 'id_asc',
                 },
                 page     : 0,
                 //
@@ -234,7 +238,6 @@
                 dir      : {},
                 // page: 1,
                 //
-                searchTxt: '',
             }
         },
         /*watch  : {
@@ -256,15 +259,15 @@
                     localStorage.setItem('toshokan_framework_var_listType', val);
                 },
             },
-            sort         : {
+            sortLocal    : {
                 get: function () {
-                    console.info('list: query:sort get');
+                    console.info('list: query:sortLocal get');
                     let data = localStorage.getItem('toshokan_framework_var_list_sort');
                     data     = data ? data : 'id_desc';
                     return data;
                 },
                 set: function (val) {
-                    console.info('list: query:sort set:' + val);
+                    console.info('list: query:sortLocal set:' + val);
                     localStorage.setItem('toshokan_framework_var_list_sort', val);
                 },
             },
@@ -276,9 +279,10 @@
             // console.info(GenFunc);
             // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
-            this.listType = this.listTypeLocal;
+            this.listType   = this.listTypeLocal;
+            this.query.sort = this.sortLocal;
             this.fillQuery(router.currentRoute.query);
-            this.query().then(this.fillData);
+            this.query(this.queryData, this.page).then(this.fillData);
             store.commit(
                 'pushMsg',
                 {type: 'info', data: 'list props success'}
@@ -301,6 +305,8 @@
         methods      : {
             /**
              * @todo api
+             * 拆开是为了方便外部调用
+             *
              * @return Promise
              *  {
              *      list  :'',
@@ -308,15 +314,17 @@
              *      navi  :'',
              *      query :'',
              *  }
+             * @param {{name: string}|{}|{from: number, tag: number, sort: *, keyword: string}} query
+             * @param {*} page
              * */
-            query         : function () {
+            query         : function (query, page) {
                 console.info('list: query');
                 console.info(this);
                 // console.info(page);
                 // console.info(typeof page);
-                let query = GenFunc.copyObject(this.queryData);
-                let page  = this.page;
-                query     = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
+                query = GenFunc.copyObject(query);
+                page  = typeof query.page !== 'undefined' ? 1 : query.page;
+                query = Object.assign(query, {page})
                 // console.info(Popup);
                 // Popup.show();
                 let listData = [
@@ -540,7 +548,7 @@
                         description: 'this is description',
                         size       : '996 KB',
                         hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'image',
+                        type       : 'folder',
                         favourite  : '1',
                         time_create: '1919-08-10 11:45:14',
                         time_update: '1919-08-10 11:45:14',
@@ -737,11 +745,8 @@
             },
             //
             goto          : function (type, targetId) {
-                let query = {
-                    from   : 0,
-                    tag    : 0,
-                    keyword: '',
-                };
+                console.info(`list: goto ${type} ${targetId}`);
+                let query = GenFunc.copyObject(this.queryData);
                 switch (type) {
                     //点文件夹，跳转文件夹
                     case 'directory':
@@ -754,8 +759,7 @@
                         break;
                     //search 查询当前目录下的 txt
                     case 'search':
-                        query.from    = this.dir.id;
-                        query.keyword = this.searchTxt;
+                        query.from = this.dir.id;
                         break;
                     //file 显示详情
                     case 'file':
@@ -765,8 +769,11 @@
                             targetIndex = i1;
                             break;
                         }
-                        return this.goDetail(targetIndex);
-                        break;
+                        store.commit('popup',{
+                            type:'',
+                            info: {},
+                        });
+                        return ;
                 }
                 let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
                 if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
@@ -780,8 +787,9 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
-                this.$parent.showForm(
-                    {
+                store.commit('popup',{
+                    type:'form',
+                    info:{
                         title   : 'addFolder',
                         data    : {
                             title      : '',
@@ -803,7 +811,8 @@
                             console.info('list: callback: error');
                             console.info(data);
                         },
-                    });
+                    },
+                });
                 /*this.$parent.showLoader(
                  {type:'loader'}
                  );*/

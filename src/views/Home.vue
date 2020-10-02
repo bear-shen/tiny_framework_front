@@ -28,7 +28,7 @@
                 this.currentRoute = router.currentRoute;
                 this.query();
             },
-            page: function (to, from) {
+            page  : function (to, from) {
                 console.info('home: param:page compute watched');
             }
         },
@@ -76,6 +76,7 @@
         methods   : {
             query: function () {
                 console.info('home: query');
+                store.commit('pushMsg', {type: 'info', data: 'query msg'});
             }
         },
     }

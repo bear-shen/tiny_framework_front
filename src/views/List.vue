@@ -35,14 +35,14 @@
                 </select>
             </div>
             <div class="listHeaderLayout">
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listTypeLocal==='text'}]" v-on:click="changeListType('text')"></button>
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_detail',{active:listTypeLocal==='detail'}]" v-on:click="changeListType('detail')"></button>
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listTypeLocal==='img'}]" v-on:click="changeListType('img')"></button>
+                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
+                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
+                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listType==='img'}]" v-on:click="changeListType('img')"></button>
             </div>
         </div>
-        <div :class="['listContent','listType_'+listTypeLocal]">
+        <div :class="['listContent','listType_'+listType]">
             <ul>
-                <File v-for="item in list" :item="item" :dir="dir" :listType="listTypeLocal" :fromList="true"></File>
+                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :fromList="true"></File>
 
             </ul>
         </div>
@@ -207,39 +207,34 @@
         components   : {File},
         store        : store,
         watch        : {
-            $route: function (to, from) {
+            $route   : function (to, from) {
                 console.info(`list: route to ${router.currentRoute.name}`);
-                // console.info(to);
-                // console.info(from);
-                // console.info(router.currentRoute.params);
-                this.fillParam(router.currentRoute.query);
-                // this.currentRoute = router.currentRoute;
-                this.query(this.param, this.page).then(this.fillData);
+                this.fillQuery(router.currentRoute.query);
+                this.query().then(this.fillData);
             },
-            page  : function (to, from) {
-                console.info('list: param:page compute watched');
-            },
-            param : function (to, from) {
+            queryData: function (to, from) {
                 console.info(to);
                 console.info(from);
             }
         },
         data         : function () {
             return {
-                param        : {
+                queryData: {
                     from   : 0,
                     tag    : 0,
                     keyword: '',
                     sort   : this.sort,
                 },
-                listTypeLocal: this.listType,
+                page     : 0,
+                //
+                listType : this.listTypeLocal,
                 // from query
-                navi         : [],
-                list         : [],
-                dir          : {},
+                navi     : [],
+                list     : [],
+                dir      : {},
                 // page: 1,
                 //
-                searchTxt    : '',
+                searchTxt: '',
             }
         },
         /*watch  : {
@@ -249,37 +244,27 @@
          }
          },*/
         computed     : {
-            page    : {
+            listTypeLocal: {
                 get: function () {
-                    console.info('list: param:page get');
-                    return this.$store.state.page;
-                },
-                set: function (val) {
-                    console.info('list: param:page set');
-                    this.$store.commit('setPage', val);
-                },
-            },
-            listType: {
-                get: function () {
-                    console.info('list: param:listType get');
+                    console.info('list: query:listType get');
                     let data = localStorage.getItem('toshokan_framework_var_listType');
                     data     = data ? data : 'text';
                     return data;
                 },
                 set: function (val) {
-                    console.info('list: param:listType set:' + val);
+                    console.info('list: query:listType set:' + val);
                     localStorage.setItem('toshokan_framework_var_listType', val);
                 },
             },
-            sort    : {
+            sort         : {
                 get: function () {
-                    console.info('list: param:sort get');
+                    console.info('list: query:sort get');
                     let data = localStorage.getItem('toshokan_framework_var_list_sort');
                     data     = data ? data : 'id_desc';
                     return data;
                 },
                 set: function (val) {
-                    console.info('list: param:sort set:' + val);
+                    console.info('list: query:sort set:' + val);
                     localStorage.setItem('toshokan_framework_var_list_sort', val);
                 },
             },
@@ -291,9 +276,9 @@
             // console.info(GenFunc);
             // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
-            this.listTypeLocal = this.listType;
-            this.fillParam(router.currentRoute.query);
-            this.query(this.param, this.page).then(this.fillData);
+            this.listType = this.listTypeLocal;
+            this.fillQuery(router.currentRoute.query);
+            this.query().then(this.fillData);
             store.commit(
                 'pushMsg',
                 {type: 'info', data: 'list props success'}
@@ -316,22 +301,22 @@
         methods      : {
             /**
              * @todo api
-             * @param param object
-             * @param page int 分开写是因为 page 是计算参数
              * @return Promise
              *  {
              *      list  :'',
              *      dir   :'',
              *      navi  :'',
-             *      param :'',
+             *      query :'',
              *  }
              * */
-            query         : function (param, page) {
+            query         : function () {
                 console.info('list: query');
                 console.info(this);
                 // console.info(page);
                 // console.info(typeof page);
-                param = Object.assign(param, {page: typeof page === 'undefined' ? 1 : page})
+                let query = GenFunc.copyObject(this.queryData);
+                let page  = this.page;
+                query     = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 // console.info(Popup);
                 // Popup.show();
                 let listData = [
@@ -715,22 +700,24 @@
                 ];
                 let dir  = listData[0];
                 return new Promise((resolve, reject) => {
-                    console.warn({list: listData, dir, navi, param});
-                    return resolve({list: listData, dir, navi, param});
+                    console.warn({list: listData, dir, navi, query});
+                    return resolve({list: listData, dir, navi, query});
                 });
             },
             /**
              * 写入参数
              * */
-            fillParam     : function (param) {
-                console.info('list: fillParam');
-                // console.warn(param);
-                for (let key in this.param) {
-                    if (typeof param[key] === 'undefined') continue;
-                    this.param[key] = param[key];
-                }
-                if (param.page) {
-                    this.page = parseInt(param.page);
+            fillQuery     : function (query) {
+                console.info('list: fillQuery');
+                // console.warn(query);
+                let queryNames = Object.getOwnPropertyNames(query);
+                for (let i1 = 0; i1 < queryNames.length; i1++) {
+                    let name = queryNames[i1];
+                    if (name === 'page') {
+                        this.page = query[name];
+                    } else {
+                        this.queryData[name] = query[name];
+                    }
                 }
             },
             fillData      : function (resolveData) {
@@ -740,8 +727,8 @@
                 this.dir  = resolveData.dir;
                 //navi 导航
                 this.navi = resolveData.navi;
-                //这边理论上不用重写,但是总之写都写了
-                this.fillParam(resolveData.param);
+                //这边理论上不用重写,主要是准备到时候把查询字段修正后返回
+                this.fillQuery(resolveData.query);
             },
             changeListType: function (listType) {
                 console.info('list: changeListType');

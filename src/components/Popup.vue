@@ -76,25 +76,7 @@
         name      : "Popup",
         components: {PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
-        props     : ['info'],
-        watch     : {
-            //弹层数据处理
-            info: function (to, from) {
-                console.info(`popup: info watched`);
-                let data       = Object.assign(
-                    {
-                        type: 'form',
-                        data: {},
-                    }, to);
-                //
-                this.type      = data.type;
-                this.popupInfo = data.data;
-                //
-                this.show();
-                console.info(this);
-                console.info(this.popupInfo);
-            }
-        },
+        watch     : {},
         data      : function () {
             return {
                 type         : 'form',
@@ -106,10 +88,13 @@
         },
         created   : function () {
             console.info(this);
-            this.$store.commit('registerPopupDOM',this)
+            this.$store.commit('registerPopupDOM', this)
         },
         methods   : {
-            show : function () {
+            show : function (data) {
+                this.type      = data.type;
+                this.popupInfo = data.info;
+
                 this.isShow = true;
                 //做个延迟不然特效不会出来……
                 setTimeout(() => {

@@ -43,6 +43,8 @@
             height: calc(50vh - 2vw - #{$fontSize} * 2 - 10px);
             overflow-y: auto;
 
+            @include smallScroll;
+
             .dragList {
                 list-style: none;
                 padding: 0;

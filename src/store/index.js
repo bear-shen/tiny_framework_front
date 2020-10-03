@@ -72,7 +72,7 @@ export default new Vuex.Store(
                  * type:'confirm'
                  * info:{
                  *     data    : '',
-                 *     submit  : function ({name:value}) {},
+                 *     submit  : function () {},
                  *     cancel  : function () {},
                  * }
                  * ----
@@ -83,16 +83,13 @@ export default new Vuex.Store(
                  * ----
                  * type:'file'
                  * info:{
-                 *     list   : [],
-                 *     current: 0,
-                 *     query  : false,
-                 *     param  : {
-                 *         id:'',raw:'',normal:'',cover:'',cover_id:'',title:'',description:'',size:'',hash:'',type:'',favourite:'',time_create:'',time_update:'',tag:[{
-                 *             id  :'',name:'',sub :[{id  :'',name:''}],
-                 *         }],
-                 *     },
-                 *     page   : 1,
+                 *     currentId  : 0,
+                 *     query      : function(){},
+                 *     queryData  : {},
                  * }
+                 * ----
+                 * type:'hide'
+                 * info:null
                  * ----
                  * */
                 if (!state.popupDOM) return false;

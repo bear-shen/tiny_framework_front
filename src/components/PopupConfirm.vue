@@ -65,6 +65,9 @@
                 font-size: 2em;
             }
         }
+        button{
+            margin-left: 1em;
+        }
     }
 
     @media(max-width: 767px) {

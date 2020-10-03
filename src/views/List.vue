@@ -213,9 +213,9 @@
                 this.query(this.queryData, this.page).then(this.fillData);
             },
             /*queryData       : function (to, from) {
-                console.info(to);
-                console.info(from);
-            },*/
+             console.info(to);
+             console.info(from);
+             },*/
             'queryData.sort': function (to, from) {
                 console.info(`list: queryData.sort moded`);
                 this.goto('search');
@@ -769,11 +769,16 @@
                             targetIndex = i1;
                             break;
                         }
-                        store.commit('popup',{
-                            type:'',
-                            info: {},
+                        store.commit('popup', {
+                            type: 'file',
+                            info: {
+                                currentId: targetId,
+                                query    : this.query,
+                                queryData: this.queryData,
+                                goto     : this.goto,
+                            },
                         });
-                        return ;
+                        return;
                 }
                 let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
                 if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
@@ -787,9 +792,41 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
-                store.commit('popup',{
-                    type:'form',
-                    info:{
+                /*store.commit('popup', {
+                 type: 'file',
+                 info: {
+                 currentId: 1,
+                 query    : this.query,
+                 queryData: this.queryData,
+                 }
+                 });
+                 return;
+                 store.commit('popup', {
+                 type: 'uploader',
+                 info: {
+                 dir_id: 1,
+                 }
+                 });
+                 return;
+                 store.commit('popup', {
+                 type: 'confirm',
+                 info: {
+                 data: 'confirm test',
+                 }
+                 });
+                 return;
+                 store.commit('popup', {
+                 type: 'loader',
+                 });
+                 setTimeout(() => {
+                 store.commit('popup', {
+                 type: 'hide',
+                 });
+                 }, 1000);
+                 return;*/
+                store.commit('popup', {
+                    type: 'form',
+                    info: {
                         title   : 'addFolder',
                         data    : {
                             title      : '',

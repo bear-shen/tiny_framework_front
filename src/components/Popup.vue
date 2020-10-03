@@ -92,10 +92,13 @@
         },
         methods   : {
             show : function (data) {
+                if (this.type === 'hide') {
+                    this.hide();
+                    return;
+                }
                 this.type      = data.type;
-                this.popupInfo = data.info;
-
-                this.isShow = true;
+                this.popupInfo = data.info ? data.info : {};
+                this.isShow    = true;
                 //做个延迟不然特效不会出来……
                 setTimeout(() => {
                     this.isTransparent = false;

@@ -55,22 +55,22 @@
                 </div>
             </div>
         </div>
-        <template v-if="!loading">
-            <div class="naviBtn naviLeft" v-on:click="prev">
-                <span class="sysIcon sysIcon_arrowleft"></span>
-            </div>
-            <div class="naviBtn naviRight" v-on:click="next">
-                <span class="sysIcon sysIcon_arrowright"></span>
-            </div>
-        </template>
-        <template v-else>
+        <!--        <template v-if="!loading">-->
+        <div class="naviBtn naviLeft" v-on:click="prev">
+            <span class="sysIcon sysIcon_arrowleft"></span>
+        </div>
+        <div class="naviBtn naviRight" v-on:click="next">
+            <span class="sysIcon sysIcon_arrowright"></span>
+        </div>
+        <!--        </template>-->
+        <!--<template v-else>
             <div class="naviBtn naviLeft">
                 <span class="sysIcon sysIcon_sync"></span>
             </div>
             <div class="naviBtn naviRight">
                 <span class="sysIcon sysIcon_sync"></span>
             </div>
-        </template>
+        </template>-->
         <div class="btnClose" v-on:click="close">
             <span class="sysIcon sysIcon_close"></span>
         </div>
@@ -307,6 +307,7 @@
 </style>
 
 <script>
+    import GenFuncLib from "../lib/GenFuncLib";
     import Helper     from "../lib/Helper";
     import router     from "../router";
 
@@ -314,9 +315,10 @@
      * 文件详细页
      * 已知两个问题，
      * 历史版本不知道摆哪
-     * 文件计数的体验不大好，要做好需要传文件夹的文件总数和对应位置然后想怎么处理文件数组
      * 文本文件的详情还没有优化，最好做成ajax的，否则数组太大，而且格式没有测
      *
+     * 这边暂且做成通过给查询增加某个参数后自行获取所有的文件信息，回传估计会很大但是总之没什么办法
+     * 然后因为popup是单层的也不好做加载进度，得看看要不要自己实现一个
      * */
     export default {
         name     : 'PopupFileDetail',
@@ -324,42 +326,40 @@
         data     : function () {
             return {
                 detailOn    : false,
-                loading     : false,
+                // loading     : false,
                 //
                 currentIndex: 0,
                 current     : {},
                 list        : [],
                 //
                 query       : false,
-                param       : {},
-                page        : 1,
+                queryData   : {},
+                gotoCall    : false,
             };
         },
         created  : function () {
             console.info(`popup FileDetail: created`);
-            console.info(this.info.list)
-            let info = {};
-            Object.assign(info, {
-                list   : [],
-                current: 0,
-                query  : false,
-                param  : {},
-                page   : 1,
-            });
-            Object.assign(info, this.info);
-            console.debug(info.list);
-            let current = info.list[info.current];
-            if (!info.list[info.current]) current = info.list[0];
-            //
-            this.current      = current;
-            this.currentIndex = info.current;
-            this.list         = info.list;
-            //
+            let info          = Object.assign(
+                {
+                    currentId: 0,
+                    query    : false,
+                    queryData: {},
+                    goto     : false,
+                }, GenFuncLib.copyObject(this.info));
+            this.currentIndex = 0;
             this.query        = info.query;
-            this.param        = info.param;
-            this.page         = info.page;
-            console.info(info.list);
-            console.info(current);
+            this.gotoCall     = info.goto;
+            this.queryData    = Object.assign(GenFuncLib.copyObject(info.queryData), {all: 1});
+            //
+            this.query(this.queryData, 1).then((resolveData) => {
+                this.fillData(resolveData);
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id != info.currentId) continue;
+                    this.currentIndex = i1;
+                    this.current      = this.list[i1];
+                    break;
+                }
+            });
         },
         destroyed: function () {
             console.info(`popup FileDetail: destroyed`);
@@ -373,96 +373,29 @@
                 this.$parent.hide();
             },
             next        : function () {
-                this.loading = true;
+                // this.loading = true;
                 console.info(`popup FileDetail: next`);
-                if (this.list.length - 1 <= this.currentIndex) {
-                    if (!this.query) {
-                        console.info(`popup FileDetail: next: query not defined`);
-                        this.loading = false;
-                        return false;
-                    }
-                    //查询后写入下一组
-                    this.query(this.param, this.page + 1).then((resolveData) => {
-                        this.fillParam(resolveData.param);
-                        for (let i1 = 0; i1 < resolveData.list.length; i1++) {
-                            this.list.push(resolveData.list[i1]);
-                        }
-                        if (this.list.length - 1 <= this.currentIndex) {
-                            this.loading = false;
-                            console.info(`popup FileDetail: next: query success, but nothing`);
-                            return false;
-                        }
-                        this.currentIndex += 1;
-                        this.current = this.list[this.currentIndex];
-                        this.loading = false;
-                        console.info(`popup FileDetail: next: query success, go next`);
-                        return true;
-                    });
-                    console.info(`popup FileDetail: next: querying`);
-                    return true;
-                }
+                if (this.currentIndex >= this.list.length - 1) return;
                 this.currentIndex += 1;
                 this.current = this.list[this.currentIndex];
-                this.loading = false;
+                // this.loading = false;
                 console.info(`popup FileDetail: next: success`);
                 return true;
             },
             prev        : function () {
-                this.loading = true;
+                // this.loading = true;
                 console.info(`popup FileDetail: prev`);
-                console.debug(this.page);
-                if (this.currentIndex <= 0) {
-                    if (!this.query || this.page <= 1) {
-                        console.info(`popup FileDetail: prev: query not defined or no pages`);
-                        this.loading = false;
-                        return false;
-                    }
-                    //查询后写入下一组
-                    this.query(this.param, this.page - 1).then((resolveData) => {
-                        this.fillParam(resolveData.param);
-                        for (let i1 = resolveData.list.length - 1; i1 >= 0; i1--) {
-                            this.list.unshift(resolveData.list[i1]);
-                            this.currentIndex += 1;
-                        }
-                        if (this.currentIndex <= 0) {
-                            this.loading = false;
-                            console.info(`popup FileDetail: prev: query success, but nothing`);
-                            return false;
-                        }
-                        this.currentIndex -= 1;
-                        this.current = this.list[this.currentIndex];
-                        this.loading = false;
-                        console.info(`popup FileDetail: prev: query success, go prev`);
-                        return true;
-                    });
-                    console.info(`popup FileDetail: prev: querying`);
-                    return true;
-                }
+                // console.debug(this.page);
+                if (this.currentIndex <= 0) return;
                 this.currentIndex -= 1;
                 this.current = this.list[this.currentIndex];
-                this.loading = false;
+                // this.loading = false;
                 console.info(`popup FileDetail: prev: success`);
                 return true;
             },
-            /**
-             * 写入参数
-             * */
-            fillParam   : function (param) {
-                console.info('popup FileDetail: fillParam');
-                // console.warn(param);
-                for (let key in param) {
-                    if (!param.hasOwnProperty(key)) continue;
-                    if (key === 'page') {
-                        this.page = param[key];
-                        continue;
-                    }
-                    this.param[key] = param[key];
-                }
-            },
-            fillData    : function (resolveData) {
+            fillData    : function (resolveData, direction) {
                 console.info('popup FileDetail: fillData');
                 this.list = resolveData.list;
-                this.fillParam(resolveData.param);
             },
             toggleDetail: function () {
                 console.info(`popup FileDetail: showDetail`);
@@ -470,24 +403,9 @@
             },
             goto        : function (type, targetId) {
                 console.info(`popup FileDetail: goto`);
-                let query = {
-                    from   : 0,
-                    tag    : 0,
-                    keyword: '',
-                };
-                switch (type) {
-                    //tag 查询当前目录下的 tag
-                    case 'tag':
-                        query.from = this.current.id;
-                        query.tag  = targetId;
-                        break;
-                }
-                let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
-                if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
-                    console.debug(`isSameRoute`);
-                    return false;
-                }
-                router.push(targetRoute);
+                console.info(this.gotoCall);
+                if (!this.gotoCall) return;
+                this.gotoCall(type, targetId);
                 this.close();
             },
         },

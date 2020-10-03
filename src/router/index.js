@@ -2,7 +2,8 @@ import Vue       from 'vue'
 import VueRouter from 'vue-router'
 import Home      from '../views/Home.vue'
 import List      from "../views/List";
-import Tag  from "../views/Tag";
+import Tag       from "../views/Tag";
+import Favourite from "../views/Favourite";
 
 Vue.use(VueRouter)
 
@@ -21,7 +22,7 @@ const routes = [
     },
     {
         name: 'Favourite', title: 'Favourite',
-        icon: 'sysIcon_heart-o', path: '/favourite', component: Home, props: true,
+        icon: 'sysIcon_heart-o', path: '/favourite', component: Favourite, props: true,
     },
     {
         name: 'UserGroup', title: 'UserGroup',

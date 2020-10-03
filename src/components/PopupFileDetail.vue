@@ -349,7 +349,7 @@
             this.currentIndex = 0;
             this.query        = info.query;
             this.gotoCall     = info.goto;
-            this.queryData    = Object.assign(GenFuncLib.copyObject(info.queryData), {all: 1});
+            this.queryData    = Object.assign(GenFuncLib.copyObject(info.queryData), {all_file: 1});
             //
             this.query(this.queryData, 1).then((resolveData) => {
                 this.fillData(resolveData);

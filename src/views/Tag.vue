@@ -53,7 +53,7 @@
                         <template v-else>
                             <div class="tagMain">
                                 <!--<span class="">ID:{{tag.id}}. {{tag.name}}</span>-->
-                                <span class="">{{tag.name}}</span>
+                                <span class="" v-on:click="goto('tag',tag.id)">{{tag.name}}</span>
                                 <!--<span class="">{{tag.sort}}</span>-->
                                 <!--<span class="">{{tag.time_create}}<br>{{tag.time_update}}</span>-->
                                 <span class="operator">
@@ -230,6 +230,7 @@
                     *:nth-child(1) {
                         margin-right: 0.5em;
                         font-size: $fontSize*0.75;
+                        cursor: pointer;
                     }
 
                     *:nth-child(2) {}
@@ -289,6 +290,7 @@
     import store      from "../store";
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
+    import Helper     from "../lib/Helper";
 
     export default {
         name      : 'Tag',
@@ -299,16 +301,13 @@
                 console.info(`Tag: route to ${router.currentRoute.name}`);
                 // console.info(to);
                 // console.info(from);
-                this.fillParam(router.currentRoute.query);
-                this.query(this.param, this.page).then(this.fillData);
+                this.fillQuery(router.currentRoute.query);
+                this.query(this.queryData, this.page).then(this.fillData);
             },
-            page  : function (to, from) {
-                console.info('Tag: param:page compute watched');
-            }
         },
         data      : function () {
             return {
-                param   : {
+                queryData   : {
                     name: '',
                 },
                 // page: 1,
@@ -329,23 +328,7 @@
                 },
             }
         },
-        /*watch  : {
-         page: function () {
-         console.info('home: param:page computed');
-         return this.$store.state.pageSet;
-         }
-         },*/
         computed  : {
-            page: {
-                get: function () {
-                    console.info('Tag: param:page get');
-                    return this.$store.state.page;
-                },
-                set: function (val) {
-                    console.info('Tag: param:page set');
-                    this.$store.commit('setPage', val);
-                },
-            }
         },
         created   : function () {
             console.info('Tag.vue create');
@@ -353,13 +336,14 @@
             // console.info(GenFunc);
             // console.info(UploaderLib);
             // this.page = this.$store.state.pageSet;
-            this.fillParam(router.currentRoute.query);
-            this.query(this.param, this.page).then(this.fillData);
+            this.fillQuery(router.currentRoute.query);
+            this.query(this.queryData, 1).then(this.fillData);
         },
         mounted   : function () {
             console.info('Tag.vue mount');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
+            store.commit('closePagination');
         },
         updated   : function () {
             console.info('Tag.vue update');
@@ -370,9 +354,9 @@
             /**
              * 查询方法，返回的 promise
              * */
-            query    : function (param, page) {
+            query    : function (query, page) {
                 console.info('Tag: query');
-                param    = Object.assign(param, {page: typeof page === 'undefined' ? 1 : page})
+                query    = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 //
                 let list = [
                     {
@@ -401,32 +385,32 @@
                     list.push(list[0]);
                 }
                 for (let i = 0; i < list.length; i++) {
-                    let sub=[];
+                    let sub = [];
                     for (let j = 0; j < Math.floor(Math.random() * 7); j++) {
                         sub.push(list[i].child[0]);
-                        list[i].child=sub;
+                        list[i].child = sub;
                     }
                 }
                 //
                 return new Promise((resolve, reject) => {
                     console.debug({list});
-                    return resolve({list, param});
+                    return resolve({list, query});
                 });
             },
             /**
              * 写入参数
-             * 根据自身的 param 字段进行处理，不会记录额外的参数
-             * 然后 page 字段另做
              * */
-            fillParam: function (param) {
-                console.info('Tag: fillParam');
-                // console.warn(param);
-                for (let key in this.param) {
-                    if (typeof param[key] === 'undefined') continue;
-                    this.param[key] = param[key];
-                }
-                if (param.page) {
-                    this.page = parseInt(param.page);
+            fillQuery     : function (query) {
+                console.info('list: fillQuery');
+                // console.warn(query);
+                let queryNames = Object.getOwnPropertyNames(query);
+                for (let i1 = 0; i1 < queryNames.length; i1++) {
+                    let name = queryNames[i1];
+                    if (name === 'page') {
+                        this.page = query[name];
+                    } else {
+                        this.queryData[name] = query[name];
+                    }
                 }
             },
             /**
@@ -436,7 +420,7 @@
             fillData : function (resolveData) {
                 console.info('Tag: fillData');
                 this.list = resolveData.list;
-                this.fillParam(resolveData.param);
+                this.fillQuery(resolveData.query);
             },
             modGroup : function (id) {
                 this.editMode = 1;
@@ -479,6 +463,22 @@
                 this.editId   = 0;
             },
             delTag   : function (id) {
+            },
+            goto     : function (type, targetId) {
+                console.info(`list: goto ${type} ${targetId}`);
+                let query = {};
+                switch (type) {
+                    //tag 查询当前目录下的 tag
+                    case 'tag':
+                        query.tag = targetId;
+                        break;
+                }
+                let targetRoute = {path: '/', query: Object.assign(query, {page: 1})};
+                if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
+                    console.debug(`isSameRoute`);
+                    return false;
+                }
+                router.push(targetRoute);
             },
         },
     }

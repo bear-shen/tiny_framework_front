@@ -19,6 +19,14 @@ export default new Vuex.Store(
         },
         mutations: {
             // -------------------------------
+            usePagination    : (state) => {
+                // if (!state.paginatorDOM) return false;
+                state.paginatorDOM.usePagination = true;
+            },
+            closePagination  : (state) => {
+                // if (!state.paginatorDOM) return false;
+                state.paginatorDOM.usePagination = false;
+            },
             registerPaginator: (state, dom) => {
                 console.info(`Store registerPaginator`);
                 state.paginatorDOM = dom;
@@ -86,6 +94,7 @@ export default new Vuex.Store(
                  *     currentId  : 0,
                  *     query      : function(){},
                  *     queryData  : {},
+                 *     goto       : {},
                  * }
                  * ----
                  * type:'hide'

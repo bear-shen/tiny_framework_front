@@ -294,6 +294,7 @@
             console.debug('List.vue mount');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
+            store.commit('usePagination');
         },
         beforeDestroy: function () {
         },

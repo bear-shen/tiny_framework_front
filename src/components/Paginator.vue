@@ -1,5 +1,5 @@
 <template>
-    <ul id="paginator" class="nav navbar-nav navbar-right">
+    <ul id="paginator" class="nav navbar-nav navbar-right" v-if="usePagination">
         <li>
             <a href="javascript:void(0)" v-on:click="prev">
                 <span aria-hidden="true">&laquo;</span>
@@ -102,7 +102,7 @@
         },
         created : function () {
             //专门写一个回调函数是为了对应事件无法获取的情况
-            this.$store.commit('registerPaginator', this.callback);
+            this.$store.commit('registerPaginator', this);
             //首次回调时使用的是请求里得到的page，列表加载早于分页加载
             //之后的回调则使用内部函数了
             this.pagination();

@@ -7,13 +7,16 @@
                 </template>
                 <template v-else>
                         <table>
-                            <tr><td>ID</td><td>{{item.id}}</td></tr>
-                            <tr><td>Name</td><td>{{item.name}}</td></tr>
-                            <tr><td>Desc</td><td>{{item.description}}</td></tr>
-                            <tr><td>Status</td><td>{{item.status?'On':'Off'}}</td></tr>
-                            <tr><td>Admin</td><td>{{item.control_admin?'Y':'N'}}</td></tr>
-                            <tr><td>User</td><td>
-                                <table>
+                            <tr><th>ID</th><td>
+                                <span>{{item.id}}</span>
+                                <span class="sysIcon sysIcon_edit"></span>
+                            </td></tr>
+                            <tr><th>Name</th><td>{{item.name}}</td></tr>
+                            <tr><th>Desc</th><td>{{item.description}}</td></tr>
+                            <tr><th>Status</th><td>{{item.status?'On':'Off'}}</td></tr>
+                            <tr><th>Admin</th><td>{{item.control_admin?'Y':'N'}}</td></tr>
+                            <tr><th>User</th><td>
+                                <table class="subTable">
                                     <tr>
                                         <th>Id</th>
                                         <th>Name</th>
@@ -28,8 +31,8 @@
                                     </tr>
                                 </table>
                             </td></tr>
-                            <tr><td>Auth</td><td>
-                                <table>
+                            <tr><th>Auth</th><td>
+                                <table class="subTable">
                                     <tr>
                                         <th>DirId</th>
                                         <th>Path</th>
@@ -46,11 +49,11 @@
                                     </tr>
                                 </table>
                             </td></tr>
-                            <tr><td>Time</td><td>{{item.time_update}}<br>{{item.time_create}}</td></tr>
+                            <tr><th>Time</th><td>{{item.time_update}}<br>{{item.time_create}}</td></tr>
                         </table>
                 </template>
             </li>
-            <li>
+            <li class="groupMain">
                 <template v-if="editMode===1 && editId===0">
                     <div class="groupMain editMode">
                         <span class="">ID:0</span>
@@ -81,11 +84,43 @@
             list-style: none;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .groupMain{
+            margin: $fontSize*0.5;
+            min-width: 45%;
         }
         .groupMain>table{
             width: 100%;
         }
-        font-size: $fontSize*1.25;
+        tr:nth-child(2n){
+            background-color: rgba(0,0,0,0.2);
+        }
+        tr{
+            line-height: $fontSize*2;
+        }
+        td,th{
+            padding: 0 $fontSize*1;
+        }
+        th{
+            white-space: nowrap;
+        }
+        .subTable {
+            width: 100%;
+            tr:nth-child(2n){
+                background-color: rgba(255,255,255,0.1);
+            }
+        }
+        @media(max-width: 1350px){
+            .groupMain{
+                margin: $fontSize*0.5;
+                min-width: 90%;
+            }
+            font-size: $fontSize*1;
+        }
+        font-size: $fontSize*1.2;
     }
 </style>
 
@@ -174,6 +209,86 @@
                             {id: 0, name: '', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
                             {id: 0, name: '', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
                             {id: 0, name: '', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
+                        ],
+                    },
+                    {
+                        id           : 999,
+                        name         : 'guest',
+                        description  : 'guest group',
+                        status       : 1,
+                        sort         : 1,
+                        control_dir  : [
+                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                        ],
+                        control_admin: 0,
+                        time_create  : '1919-08-10 11:45:14',
+                        time_update  : '1919-08-10 11:45:14',
+                        user         : [
+                            {id: 0, name: 'guest', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
+                        ],
+                    },
+                    {
+                        id           : 999,
+                        name         : 'guest',
+                        description  : 'guest group',
+                        status       : 1,
+                        sort         : 1,
+                        control_dir  : [
+                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                        ],
+                        control_admin: 0,
+                        time_create  : '1919-08-10 11:45:14',
+                        time_update  : '1919-08-10 11:45:14',
+                        user         : [
+                            {id: 0, name: 'guest', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
+                        ],
+                    },
+                    {
+                        id           : 999,
+                        name         : 'guest',
+                        description  : 'guest group',
+                        status       : 1,
+                        sort         : 1,
+                        control_dir  : [
+                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                        ],
+                        control_admin: 0,
+                        time_create  : '1919-08-10 11:45:14',
+                        time_update  : '1919-08-10 11:45:14',
+                        user         : [
+                            {id: 0, name: 'guest', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
+                        ],
+                    },
+                    {
+                        id           : 999,
+                        name         : 'guest',
+                        description  : 'guest group',
+                        status       : 1,
+                        sort         : 1,
+                        control_dir  : [
+                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                        ],
+                        control_admin: 0,
+                        time_create  : '1919-08-10 11:45:14',
+                        time_update  : '1919-08-10 11:45:14',
+                        user         : [
+                            {id: 0, name: 'guest', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
+                        ],
+                    },
+                    {
+                        id           : 999,
+                        name         : 'guest',
+                        description  : 'guest group',
+                        status       : 1,
+                        sort         : 1,
+                        control_dir  : [
+                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                        ],
+                        control_admin: 0,
+                        time_create  : '1919-08-10 11:45:14',
+                        time_update  : '1919-08-10 11:45:14',
+                        user         : [
+                            {id: 0, name: 'guest', status: 1, time_create: '1919-08-10 11:45:14', time_update: '1919-08-10 11:45:14',},
                         ],
                     },
                     {

@@ -86,7 +86,7 @@
                             type="text" v-model="addTagTxt"
                             placeholder="input tag and choose"
                     >
-                        <ul v-if="showTagSelector" class="ct_tag_hinter">
+                        <ul v-if="showTagSelector" class="float_hinter">
                             <li v-for="tag in tagSelector" v-on:click.stop="addTag(tag.id)">{{tag.group_name}}:{{tag.name}}</li>
                         </ul>
                     </dd>
@@ -444,23 +444,6 @@
                 text-indent: 1em;
             }
 
-            .ct_tag_hinter {
-                list-style: none;
-                padding: 10px 0;
-                background-color: rgba(0, 0, 0, 0.3);
-                position: absolute;
-                top: $fontSize*2;
-
-                li {
-                    width: $liMetaWidth - 20px;
-                    line-height: $fontSize*1.5;
-                    padding: 0 10px;
-
-                    &:hover {
-                        background-color: rgba(255, 255, 255, 0.3);
-                    }
-                }
-            }
 
         }
 
@@ -524,15 +507,11 @@
                 editMetaFlag   : 0,
                 editTagFlag    : 0,
                 //tag 部分
-                addTagTxt      : '',
                 showTagSelector: false,
                 tagSelector    : [],
             }
         },
         watch        : {
-            addTagTxt: function (to, from) {
-                this.searchTag();
-            },
         },
         created      : function () {
         },

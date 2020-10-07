@@ -61,13 +61,12 @@
                             </tr>
                             <tr v-for="(dir,dirIndex) in item.control_dir">
                                 <td>
-                                    <input type="text" v-model="dir.dir_id" v-on:keyup="search(groupIndex,dirIndex)">
-                                    <ul v-if="selectorGroupIndex===groupIndex && selectorDirIndex===dirIndex" class="float_hinter">
-                                        <li
-                                                v-for="(selectorItem,selectorIndex) in selector"
-                                                v-on:click.stop="setAuth(groupIndex,dirIndex,selectorIndex)"
-                                        >{{selectorItem.dir_id}} : {{selectorItem.path}}</li>
-                                    </ul>
+                                    <Hinter
+                                    :data    ="dir.dir_id"
+                                    :show    ="['dir_id','path']"
+                                    :query   ="hinterQuery"
+                                    :callback="hinterCallback.bind(this,groupIndex,dirIndex)"
+                                    />
                                 </td>
                                 <td>{{dir.path}}</td>
                                 <td :class="{positive:dir.access,negative:!dir.access,}">
@@ -236,10 +235,11 @@
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
     import Helper     from "../lib/Helper";
+    import Hinter     from "../components/Hinter";
 
     export default {
         name      : 'UserGroup',
-        components: {},
+        components: {Hinter},
         store     : store,
         watch     : {
             $route: function (to, from) {
@@ -263,10 +263,6 @@
                 editAuthGroupIndex   : -1,
                 editAuthIndex: -1,
                 //
-                selectorGroupIndex : false,
-                selectorDirIndex : false,
-                selector     : [],
-                //
                 list         : [],
             }
         },
@@ -285,10 +281,8 @@
             // console.info(this);
             // this.page = this.$store.state.pageSet;
             store.commit('closePagination');
-            document.getElementById('app').addEventListener('click', this.searchClear);
         },
         beforeDestroy:function() {
-            document.getElementById('app').removeEventListener('click', this.searchClear)
         },
         updated   : function () {
             console.warn('UserGroup.vue update');
@@ -359,7 +353,6 @@
                 let current=this.selector[selectIndex];
                 this.list[groupIndex].control_dir[dirIndex].dir_id = current.dir_id;
                 this.list[groupIndex].control_dir[dirIndex].path   = current.path;
-                this.searchClear();
             },
             delAuth : function (itemIndex) {
                 console.info('UserGroup: delAuth')
@@ -370,30 +363,28 @@
             /**
              * @todo api
              * */
-            search     : function (groupIndex,dirIndex) {
-                console.debug(`UserGroup: search ${groupIndex} ${dirIndex}`);
+            hinterQuery     : function (searchTxt) {
+                console.debug(`UserGroup: hinterQuery ${searchTxt}`);
                 //
-                let curDir=this.list[groupIndex].control_dir[dirIndex];
-                if (!curDir.dir_id) return;
-                //
-                this.selectorGroupIndex = groupIndex;
-                this.selectorDirIndex = dirIndex;
-                this.selector     = [
-                    {dir_id: 4, path: '/root/tentacles',},
-                    {dir_id: 2, path: '/root/dilf',},
-                    {dir_id: 3, path: '/root/rape',},
-                    {dir_id: 1, path: '/root/netorare',},
-                ];
+                return new Promise((resolve, reject) => {
+                    return resolve(
+                        {
+                            list: [
+                                {dir_id: 4, path: '/root/tentacles',},
+                                {dir_id: 2, path: '/root/dilf',},
+                                {dir_id: 3, path: '/root/rape',},
+                                {dir_id: 1, path: '/root/netorare',},
+                            ],
+                        });
+                });
             },
-            /**
-             * @todo api
-             * */
-            searchClear: function () {
-                if (!this.selector.length) return false;
-                console.debug('UserGroup: searchClear ');
-                this.selectorGroupIndex = false;
-                this.selectorDirIndex = false;
-                this.selector     = [];
+            hinterCallback: function (groupIndex, dirIndex, target) {
+                console.debug(`UserGroup: hinterCallback ${groupIndex} ${dirIndex}`);
+                console.debug(target);
+                this.list[groupIndex].control_dir[dirIndex]
+                    .dir_id = target.dir_id;
+                this.list[groupIndex].control_dir[dirIndex]
+                    .path   = target.path;
             },
             // ---------------------------------
             /**

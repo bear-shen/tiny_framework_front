@@ -1,4 +1,3 @@
-
 <!--
 Hinter
 Props:
@@ -8,18 +7,20 @@ Props:
     callback  function(itemData) :void             查询完成的回调方法
 -->
 <template>
-    <input type="text" v-model="data"
-           v-on:keyup="htQuery()"
-           v-on:focus="htQuery()"
-    >
-    <ul v-if="active"
-        class="float_hinter">
-        <li
-                v-for="(item,index) in list"
-                v-on:click.stop="htCallback(item)"
-        >{{makeName(item)}}
-        </li>
-    </ul>
+    <div>
+        <input type="text" v-model="htData"
+               v-on:keyup="htQuery()"
+               v-on:focus="htQuery()"
+        >
+        <ul v-if="active"
+            class="float_hinter">
+            <li
+                    v-for="(item,index) in list"
+                    v-on:click.stop="htCallback(item)"
+            >{{makeName(item)}}
+            </li>
+        </ul>
+    </div>
 </template>
 
 <style lang="scss">
@@ -58,10 +59,19 @@ Props:
             return {
                 list  : [],
                 active: 0,
+                htData: '',
+                htShow: [],
             }
         },
-        watch        : {},
+        watch        : {
+            data: function (from, to) {
+                console.debug(`Hinter.vue: data modify watched ${from} ${to}`);
+                this.htData = this.data;
+            }
+        },
         created      : function () {
+            this.htData = this.data;
+            this.htShow = this.show;
         },
         mounted      : function () {
             console.info('Hinter.vue mount');
@@ -73,25 +83,25 @@ Props:
         methods      : {
             makeName   : function (item) {
                 let target = [];
-                if (!this.show) this.show = Object.getOwnPropertyNames(item);
-                for (let i1 = 0; i1 < this.show.length; i1++) {
-                    target.push(this.item[this.show[i1]]);
+                if (!this.htShow) this.htShow = Object.getOwnPropertyNames(item);
+                for (let i1 = 0; i1 < this.htShow.length; i1++) {
+                    target.push(item[this.htShow[i1]]);
                 }
                 target = target.join(': ');
                 return target;
             },
             htQuery    : function () {
                 console.info('Hinter.vue query');
-                if (!this.data.length) return;
+                if (!this.htData.length) return;
                 if (!this.query) return;
                 this.active = 1;
-                this.query(data).then(this.fillData);
+                this.query(this.htData).then(this.fillData);
             },
-            htCallback : function () {
+            htCallback : function (item) {
                 console.info('Hinter.vue query');
-                if (!this.data.length) return;
+                if (!this.htData.length) return;
                 if (!this.callback) return;
-                this.callback();
+                this.callback(item);
                 this.searchClear();
             },
             fillData   : function (resolveData) {

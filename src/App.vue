@@ -261,25 +261,6 @@
         @include smallScroll;
     }
 
-
-    .float_hinter {
-        list-style: none;
-        padding: 10px 0;
-        background-color: rgba(0, 0, 0, 0.3);
-        position: absolute;
-        top: $fontSize*2;
-        z-index: 90;
-
-        li {
-            width: 300px;
-            line-height: $fontSize*1.5;
-            padding: 0 10px;
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.3);
-            }
-        }
-    }
     .pointer{
         cursor: pointer;
     }

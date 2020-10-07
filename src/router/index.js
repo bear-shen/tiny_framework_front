@@ -5,6 +5,7 @@ import List      from "../views/List";
 import Tag       from "../views/Tag";
 import Favourite from "../views/Favourite";
 import UserGroup from "../views/UserGroup";
+import User      from "../views/User";
 
 Vue.use(VueRouter)
 
@@ -31,7 +32,7 @@ const routes = [
     },
     {
         name: 'User', title: 'User',
-        icon: 'sysIcon_user', path: '/user', component: Home, props: true,
+        icon: 'sysIcon_user', path: '/user', component: User, props: true,
     },
     {
         name: 'Settings', title: 'Settings',

@@ -32,10 +32,10 @@
                     </template>
                     <tr><th>
                         Auth
-                        <span class="sysIcon sysIcon_edit" v-if="editAuthGroupIndex!==groupIndex" v-on:click="modAuthGroup(groupIndex)"></span>
+                        <span class="sysIcon sysIcon_edit" v-if="editAuthId!==item.id" v-on:click="modAuthGroup(item.id)"></span>
                         <span class="sysIcon sysIcon_save" v-else v-on:click="saveAuthGroup(item.id)"></span>
                     </th><td>
-                        <table class="subTable" v-if="editAuthGroupIndex!==groupIndex">
+                        <table class="subTable" v-if="editAuthId!==item.id">
                             <tr>
                                 <th>DirId</th>
                                 <th>Path</th>
@@ -108,7 +108,7 @@
                     </td></tr>
                 </table>
             </li>
-            <li class="groupMain sysIcon sysIcon_plus-square-o addGroup" v-on:click="addGroup()">
+            <li class="groupMain">
             </li>
         </ul>
     </div>
@@ -122,7 +122,7 @@
             padding: 0;
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
+            justify-content: space-around;
         }
         .groupMain{
             margin: $fontSize*0.5;
@@ -222,10 +222,6 @@
         .float_hinter{
             background-color: rgba(0,0,0,0.8);
         }
-        .addGroup{
-            text-align: left;
-            font-size: $fontSize*2;
-        }
     }
 </style>
 
@@ -260,7 +256,7 @@
                 editGroupId  : 0,
                 //
                 editAuth     : 0,
-                editAuthGroupIndex   : -1,
+                editAuthId   : 0,
                 editAuthIndex: -1,
                 //
                 selectorGroupIndex : false,
@@ -296,29 +292,8 @@
             // this.page = this.$store.state.pageSet;
         },
         methods   : {
-            addGroup: function () {
-                console.info('UserGroup: modGroup')
-                this.list.push(
-                    {
-                        id           : 0,
-                        name         : '',
-                        description  : '',
-                        status       : 0,
-                        control_dir  : [
-                            {dir_id: 0, access: 1, modify:0, delete: 0, path: 'root',},
-                        ],
-                        control_admin: 0,
-                        time_create  : '',
-                        time_update  : '',
-                        user         : [
-                        ],
-                    });
-                this.editGroupId=0;
-                this.editGroup = 1;
-            },
             modGroup: function (itemId) {
                 console.info('UserGroup: modGroup')
-                this.saveGroup();
                 for (let i1 = 0; i1 < this.list.length; i1++) {
                     if (this.list[i1].id !== itemId) continue;
                     this.editGroupId = itemId;
@@ -332,18 +307,21 @@
             // ---------------------------------
             modAuthGroup : function (groupId) {
                 console.info('UserGroup: modAuthGroup');
-                this.saveAuthGroup();
-                this.editAuthGroupIndex=groupId;
+                for (let i1 = 0; i1 < this.list.length; i1++) {
+                    if (this.list[i1].id !== groupId) continue;
+                    this.editAuthId = groupId;
+                }
                 this.editAuth = 1;
             },
             saveAuthGroup : function () {
-                this.editAuthGroupIndex   = -1;
+                this.editAuthId   = 0;
                 this.editAuth = 0;
                 this.editAuthIndex = -1;
             },
             addAuth : function (index) {
                 console.info('UserGroup: addAuth');
-                this.list[this.editAuthGroupIndex]
+                let current=this.selector[index];
+                this.list[this.editGroupId]
                     .control_dir.push(
                     {
                         dir_id: '',

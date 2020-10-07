@@ -280,6 +280,9 @@
             }
         }
     }
+    .pointer{
+        cursor: pointer;
+    }
 </style>
 <script>
     import router from "./router";

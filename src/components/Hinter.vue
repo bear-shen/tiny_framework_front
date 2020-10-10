@@ -7,7 +7,7 @@ Props:
     callback  function(itemData) :void             查询完成的回调方法
 -->
 <template>
-    <div>
+    <div class="hinter_div" v-on:click.stop>
         <input type="text" v-model="htData"
                v-on:keyup="htQuery()"
                v-on:focus="htQuery()"
@@ -24,6 +24,9 @@ Props:
 </template>
 
 <style lang="scss">
+    .hinter_div{
+        position: relative;
+    }
     .float_hinter {
         list-style: none;
         padding: 10px 0;
@@ -72,7 +75,7 @@ Props:
         },
         created      : function () {
             let td=this.data;
-            if (!td) {
+            if (typeof td==='undefined') {
                 this.empData = true;
                 td='';
             }
@@ -97,14 +100,14 @@ Props:
                 return target;
             },
             htQuery    : function () {
-                console.info('Hinter.vue query');
+                console.info('Hinter.vue htQuery');
                 if (!this.htData.length) return;
                 if (!this.query) return;
                 this.active = 1;
                 this.query(this.htData).then(this.fillData);
             },
             htCallback : function (item) {
-                console.info('Hinter.vue query');
+                console.info('Hinter.vue htCallback');
                 if (!this.htData.length) return;
                 if (!this.callback) return;
                 this.callback(item);
@@ -115,6 +118,7 @@ Props:
                 this.list = resolveData.list;
             },
             searchClear: function () {
+                console.info('Hinter.vue searchClear');
                 this.active = 0;
                 this.list   = [];
             }

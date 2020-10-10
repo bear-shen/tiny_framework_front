@@ -12,21 +12,48 @@
                 <th>Edit</th>
             </tr>
             <tr v-for="(user,userIndex) in list" class="">
-                <td>{{user.id}}</td>
-                <td>{{user.group.id}} : {{user.group.name}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
-                <td>{{user.description}}</td>
-                <td :class="{positive:user.status,negative:!user.status,}">
-                    {{user.status?'Enable':'Disable'}}
-                </td>
-                <td>
-                    {{user.time_update}}
-                    <br>
-                    {{user.time_create}}
-                </td>
-                <td v-if="1" class="sysIcon sysIcon_edit pointer" v-on:click="modUser(userIndex)"></td>
-                <td v-else class="sysIcon sysIcon_edit pointer" v-on:click="saveUser()"></td>
+                <template v-if="editUserIndex===userIndex">
+                    <td>{{user.id}}</td>
+                    <td>
+                        <Hinter
+                                :data="user.group.name"
+                                :show="['id','name']"
+                                :query="hinterQuery"
+                                :callback="hinterCallback.bind(this,userIndex)"
+                        />
+                    </td>
+                    <td><input type="text" v-model="user.name"></td>
+                    <td><input type="text" v-model="user.email"></td>
+                    <td><input type="text" v-model="user.description"></td>
+                    <td :class="{positive:user.status,negative:!user.status,}">
+                        <input type="radio" :value="1" v-model="user.status" :id="`us_${user.id}_admin_0`">
+                        <label :for="`us_${user.id}_admin_0`">Enable</label>
+                        <input type="radio" :value="0" v-model="user.status" :id="`us_${user.id}_admin_1`">
+                        <label :for="`us_${user.id}_admin_1`">Disable</label>
+                    </td>
+                    <td>
+                        {{user.time_update}}
+                        <br>
+                        {{user.time_create}}
+                    </td>
+                    <td class="sysIcon sysIcon_save pointer" v-on:click="saveUser()"></td>
+                </template>
+                <template v-else>
+                    <td>{{user.id}}</td>
+                    <td>{{user.group.id}} : {{user.group.name}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.description}}</td>
+                    <td :class="{positive:user.status,negative:!user.status,}">
+                        {{user.status?'Enable':'Disable'}}
+                    </td>
+                    <td>
+                        {{user.time_update}}
+                        <br>
+                        {{user.time_create}}
+                    </td>
+                    <td class="sysIcon sysIcon_edit pointer" v-on:click="modUser(userIndex)"></td>
+                </template>
             </tr>
             <tr class="">
             </tr>
@@ -104,10 +131,11 @@
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'
     import Helper     from "../lib/Helper";
+    import Hinter     from "../components/Hinter";
 
     export default {
         name         : 'User',
-        components   : {},
+        components   : {Hinter},
         store        : store,
         watch        : {
             $route: function (to, from) {
@@ -120,17 +148,14 @@
         },
         data         : function () {
             return {
-                queryData        : {
+                queryData    : {
                     name: '',
                 },
                 // page: 1,
-                editUser         : 0,
-                editUserIndex    : 0,
+                editUser     : 0,
+                editUserIndex: -1,
                 //
-                selectorUserIndex: false,
-                selector         : [],
-                //
-                list             : [],
+                list         : [],
             }
         },
         computed     : {},
@@ -159,56 +184,77 @@
             // this.page = this.$store.state.pageSet;
         },
         methods      : {
-            modUser    : function (userIndex) {
-                console.info('User: modGroup')
-                for (let i1 = 0; i1 < this.list.length; i1++) {
-                    if (this.list[i1].id !== itemId) continue;
-                    this.editGroupId = itemId;
-                }
+            modUser       : function (userIndex) {
+                console.info('User: modUser');
                 this.editUserIndex = userIndex;
                 this.editUser      = 1;
             },
-            saveUser   : function () {
-                this.editGroupId = 0;
-                this.editGroup   = 0;
+            saveUser      : function () {
+                console.info('User: saveUser');
+                this.editUserIndex = -1;
+                this.editUser      = 0;
             },
-            /**
-             * @todo api
-             * */
-            search     : function (userIndex) {
-                console.debug(`User: search ${groupIndex} ${dirIndex}`);
+            hinterQuery   : function () {
+                console.debug(`User: hinterQuery`);
                 //
-                let curDir = this.list[groupIndex].control_dir[dirIndex];
-                if (!curDir.dir_id) return;
-                //
-                this.selectorGroupIndex = groupIndex;
-                this.selectorDirIndex   = dirIndex;
-                this.selector           = [
-                    {dir_id: 4, path: '/root/tentacles',},
-                    {dir_id: 2, path: '/root/dilf',},
-                    {dir_id: 3, path: '/root/rape',},
-                    {dir_id: 1, path: '/root/netorare',},
-                ];
+                return new Promise((resolve, reject) => {
+                    return resolve(
+                        {
+                            list: [
+                                {id: 4, name: 'administrator', description: 'this is description', admin: 1},
+                                {id: 2, name: 'hentai', description: 'this is description', admin: 0},
+                                {id: 3, name: 'little pony', description: 'this is description', admin: 0},
+                                {id: 1, name: 'cthulhu', description: 'this is description', admin: 0},
+                            ],
+                        });
+                });
             },
-            /**
-             * @todo api
-             * */
-            searchClear: function () {
-                if (!this.selector.length) return false;
-                console.debug('User: searchClear ');
-                this.selectorGroupIndex = false;
-                this.selectorDirIndex   = false;
-                this.selector           = [];
+            hinterCallback: function (userIndex, target) {
+                console.debug(`User: hinterCallback`);
+                this.list[userIndex].group.id          = target.id;
+                this.list[userIndex].group.name        = target.name;
+                this.list[userIndex].group.description = target.description;
+                this.list[userIndex].group.admin       = target.admin;
             },
             // ---------------------------------
             /**
              * 查询方法，返回的 promise
              * */
-            query      : function (query, page) {
+            query         : function (query, page) {
                 console.info('User: query');
                 query    = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 //
                 let list = [
+                    {
+                        id         : 1,
+                        name       : 'admin',
+                        email      : 'admin@admin.com',
+                        description: 'admin group',
+                        group      : {
+                            id         : 1,
+                            name       : 'admin',
+                            description: 'admin description',
+                            admin      : 1,
+                        },
+                        status     : 1,
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                    },
+                    {
+                        id         : 1,
+                        name       : 'admin',
+                        email      : 'admin@admin.com',
+                        description: 'admin group',
+                        group      : {
+                            id         : 1,
+                            name       : 'admin',
+                            description: 'admin description',
+                            admin      : 1,
+                        },
+                        status     : 1,
+                        time_create: '1919-08-10 11:45:14',
+                        time_update: '1919-08-10 11:45:14',
+                    },
                     {
                         id         : 1,
                         name       : 'admin',
@@ -234,7 +280,7 @@
             /**
              * 写入参数
              * */
-            fillQuery  : function (query) {
+            fillQuery     : function (query) {
                 console.info('list: fillQuery');
                 // console.warn(query);
                 let queryNames = Object.getOwnPropertyNames(query);
@@ -251,13 +297,13 @@
              * 填充数据， this.query 的配套方法
              * 拆开写是为了方便 query 方法注入到外部以便共用
              * */
-            fillData   : function (resolveData) {
+            fillData      : function (resolveData) {
                 console.info('User: fillData');
                 console.info(resolveData.list);
                 this.list = resolveData.list;
                 this.fillQuery(resolveData.query);
             },
-            goto       : function (type, targetId) {
+            goto          : function (type, targetId) {
                 console.info(`list: goto ${type} ${targetId}`);
                 let query = {};
                 let path  = '/';

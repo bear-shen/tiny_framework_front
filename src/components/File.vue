@@ -82,13 +82,13 @@
                 </dl>
                 <dl>
                     <dt>add:</dt>
-                    <dd><input
-                            type="text" v-model="addTagTxt"
-                            placeholder="input tag and choose"
-                    >
-                        <ul v-if="showTagSelector" class="float_hinter">
-                            <li v-for="tag in tagSelector" v-on:click.stop="addTag(tag.id)">{{tag.group_name}}:{{tag.name}}</li>
-                        </ul>
+                    <dd>
+                        <Hinter
+                                :data="''"
+                                :show="['group_name','name']"
+                                :query="hinterQuery"
+                                :callback="hinterCallback.bind(this)"
+                        />
                     </dd>
                 </dl>
             </div>
@@ -489,10 +489,12 @@
 </style>
 
 <script>
-    import store from '../store';
+    import store  from '../store';
+    import Hinter from "./Hinter";
 
     export default {
         name         : "File",
+        components   : {Hinter},
         // el     : '#msg',
         store        : store,
         //dir是可选的，从收藏夹进入不传入dir
@@ -504,15 +506,11 @@
         ],
         data         : function () {
             return {
-                editMetaFlag   : 0,
-                editTagFlag    : 0,
-                //tag 部分
-                showTagSelector: false,
-                tagSelector    : [],
+                editMetaFlag: 0,
+                editTagFlag : 0,
             }
         },
-        watch        : {
-        },
+        watch        : {},
         created      : function () {
         },
         mounted      : function () {
@@ -648,26 +646,51 @@
             /**
              * @todo api
              * */
-            searchTag     : function () {
-                console.debug('list: searchTag ' + this.addTagTxt);
-                if (!this.addTagTxt) return;
-                this.showTagSelector = true;
-                this.tagSelector     = [
-                    {id: 4, group_id: 2, name: 'tentacles', group_name: 'male',},
-                    {id: 5, group_id: 2, name: 'dilf', group_name: 'male',},
-                    {id: 2, group_id: 1, name: 'rape', group_name: 'female',},
-                    {id: 3, group_id: 1, name: 'netorare', group_name: 'female',},
-                ];
+            hinterQuery   : function (searchTxt) {
+                console.debug(`User: hinterQuery ${searchTxt}`);
+                //
+                return new Promise((resolve, reject) => {
+                    return resolve(
+                        {
+                            list: [
+                                {id: 75, name: 'drugs', group_id: 2, group_name: 'male',},
+                                {id: 74, name: 'bbm', group_id: 1, group_name: 'male',},
+                                {id: 76, name: 'anal', group_id: 3, group_name: 'male',},
+                                {id: 77, name: 'yaoi', group_id: 4, group_name: 'male',},
+                            ],
+                        });
+                });
             },
-            /**
-             * @todo api
-             * */
-            searchTagClear: function () {
-                if (!this.showTagSelector) return false;
-                console.debug('list: searchTagClear ' + this.addTagTxt);
-                this.addTagTxt       = '';
-                this.showTagSelector = false;
-                this.tagSelector     = [];
+            hinterCallback: function (target) {
+                console.debug(`User: hinterCallback ${JSON.stringify(target)}`);
+                console.debug(target);
+                let groupIndex = -1;
+                for (let i1 = 0; i1 < this.item.tag.length; i1++) {
+                    if (this.item.tag[i1].id != target.group_id) continue;
+                    groupIndex = i1;
+                }
+                if (groupIndex === -1) {
+                    this.item.tag.push(
+                        {
+                            id  : target.group_id,
+                            name: target.group_name,
+                            sub : [],
+                        });
+                    groupIndex = this.item.tag.length - 1;
+                }
+                let tagIndex = -1;
+                for (let i1 = 0; i1 < this.item.tag[groupIndex].sub.length; i1++) {
+                    if (this.item.tag[groupIndex].sub[i1].id != target.id) continue;
+                    tagIndex = i1;
+                }
+                if(tagIndex!==-1){
+                    console.warn('tag duplicated');
+                    return;
+                }
+                this.item.tag[groupIndex].sub.push(
+                    {id: target.id, name: target.name,}
+                );
+
             },
         }
     }

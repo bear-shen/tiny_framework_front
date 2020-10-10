@@ -84,7 +84,6 @@
                     <dt>add:</dt>
                     <dd>
                         <Hinter
-                                :data="''"
                                 :show="['group_name','name']"
                                 :query="hinterQuery"
                                 :callback="hinterCallback.bind(this)"

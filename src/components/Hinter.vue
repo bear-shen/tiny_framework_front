@@ -57,10 +57,11 @@ Props:
         ],
         data         : function () {
             return {
-                list  : [],
-                active: 0,
-                htData: '',
-                htShow: [],
+                list   : [],
+                active : 0,
+                htData : '',
+                htShow : [],
+                empData: false,
             }
         },
         watch        : {
@@ -70,7 +71,12 @@ Props:
             }
         },
         created      : function () {
-            this.htData = this.data;
+            let td=this.data;
+            if (!td) {
+                this.empData = true;
+                td='';
+            }
+            this.htData = td;
             this.htShow = this.show;
         },
         mounted      : function () {
@@ -103,6 +109,7 @@ Props:
                 if (!this.callback) return;
                 this.callback(item);
                 this.searchClear();
+                if(this.empData)this.htData='';
             },
             fillData   : function (resolveData) {
                 this.list = resolveData.list;

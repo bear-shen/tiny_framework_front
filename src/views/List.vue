@@ -42,7 +42,7 @@
         </div>
         <div :class="['listContent','listType_'+listType]">
             <ul>
-                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :fromList="true"></File>
+                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'list'"></File>
 
             </ul>
         </div>
@@ -793,6 +793,12 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
+                return store.commit('popup', {
+                    type: 'list',
+                    info: {
+                        parent: [0, 2, 5, 7],
+                    }
+                });
                 /*store.commit('popup', {
                  type: 'file',
                  info: {
@@ -861,22 +867,12 @@
              * */
             addFile       : function () {
                 console.info('list: addFile');
-                this.$parent.showUploader(
-                    {
-                        data  : this.dir,
-                        submit: function (data) {
-                            console.info('list: callback: submit');
-                            console.info(data);
-                        },
-                        cancel: function (data) {
-                            console.info('list: callback: cancel');
-                            console.info(data);
-                        },
-                        error : function (data) {
-                            console.info('list: callback: error');
-                            console.info(data);
-                        },
-                    });
+                store.commit('popup', {
+                    type: 'uploader',
+                    info: {
+                        dir_id: 1,
+                    }
+                });
                 /*this.$parent.showLoader(
                  {type:'loader'}
                  );*/

@@ -29,7 +29,7 @@ api 有了以后改改就能用的
         </div>
         <div :class="['listContent','listType_'+listType]">
             <ul>
-                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :fromList="false"></File>
+                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'favourite'"></File>
 
             </ul>
         </div>

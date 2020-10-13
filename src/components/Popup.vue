@@ -15,6 +15,9 @@
         <template v-else-if="type==='file'">
             <popup-file-detail v-bind:info="popupInfo"></popup-file-detail>
         </template>
+        <template v-else-if="type==='list'">
+            <popup-file-list v-bind:info="popupInfo"></popup-file-list>
+        </template>
     </div>
 </template>
 
@@ -23,7 +26,7 @@
     #popup {
         //background-color: rgba(0, 0, 0, 0.25);
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - #{$footerHeight});
         position: fixed;
         top: $footerHeight;
         z-index: 4000;
@@ -58,6 +61,7 @@
     import PopupConfirm    from "./PopupConfirm";
     import PopupUploader   from "./PopupUploader";
     import PopupFileDetail from "./PopupFileDetail";
+    import PopupFileList   from "./PopupFileList";
 
     /**
      * @var isShow          (internal)
@@ -74,7 +78,7 @@
      * */
     export default {
         name      : "Popup",
-        components: {PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
+        components: {PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
         watch     : {},
         data      : function () {

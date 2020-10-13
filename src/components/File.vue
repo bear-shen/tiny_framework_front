@@ -27,7 +27,7 @@
                 <div class="ct_time_update">{{item.time_update}}</div>
             </template>
             <div class="ct_operate">
-                <template v-if="fromList">
+                <template v-if="from==='list'">
                     <div v-if="item.cover"
                          :class="['btn', 'btn-dark', {'active':dir && dir.cover_id===item.id}]"
                          v-on:click="setCover()"
@@ -501,7 +501,7 @@
             'item',
             'dir',
             'listType',
-            'fromList'
+            'from'
         ],
         data         : function () {
             return {
@@ -513,12 +513,8 @@
         created      : function () {
         },
         mounted      : function () {
-            document.getElementById('app').addEventListener('click', this.searchTagClear);
-            // console.info(this);
-            // this.page = this.$store.state.pageSet;
         },
         beforeDestroy: function () {
-            document.getElementById('app').removeEventListener('click', this.searchTagClear)
         },
         methods      : {
             goto          : function (type, targetId) {
@@ -577,60 +573,6 @@
                 }
             },
             // -------------------------------------------
-            /**
-             * @todo api
-             * */
-            addTag        : function (tagId) {
-                console.debug('list: addTag:' + this.item.id + '\t' + tagId);
-                let tag = false;
-                for (let i1 = 0; i1 < this.tagSelector.length; i1++) {
-                    if (this.tagSelector[i1].id !== tagId) continue;
-                    tag = this.tagSelector[i1];
-                }
-                if (!tag) {
-                    console.warn('tag not found');
-                    return false;
-                }
-                //查找 item
-                console.debug(`item found ${this.item.id}`);
-                console.info(this.item);
-                let hasGroup = false;
-                let hasTag   = false;
-                //查找 tag group
-                for (let i2 = 0; i2 < this.item.tag.length; i2++) {
-                    if (this.item.tag[i2].id !== tag.group_id) continue;
-                    console.debug(`group found ${this.item.id} ${i2}`);
-                    console.info(this.item.tag[i2]);
-                    hasGroup = true;
-                    //查找 tag
-                    for (let i3 = 0; i3 < this.item.tag[i2].sub.length; i3++) {
-                        if (this.item.tag[i2].sub[i3].id !== tag.id) continue;
-                        console.debug(`tag found ${this.item.id} ${i2} ${i3}`);
-                        console.info(this.item.tag[i2].sub[i3]);
-                        hasTag = true;
-                        //如果存在 tag ，不写入
-                        break;
-                    }
-                    //无 tag 加 tag
-                    if (!hasTag) {
-                        this.item.tag[i2].sub.push(
-                            {id: tag.id, name: tag.name,}
-                        );
-                    }
-                }
-                //无 group 加 group
-                if (!hasGroup) {
-                    this.item.tag.push(
-                        {
-                            id  : tag.group_id,
-                            name: tag.group_name,
-                            sub : [
-                                {id: tag.id, name: tag.name,},
-                            ],
-                        })
-                }
-                this.searchTagClear();
-            },
             editTag       : function () {
                 console.info('list: editTag');
                 this.editTagFlag = 1;

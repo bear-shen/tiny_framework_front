@@ -4,11 +4,15 @@
 <template>
     <div class="popup_file_list">
         <div class="list_content">
-            <popup-file-list-sub :item="root"/>
+            <popup-file-list-sub
+                    :item="root"
+                    :submit="submit"
+                    :from="[]"
+            />
         </div>
         <div class="list_operate">
-            <button type="button" class="btn btn-warning" v-on:click="">close</button>
-            <button type="button" class="btn btn-success" v-on:click="">submit</button>
+            <button type="button" class="btn btn-warning" v-on:click="reset">close</button>
+            <button type="button" class="btn btn-success" v-on:click="submit">submit</button>
         </div>
     </div>
 </template>
@@ -36,7 +40,8 @@
             position: absolute;
             bottom: $fontSize;
             right: $fontSize;
-            button{
+
+            button {
                 margin-left: $fontSize;
             }
         }
@@ -63,6 +68,7 @@
         data      : function () {
             return {
                 root: {
+                    route   : [],
                     id      : 0,
                     title   : 'root',
                     type    : 'folder',
@@ -89,46 +95,13 @@
         destroyed : function () {
         },
         methods   : {
-            expand: function (cur) {
-                if (!cur) cur = this.list;
-                this.query(cur.id).then((list) => {
-                    //
-                    for (let i1 = 0; i1 < list.length; i1++) {
-                        let item = Object.assign(
-                            {
-                                sub_size: -1,
-                                sub     : [],
-                            }, list[i1]);
-                        cur.push(item);
-                    }
-                    //
-                });
-            },
-            fold  : function (cur) {
-            },
-            query : function (currentId) {
-                let listData = [];
-                for (let i1 = 0; i1 < Math.floor(Math.random() * 10); i1++) {
-                    let type = Math.random() > 0.2 ? 'folder' : 'image';
-                    let item = {
-                        id      : Math.floor(Math.random() * 1000),
-                        title   : `name:${type}:${Math.random()}`,
-                        type    : type,
-                        sub_size: -1,
-                        sub     : [],
-                    };
-                    listData.push(item);
-                }
-                return new Promise((resolve, reject) => {
-                    console.warn({list: listData,});
-                    return resolve({list: listData,});
-                });
-            },
             reset : function () {
                 this.$parent.hide();
             },
-            submit: function () {
+            submit: function (current, curItem) {
                 this.$parent.hide();
+                console.info(current);
+                console.info(curItem);
             },
             empty : function () {
             },

@@ -95,6 +95,8 @@
             line-height: $fontSize*2;
             text-align: center;
             border-radius: $fontSize;
+            color: white;
+            //text-shadow: black 0 0 5px;
         }
 
         .naviBtn {

@@ -4,17 +4,22 @@
 <template>
     <div class="list">
         <div class="name">
-                <span
-                        class="sysIcon sysIcon_plus-square-o"
-                        v-on:click="expand()"
+                <span v-if="expanded"
+                      class="sysIcon sysIcon_minus-square-o"
+                      v-on:click="fold()"
                 ></span>
-            <span v-on:click="submit(current,item)">{{item.title}}</span>
+            <span v-else
+                  class="sysIcon sysIcon_plus-square-o"
+                  v-on:click="expand()"
+            ></span>
+            <span v-on:click="submit(item,currentRoute)">{{item.title}}</span>
         </div>
-        <template v-for="sub in item.sub">
+        <template v-for="subItem in sub" v-if="subItem.type==='folder'">
             <popup-file-list-sub
-                    :item="sub"
+                    :item="subItem"
                     :submit="submit"
-                    :from="current"
+                    :from="currentRoute"
+                    :query="false"
             />
         </template>
     </div>
@@ -22,11 +27,17 @@
 
 <style lang="scss">
     .popup_file_list {
+        font-size: $fontSize*1.2;
         .list {
             margin-left: 2*$fontSize;
         }
 
         .name {
+            white-space: nowrap;
+            span {
+                display: inline-block;
+            }
+
             span:first-child {
 
             }
@@ -44,7 +55,16 @@
     export default {
         name     : "PopupFileListSub",
         // el     : '#popup',
-        props    : ['item', 'submit', 'from'],
+        props    : [
+            //当前数据 {}
+            'item',
+            //提交的回调 function(){}
+            'submit',
+            //跟踪路径 [0,1,2,3]
+            'from',
+            //查询语句，只有第一次迭代会输入，后面的迭代写入false
+            'query'
+        ],
         watch    : {
             //弹层数据处理
             info: function (to, from) {
@@ -54,7 +74,11 @@
         },
         data     : function () {
             return {
-                current: [],
+                currentRoute : [],
+                expanded: false,
+                sub_size: -1,
+                sub     : [],
+                sub_hide: [],
             }
         },
         created  : function () {
@@ -62,30 +86,38 @@
             //
             // console.info(this.item.id);
             // console.info(this.item.title);
-            this.current = this.from.concat([this.item.id]);
+            this.currentRoute = this.from.concat([this.item.id]);
         },
         destroyed: function () {
         },
         methods  : {
             expand: function () {
                 console.info(`PopupFileListSub: expand`);
+                if (this.sub_size !== -1) {
+                    this.expanded      = true;
+                    this.sub      = this.sub_hide;
+                    this.sub_hide = [];
+                    return;
+                }
                 this.query(this.item.id).then((data) => {
                     console.info(`PopupFileListSub: expand callback`);
-                    console.warn(data);
+                    // console.warn(data);
+                    if (this.sub_size !== -1) return;
                     //
+                    this.sub_size = data.list.length;
                     for (let i1 = 0; i1 < data.list.length; i1++) {
-                        let item = Object.assign(
-                            {
-                                sub_size: -1,
-                                sub     : [],
-                            }, data.list[i1]);
-                        console.info(item);
-                        this.item.sub.push(item);
+                        let item = Object.assign({}, data.list[i1]);
+                        // console.info(item);
+                        this.sub.push(item);
                     }
+                    this.expanded = true;
                     //
                 });
             },
-            fold  : function (cur) {
+            fold  : function () {
+                this.expanded      = false;
+                this.sub_hide = this.sub;
+                this.sub      = [];
             },
             query : function (currentId) {
                 let listData = [];

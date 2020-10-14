@@ -3,11 +3,14 @@
 -->
 <template>
     <div class="popup_file_list">
+        <div class="title">{{title}}</div>
+        <div class="search"><input type="text" v-model="search"/></div>
         <div class="list_content">
             <popup-file-list-sub
                     :item="root"
                     :submit="submit"
                     :from="[]"
+                    :query="search"
             />
         </div>
         <div class="list_operate">
@@ -25,14 +28,32 @@
         height: 50vh;
         max-width: 90%;
         width: 480px;
-        background-color: hsla(0, 0%, 0%, 0.5);
+        background-color: hsla(0, 0%, 25%, 0.75);
         padding: $fontSize;
         position: relative;
+
+        .title {
+            text-align: center;
+            height: $fontSize*1.5;
+            line-height: $fontSize*1.5;
+            font-size: $fontSize*1.2;
+        }
+
+        .search {
+            padding: $fontSize*0.5 0;
+            input {
+                width: 100%;
+                height: $fontSize*2;
+                line-height: $fontSize*2;
+                font-size: $fontSize*1.2;
+                padding: 0 $fontSize*0.5;
+            }
+        }
 
         .list_content {
             overflow: auto;
             @include smallScroll;
-            height: calc(50vh - #{$fontSize*5});
+            height: calc(50vh - #{$fontSize*9.5});
         }
 
         .list_operate {
@@ -67,7 +88,9 @@
         },
         data      : function () {
             return {
-                root: {
+                title : 'Title',
+                search: '',
+                root  : {
                     route   : [],
                     id      : 0,
                     title   : 'root',
@@ -79,7 +102,7 @@
         },
         created   : function () {
             console.info(`popup form: created`);
-            let data = Object.assign(
+            let data   = Object.assign(
                 {
                     title : 'title',
                     submit: () => {
@@ -88,7 +111,7 @@
                     },
                 }, this.info);
             //
-
+            this.title = data.title;
             //
             console.info(this);
         },
@@ -98,9 +121,9 @@
             reset : function () {
                 this.$parent.hide();
             },
-            submit: function (current, curItem) {
+            submit: function (curItem, currentRoute) {
                 this.$parent.hide();
-                console.info(current);
+                console.info(currentRoute);
                 console.info(curItem);
             },
             empty : function () {

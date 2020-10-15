@@ -1,3 +1,9 @@
+<!--
+item 当前的文件数据
+dir 当前文件夹数据
+listType 列表类型，实际上没什么用
+from 来自对象 {list|favourite|recycle}
+-->
 <template>
     <li :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
         <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)">
@@ -31,18 +37,18 @@
                     <div v-if="item.cover"
                          :class="['btn', 'btn-dark', {'active':dir && dir.cover_id===item.id}]"
                          v-on:click="setCover()"
-                    ><span class="sysIcon sysIcon_edit"></span>&nbsp;cov
+                    ><span class="sysIcon sysIcon_edit"></span>&nbsp;cover
                     </div>
                 </template>
 
                 <template v-if="editMetaFlag">
                     <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta()">
-                        <span class="sysIcon sysIcon_save"></span>&nbsp;inf
+                        <span class="sysIcon sysIcon_save"></span>&nbsp;info
                     </div>
                 </template>
                 <template v-else>
                     <div :class="['btn', 'btn-dark']" v-on:click="editMeta()">
-                        <span class="sysIcon sysIcon_edit"></span>&nbsp;inf
+                        <span class="sysIcon sysIcon_edit"></span>&nbsp;info
                     </div>
                 </template>
 
@@ -66,8 +72,19 @@
                         <span class="sysIcon sysIcon_heart-o"></span>&nbsp;fav
                     </div>
                 </template>
-                <div :class="['btn', 'btn-dark']" v-on:click="deleteFile()">
-                    <span class="sysIcon sysIcon_delete"></span>&nbsp;del
+
+                <template v-if="from==='recycle'">
+                <div :class="['btn', 'btn-dark']" v-on:click="recoverFile()">
+                    <span class="sysIcon sysIcon_delete"></span>&nbsp;recover
+                </div>
+                </template>
+                <template v-else>
+                    <div :class="['btn', 'btn-dark']" v-on:click="deleteFile()">
+                        <span class="sysIcon sysIcon_delete"></span>&nbsp;delete
+                    </div>
+                </template>
+                <div :class="['btn', 'btn-dark']" v-on:click="moveFile()">
+                    <span class="sysIcon sysIcon_inbox"></span>&nbsp;move
                 </div>
             </div>
         </div>
@@ -571,6 +588,28 @@
                     if (this.item.id !== this.item.id) continue;
                     this.$parent.list.splice(i1, 1);
                 }
+            },
+            /**
+             * @todo api @use $parent
+             * */
+            recoverFile    : function () {
+                console.info('list: recoverFile');
+                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
+                    if (this.item.id !== this.item.id) continue;
+                    this.$parent.list.splice(i1, 1);
+                }
+            },
+            moveFile:function(){
+                console.info('list: moveFile');
+                return store.commit('popup', {
+                    type: 'list',
+                    info: {
+                        title:'move to:',
+                        submit:(dirItem,dirRoute)=>{
+                            console.info(`moveFile to ${JSON.stringify(dirItem)}`)
+                        },
+                    }
+                });
             },
             // -------------------------------------------
             editTag       : function () {

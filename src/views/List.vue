@@ -793,12 +793,6 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
-                return store.commit('popup', {
-                    type: 'list',
-                    info: {
-                        parent: [0, 2, 5, 7],
-                    }
-                });
                 /*store.commit('popup', {
                  type: 'file',
                  info: {

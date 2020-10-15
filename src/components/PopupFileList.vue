@@ -91,13 +91,10 @@
                 title : 'Title',
                 search: '',
                 root  : {
-                    route   : [],
                     id      : 0,
                     title   : 'root',
                     type    : 'folder',
-                    sub_size: -1,
-                    sub     : [],
-                },
+                 },
             }
         },
         created   : function () {
@@ -120,11 +117,13 @@
         methods   : {
             reset : function () {
                 this.$parent.hide();
+                this.info.cancel();
             },
             submit: function (curItem, currentRoute) {
                 this.$parent.hide();
                 console.info(currentRoute);
                 console.info(curItem);
+                this.info.submit(curItem,currentRoute);
             },
             empty : function () {
             },

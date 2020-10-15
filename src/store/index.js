@@ -97,6 +97,13 @@ export default new Vuex.Store(
                  *     goto       : {},
                  * }
                  * ----
+                 * type:'list'
+                 * info:{
+                 *     title  : '',
+                 *     submit : function({id:0,title:'',type:'folder'},[id,id,id]){},
+                 *     cancel : function(){},
+                 * }
+                 * ----
                  * type:'hide'
                  * info:null
                  * ----

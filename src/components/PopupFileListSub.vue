@@ -3,7 +3,7 @@
 -->
 <template>
     <div class="list">
-        <div class="name">
+        <div class="name" :style="{paddingLeft:`${currentRoute.length}em`}">
                 <span v-if="expanded"
                       class="sysIcon sysIcon_minus-square-o"
                       v-on:click="fold()"
@@ -14,13 +14,18 @@
             ></span>
             <span v-on:click="submit(item,currentRoute)">{{item.title}}</span>
         </div>
-        <template v-for="subItem in sub" v-if="subItem.type==='folder'">
-            <popup-file-list-sub
-                    :item="subItem"
-                    :submit="submit"
-                    :from="currentRoute"
-                    :query="false"
-            />
+        <template v-if="loading">
+            <div class="list">loading...</div>
+        </template>
+        <template v-else>
+            <template v-for="subItem in sub" v-if="subItem.type==='folder'">
+                <popup-file-list-sub
+                        :item="subItem"
+                        :submit="submit"
+                        :from="currentRoute"
+                        :query_word="false"
+                />
+            </template>
         </template>
     </div>
 </template>
@@ -28,12 +33,21 @@
 <style lang="scss">
     .popup_file_list {
         font-size: $fontSize*1.2;
+
         .list {
-            margin-left: 2*$fontSize;
+            //margin-left: 2*$fontSize;
         }
 
         .name {
             white-space: nowrap;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.5);
+                transition: background-color 0.2s;
+            }
+
+            transition: background-color 0.2s;
+
             span {
                 display: inline-block;
             }
@@ -63,22 +77,34 @@
             //跟踪路径 [0,1,2,3]
             'from',
             //查询语句，只有第一次迭代会输入，后面的迭代写入false
-            'query'
+            'query_word'
         ],
         watch    : {
             //弹层数据处理
-            info: function (to, from) {
+            info      : function (to, from) {
                 console.info(`PopupFileListSub: info watched`);
                 console.info(to);
+            },
+            query_word: function (to, from) {
+                console.info(`PopupFileListSub: query_word watched`);
+                console.info(to);
+                //
+                this.expanded = false;
+                this.sub_size = -1;
+                this.sub      = [];
+                this.sub_hide = [];
+                //
+                this.expand();
             }
         },
         data     : function () {
             return {
-                currentRoute : [],
-                expanded: false,
-                sub_size: -1,
-                sub     : [],
-                sub_hide: [],
+                currentRoute: [],
+                loading     : false,
+                expanded    : false,
+                sub_size    : -1,
+                sub         : [],
+                sub_hide    : [],
             }
         },
         created  : function () {
@@ -93,13 +119,18 @@
         methods  : {
             expand: function () {
                 console.info(`PopupFileListSub: expand`);
+                this.loading     = true;
+                let useQueryWord = this.query_word && this.query_word.length;
                 if (this.sub_size !== -1) {
-                    this.expanded      = true;
+                    this.expanded = true;
                     this.sub      = this.sub_hide;
                     this.sub_hide = [];
                     return;
                 }
-                this.query(this.item.id).then((data) => {
+                this.query(
+                    useQueryWord ? this.query_word : this.item.id,
+                    useQueryWord ? 'query' : 'folder'
+                ).then((data) => {
                     console.info(`PopupFileListSub: expand callback`);
                     // console.warn(data);
                     if (this.sub_size !== -1) return;
@@ -111,15 +142,16 @@
                         this.sub.push(item);
                     }
                     this.expanded = true;
+                    this.loading  = false;
                     //
                 });
             },
             fold  : function () {
-                this.expanded      = false;
+                this.expanded = false;
                 this.sub_hide = this.sub;
                 this.sub      = [];
             },
-            query : function (currentId) {
+            query : function (queryData, queryType) {
                 let listData = [];
                 for (let i1 = 0; i1 < Math.floor(Math.random() * 10); i1++) {
                     let type = Math.random() > 0.2 ? 'folder' : 'image';

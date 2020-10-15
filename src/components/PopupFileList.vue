@@ -10,7 +10,7 @@
                     :item="root"
                     :submit="submit"
                     :from="[]"
-                    :query="search"
+                    :query_word="search"
             />
         </div>
         <div class="list_operate">

@@ -7,6 +7,7 @@ import Favourite from "../views/Favourite";
 import UserGroup from "../views/UserGroup";
 import User      from "../views/User";
 import Recycle   from "../views/Recycle";
+import Settings  from "../views/Settings";
 
 Vue.use(VueRouter)
 
@@ -37,7 +38,7 @@ const routes = [
     },
     {
         name: 'Settings', title: 'Settings',
-        icon: 'sysIcon_setting', path: '/settings', component: Home, props: true,
+        icon: 'sysIcon_setting', path: '/settings', component: Settings, props: true,
     },
     {
         name: 'Recycle', title: 'Recycle',

@@ -1,5 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports          = {
+    transpileDependencies: [
+        'vue-echarts',
+        'resize-detector'
+    ],
     css      : {
         sourceMap: true,
         loaderOptions:{

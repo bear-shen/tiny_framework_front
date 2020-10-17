@@ -6,6 +6,7 @@ import Tag       from "../views/Tag";
 import Favourite from "../views/Favourite";
 import UserGroup from "../views/UserGroup";
 import User      from "../views/User";
+import Recycle   from "../views/Recycle";
 
 Vue.use(VueRouter)
 
@@ -40,7 +41,7 @@ const routes = [
     },
     {
         name: 'Recycle', title: 'Recycle',
-        icon: 'sysIcon_delete', path: '/recycle', component: Home, props: true,
+        icon: 'sysIcon_delete', path: '/recycle', component: Recycle, props: true,
     },
     /*{
      path: '/about',

@@ -64,12 +64,12 @@ from 来自对象 {list|favourite|recycle}
                 </template>
                 <template v-if="item.favourite">
                     <div :class="['btn', 'btn-dark']" v-on:click="favourite()">
-                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;fav
+                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
                     </div>
                 </template>
                 <template v-else>
                     <div :class="['btn', 'btn-dark','active']" v-on:click="favourite()">
-                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;fav
+                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
                     </div>
                 </template>
 

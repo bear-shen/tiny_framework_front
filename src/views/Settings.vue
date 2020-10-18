@@ -1,21 +1,140 @@
 <template>
     <div class="Settings">
-        <div v-for="item in list">
-            <template v-if="item.type==='text'"></template>
-            <template v-else-if="item.type==='input'"></template>
-            <template v-else-if="item.type==='select'"></template>
-            <template v-else-if="item.type==='radio'"></template>
-            <template v-else-if="item.type==='textarea'"></template>
-            <template v-else-if="item.type==='checkbox'"></template>
-            <template v-else-if="item.type==='line'"></template>
-            <template v-else-if="item.type==='time'"></template>
-            <template v-else-if="item.type==='pie'"></template>
+        <div v-for="item in list" :class="['item',`size_${item.size}`,`cls_${item.type}`]">
+            <div v-if="item.name" :title="item.description" class="title">{{item.name}}</div>
+            <template v-if="item.type==='text'">
+                <div class="content" v-html="item.data.value"></div>
+            </template>
+            <template v-else-if="item.type==='form'">
+                <table class="content">
+                    <tr v-for="sub in item.data">
+                        <th :title="sub.description">{{sub.name}}</th>
+                        <td>
+                            <template v-if="false"></template>
+                            <template v-else-if="sub.type==='text'">
+                                <input type="text" v-model="sub.value"/>
+                            </template>
+                            <template v-else-if="sub.type==='textarea'">
+                                <textarea v-model="sub.value"></textarea>
+                            </template>
+                            <template v-else-if="sub.type==='select'">
+                                <select v-model="sub.value">
+                                    <option v-for="(optV,optK) in sub.extra" :value="optK">{{optV}}</option>
+                                </select>
+                            </template>
+                            <template v-else-if="sub.type==='radio'">
+                                <template v-for="(optV,optK) in sub.extra">
+                                    <label>
+                                        {{optV}} :
+                                        <input type="radio" v-model="sub.value" :value="optK">
+                                    </label>
+                                </template>
+                            </template>
+                            <template v-else-if="sub.type==='checkbox'">
+                                <template v-for="(optV,optK) in sub.extra">
+                                    <label>
+                                        {{optV}} :
+                                        <input type="checkbox" v-model="sub.value" :value="optK">
+                                    </label>
+                                </template>
+                            </template>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button :class="['btn','btn-dark','sysIcon','sysIcon_save']"></button>
+                        </td>
+                    </tr>
+                </table>
+
+            </template>
+            <template v-else-if="item.type==='ec_line'"></template>
+            <template v-else-if="item.type==='ec_time'"></template>
+            <template v-else-if="item.type==='ec_pie'"></template>
         </div>
     </div>
 </template>
 
 <style lang="scss">
     .Settings {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding-top: $fontSize;
+        align-content: flex-start;
+
+        .item {
+            display: block;
+            height: $fontSize*20;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: $fontSize*0.5;
+            padding: 0 $fontSize;
+            margin-bottom: $fontSize;
+            overflow: auto;
+            @include smallScroll;
+
+            > * {
+                width: 100%;
+
+                &:first-child {
+                    margin-top: $fontSize;
+                }
+
+                &:last-child {
+                    margin-bottom: $fontSize;
+                }
+            }
+        }
+
+        .title {
+            text-align: center;
+            font-size: $fontSize*1.2;
+            margin-bottom: $fontSize*0.5;
+        }
+
+        .content {
+            font-size: $fontSize*1;
+
+            th, label {
+                font-weight: normal;
+            }
+
+            tr > * {
+                line-height: $fontSize*1.25;
+                padding-bottom: $fontSize*0.5;
+            }
+
+            tr:last-child {
+                td {
+                    padding-top: $fontSize*0.5;
+                    text-align: center;
+                }
+
+                button {
+                    width: 90%;
+                }
+            }
+
+            label {
+                margin-right: $fontSize;
+            }
+        }
+
+        .size_1 {
+            width: 23.5%;
+        }
+
+        .size_2 {
+            width: 49%;
+        }
+
+        .size_3 {
+            width: 74.5%;
+        }
+
+        .size_4 {
+            width: 100%;
+        }
     }
 </style>
 
@@ -93,56 +212,53 @@
                         data       : {value: 'test'},
                     },
                     {
-                        name       : 'input dev',
-                        description: 'this is input dev',
-                        size       : 1,
-                        type       : 'input',
-                        data       : {value: 'test'},
-                    },
-                    {
-                        name       : 'select dev',
-                        description: 'this is select dev',
-                        size       : 1,
-                        type       : 'select',
-                        data       : {
-                            value  : 'test',
-                            options: {
-                                'val1': 'test', 'val2': 'test1', 'val3': 'test2',
+                        name       : 'form dev',
+                        description: 'this is form dev',
+                        size       : 2,
+                        type       : 'form',
+                        data       : [
+                            {
+                                name       : 'input dev',
+                                description: 'this is input dev',
+                                type       : 'text',
+                                value      : 'test',
+                                extra      : [],
                             },
-                        },
-                    },
-                    {
-                        name       : 'radio dev',
-                        description: 'this is radio dev',
-                        size       : 1,
-                        type       : 'radio',
-                        data       : {
-                            value  : 'test',
-                            options: {
-                                'val1': 'test', 'val2': 'test1', 'val3': 'test2',
+                            {
+                                name       : 'textarea dev',
+                                description: 'this is textarea dev',
+                                type       : 'textarea',
+                                value      : 'textarea test',
+                                extra      : [],
                             },
-                        },
-                    },
-                    {
-                        name       : 'textarea dev',
-                        description: 'this is textarea dev',
-                        size       : 1,
-                        type       : 'textarea',
-                        data       : {
-                            value: 'test',
-                        },
-                    },
-                    {
-                        name       : 'checkbox dev',
-                        description: 'this is checkbox dev',
-                        size       : 1,
-                        type       : 'checkbox',
-                        data       : {
-                            value  : ['test1'],
-                            options: {
-                                'val1': 'test', 'val2': 'test1', 'val3': 'test2',
+                            {
+                                name       : 'select dev',
+                                description: 'this is select dev',
+                                type       : 'select',
+                                value      : 'val2',
+                                extra      : {
+                                    'val1': 'test', 'val2': 'test1', 'val3': 'test2',
+                                }
                             },
-                        },
+                            {
+                                name       : 'radio dev',
+                                description: 'this is radio dev',
+                                type       : 'radio',
+                                value      : 'val2',
+                                extra      : {
+                                    'val1': 'test', 'val2': 'test1', 'val3': 'test2',
+                                }
+                            },
+                            {
+                                name       : 'checkbox dev',
+                                description: 'this is checkbox dev',
+                                type       : 'checkbox',
+                                value      : ['val2'],
+                                extra      : {
+                                    'val1': 'test', 'val2': 'test1', 'val3': 'test2',
+                                }
+                            },
+                        ],
                     },
                     // charts------------------
                     /**
@@ -168,7 +284,7 @@
                         name       : 'line dev',
                         description: 'this is line dev',
                         size       : 1,
-                        type       : 'line',
+                        type       : 'ec_line',
                         data       : {
                             category: ['c1', 'c2', 'c3'],
                             series  : [
@@ -205,7 +321,7 @@
                         name       : 'time dev',
                         description: 'this is time dev',
                         size       : 1,
-                        type       : 'time',
+                        type       : 'ec_time',
                         data       : [
                             {
                                 series: 'series name',
@@ -266,7 +382,7 @@
                         name       : 'pie dev',
                         description: 'this is pie dev',
                         size       : 1,
-                        type       : 'pie',
+                        type       : 'ec_pie',
                         data       : [
                             {
                                 series: 'series name',

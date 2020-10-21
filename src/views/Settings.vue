@@ -6,51 +6,11 @@
                 <div class="content" v-html="item.data.value"></div>
             </template>
             <template v-else-if="item.type==='form'">
-                <table class="content">
-                    <tr v-for="sub in item.data">
-                        <th :title="sub.description">{{sub.name}}</th>
-                        <td>
-                            <template v-if="false"></template>
-                            <template v-else-if="sub.type==='text'">
-                                <input type="text" v-model="sub.value"/>
-                            </template>
-                            <template v-else-if="sub.type==='textarea'">
-                                <textarea v-model="sub.value"></textarea>
-                            </template>
-                            <template v-else-if="sub.type==='select'">
-                                <select v-model="sub.value">
-                                    <option v-for="(optV,optK) in sub.extra" :value="optK">{{optV}}</option>
-                                </select>
-                            </template>
-                            <template v-else-if="sub.type==='radio'">
-                                <template v-for="(optV,optK) in sub.extra">
-                                    <label>
-                                        {{optV}} :
-                                        <input type="radio" v-model="sub.value" :value="optK">
-                                    </label>
-                                </template>
-                            </template>
-                            <template v-else-if="sub.type==='checkbox'">
-                                <template v-for="(optV,optK) in sub.extra">
-                                    <label>
-                                        {{optV}} :
-                                        <input type="checkbox" v-model="sub.value" :value="optK">
-                                    </label>
-                                </template>
-                            </template>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <button :class="['btn','btn-dark','sysIcon','sysIcon_save']"></button>
-                        </td>
-                    </tr>
-                </table>
-
+                <Form :detail="item"/>
             </template>
-            <template v-else-if="item.type==='ec_line'"></template>
-            <template v-else-if="item.type==='ec_time'"></template>
-            <template v-else-if="item.type==='ec_pie'"></template>
+            <template v-else-if="['ec_line','ec_time','ec_pie'].indexOf(item.type)!==-1">
+                <Chart :detail="item"/>
+            </template>
         </div>
     </div>
 </template>
@@ -94,30 +54,6 @@
 
         .content {
             font-size: $fontSize*1;
-
-            th, label {
-                font-weight: normal;
-            }
-
-            tr > * {
-                line-height: $fontSize*1.25;
-                padding-bottom: $fontSize*0.5;
-            }
-
-            tr:last-child {
-                td {
-                    padding-top: $fontSize*0.5;
-                    text-align: center;
-                }
-
-                button {
-                    width: 90%;
-                }
-            }
-
-            label {
-                margin-right: $fontSize;
-            }
         }
 
         .size_1 {
@@ -146,10 +82,12 @@
     import GenFunc    from '../lib/GenFuncLib'
     import Helper     from "../lib/Helper";
     import Hinter     from "../components/Hinter";
+    import Form       from "../components/settings/Form";
+    import Chart      from "../components/settings/Chart";
 
     export default {
         name         : 'Settings',
-        components   : {Hinter},
+        components   : {Chart, Form, Hinter},
         store        : store,
         watch        : {
             $route: function (to, from) {
@@ -276,23 +214,22 @@
     series: [{
             name: '邮件7营销',
             type: 'line',
-            stack: '总量',
+            stack: '总量',//堆积图用的，这边暂时不用
             data: [120, 132, 101, 134, 90, 230, 210]
         },]
 };*/
                     {
                         name       : 'line dev',
                         description: 'this is line dev',
-                        size       : 1,
+                        size       : 2,
                         type       : 'ec_line',
-                        data       : {
-                            category: ['c1', 'c2', 'c3'],
-                            series  : [
-                                [1, 2, 3,],
-                                [3, 4, 5,],
-                                [6, 7, 8,],
-                            ],
-                        },
+                        data       : [
+                            {
+                                name: 'dev line',
+                                // stack:'stack', //堆积图用的，这边暂时不用
+                                data: {c1: 1, c2: 2, c3: 3,},
+                            },
+                        ],
                     },
                     {
                         /**
@@ -324,22 +261,19 @@
                         type       : 'ec_time',
                         data       : [
                             {
-                                series: 'series name',
-                                value : [
+                                name: 'series name',
+                                data : [
                                     {
-                                        date : 'a1',
-                                        name : (new Date()).toString(),
+                                        date : '2020-01-01',
                                         value: 12,
                                     },
                                     {
-                                        date : 'a2',
-                                        name : (new Date()).toString(),
+                                        date : '2020-01-31',
                                         value: 13,
                                     },
                                     {
-                                        date : 'a3',
-                                        name : (new Date()).toString(),
-                                        value: 14,
+                                        date : '2020-03-01',
+                                        value: 5,
                                     },
                                 ],
                             },
@@ -381,18 +315,31 @@
                          */
                         name       : 'pie dev',
                         description: 'this is pie dev',
-                        size       : 1,
+                        size       : 3,
                         type       : 'ec_pie',
                         data       : [
                             {
-                                series: 'series name',
-                                value : [
+                                name: 'series name',
+                                data : [
                                     {
                                         name : 'a2',
                                         value: 10,
                                     },
                                     {
                                         name : 'a1',
+                                        value: 20,
+                                    },
+                                ],
+                            },
+                            {
+                                name: 'series name',
+                                data : [
+                                    {
+                                        name : 'a4',
+                                        value: 10,
+                                    },
+                                    {
+                                        name : 'a5',
                                         value: 20,
                                     },
                                 ],

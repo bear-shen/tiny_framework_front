@@ -1,6 +1,6 @@
 <template>
     <div class="Settings">
-        <div v-for="item in list" :class="['item',`size_${item.size}`,`cls_${item.type}`]">
+        <div v-for="item in list" :class="['item',`cls_${item.type}`]">
             <div v-if="item.name" :title="item.description" class="title">{{item.name}}</div>
             <template v-if="item.type==='text'">
                 <div class="content" v-html="item.data.value"></div>
@@ -17,20 +17,21 @@
 
 <style lang="scss">
     .Settings {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        /*display: grid;*/
+        /*justify-content: space-between;*/
         padding-top: $fontSize;
-        align-content: flex-start;
+        /*grid-template-columns: 33% 33% 33%;*/
+        column-count: 3;
 
         .item {
             display: block;
-            height: $fontSize*20;
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: $fontSize*0.5;
             padding: 0 $fontSize;
             margin-bottom: $fontSize;
             overflow: auto;
+            width: 100%;
+            break-inside: avoid;
             @include smallScroll;
 
             > * {
@@ -44,32 +45,24 @@
                     margin-bottom: $fontSize;
                 }
             }
+
+            .title {
+                text-align: center;
+                font-size: $fontSize*1.2;
+                margin-bottom: $fontSize*0.5;
+            }
+
+            .content {
+                font-size: $fontSize*1;
+            }
         }
 
-        .title {
-            text-align: center;
-            font-size: $fontSize*1.2;
-            margin-bottom: $fontSize*0.5;
+        @media(max-width: 1199px) {
+            column-count: 2;
         }
 
-        .content {
-            font-size: $fontSize*1;
-        }
-
-        .size_1 {
-            width: 23.5%;
-        }
-
-        .size_2 {
-            width: 49%;
-        }
-
-        .size_3 {
-            width: 74.5%;
-        }
-
-        .size_4 {
-            width: 100%;
+        @media(max-width: 767px) {
+            column-count: 1;
         }
     }
 </style>
@@ -145,14 +138,24 @@
                     {
                         name       : 'text dev',
                         description: 'this is text dev',
-                        size       : 1,
+                        type       : 'text',
+                        data       : {value: 'test'},
+                    },
+                    {
+                        name       : 'text dev',
+                        description: 'this is text dev',
+                        type       : 'text',
+                        data       : {value: 'test'},
+                    },
+                    {
+                        name       : 'text dev',
+                        description: 'this is text dev',
                         type       : 'text',
                         data       : {value: 'test'},
                     },
                     {
                         name       : 'form dev',
                         description: 'this is form dev',
-                        size       : 2,
                         type       : 'form',
                         data       : [
                             {
@@ -221,65 +224,20 @@
                     {
                         name       : 'line dev',
                         description: 'this is line dev',
-                        size       : 2,
                         type       : 'ec_line',
                         data       : [
                             {
-                                name: 'dev line',
+                                name: 'dev 1',
                                 // stack:'stack', //堆积图用的，这边暂时不用
                                 data: {c1: 1, c2: 2, c3: 3,},
                             },
-                        ],
-                    },
-                    {
-                        /**
-                         * @see https://echarts.apache.org/examples/zh/editor.html?c=dynamic-data2&theme=dark
-                         option = {
-    title: {text: '动态数据 + 时间坐标轴'},
-    tooltip: {
-        trigger: 'axis',
-        formatter: function (params) {
-            params = params[0];
-            var date = new Date(params.name);
-            return params.value[0] + ' : ' + params.value[1];
-        },
-        axisPointer: {animation: false}
-    },
-    xAxis: {type: 'time',},
-    yAxis: {type: 'value',},
-    series: [{
-        name: '模拟数据',
-        type: 'line',
-        showSymbol: false,
-        hoverAnimation: false,
-        data: [{name:Date(),value:[Date(),value]}]
-    }]
-};*/
-                        name       : 'time dev',
-                        description: 'this is time dev',
-                        size       : 1,
-                        type       : 'ec_time',
-                        data       : [
                             {
-                                name: 'series name',
-                                data : [
-                                    {
-                                        date : '2020-01-01',
-                                        value: 12,
-                                    },
-                                    {
-                                        date : '2020-01-31',
-                                        value: 13,
-                                    },
-                                    {
-                                        date : '2020-03-01',
-                                        value: 5,
-                                    },
-                                ],
+                                name: 'dev 2',
+                                // stack:'stack', //堆积图用的，这边暂时不用
+                                data: {c1: 4, c2: 8, c3: 1,},
                             },
                         ],
-                    },
-                    {
+                    }, {
                         /**
                          * @see https://echarts.apache.org/examples/zh/editor.html?c=pie-simple&theme=dark
                          option = {
@@ -315,12 +273,11 @@
                          */
                         name       : 'pie dev',
                         description: 'this is pie dev',
-                        size       : 3,
                         type       : 'ec_pie',
                         data       : [
                             {
                                 name: 'series name',
-                                data : [
+                                data: [
                                     {
                                         name : 'a2',
                                         value: 10,
@@ -333,7 +290,7 @@
                             },
                             {
                                 name: 'series name',
-                                data : [
+                                data: [
                                     {
                                         name : 'a4',
                                         value: 10,
@@ -346,6 +303,71 @@
                             },
                         ],
                     },
+                    {
+                        /**
+                         * @see https://echarts.apache.org/examples/zh/editor.html?c=dynamic-data2&theme=dark
+                         option = {
+    title: {text: '动态数据 + 时间坐标轴'},
+    tooltip: {
+        trigger: 'axis',
+        formatter: function (params) {
+            params = params[0];
+            var date = new Date(params.name);
+            return params.value[0] + ' : ' + params.value[1];
+        },
+        axisPointer: {animation: false}
+    },
+    xAxis: {type: 'time',},
+    yAxis: {type: 'value',},
+    series: [{
+        name: '模拟数据',
+        type: 'line',
+        showSymbol: false,
+        hoverAnimation: false,
+        data: [{name:Date(),value:[Date(),value]}]
+    }]
+};*/
+                        name       : 'time dev',
+                        description: 'this is time dev',
+                        type       : 'ec_time',
+                        data       : [
+                            {
+                                name: 'series 1',
+                                data: [
+                                    {
+                                        date : '2020-01-01',
+                                        value: 12,
+                                    },
+                                    {
+                                        date : '2020-01-31',
+                                        value: 13,
+                                    },
+                                    {
+                                        date : '2020-03-01',
+                                        value: 5,
+                                    },
+                                ],
+                            },
+                            {
+                                name: 'series 2',
+                                data: [
+                                    {
+                                        date : '2020-01-15',
+                                        value: 6,
+                                    },
+                                    {
+                                        date : '2020-01-18',
+                                        value: 8,
+                                    },
+                                    {
+                                        date : '2020-02-15',
+                                        value: 1,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+
                 ];
                 //
                 return new Promise((resolve, reject) => {

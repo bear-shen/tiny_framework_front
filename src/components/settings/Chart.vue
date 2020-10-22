@@ -1,13 +1,13 @@
 <template>
     <div class="content chart">
-        <v-chart :options="options" theme="dark"/>
+        <v-chart :options="options" theme="dark" autoresize/>
     </div>
 </template>
 
 <style lang="scss">
     .content.chart {
         width: 100%;
-        height: $fontSize*14;
+        height: $fontSize*20;
 
         .echarts {
             width: 100%;
@@ -20,6 +20,9 @@
     import ECharts from 'vue-echarts'
     import 'echarts/lib/chart/line'
     import 'echarts/lib/chart/pie'
+    import 'echarts/lib/component/tooltip'
+    import 'echarts/lib/component/grid'
+    import 'echarts/lib/component/legend'
 
     /**
      * @var data            (internal)
@@ -83,7 +86,7 @@
                             legend : {data: []},
                             xAxis  : {
                                 type       : 'category',
-                                boundaryGap: false,
+                                // boundaryGap: false,
                                 data       : []
                             },
                             yAxis  : {type: 'value'},
@@ -110,6 +113,7 @@
                         options.series      = meta.series;
                         options.legend.data = meta.legend;
                         options.xAxis.data  = meta.x;
+                        console.info(JSON.stringify(options));
                         break;
                     case 'ec_time':
                         Object.assign(options, {
@@ -145,8 +149,6 @@
                                 {
                                     name          : series.name,
                                     type          : 'line',
-                                    showSymbol    : false,
-                                    hoverAnimation: false,
                                     data          : arr
                                 });
 

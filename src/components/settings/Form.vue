@@ -3,7 +3,9 @@
         <tr v-for="sub in item.data">
             <th :title="sub.description">{{sub.name}}</th>
             <td>
-                <template v-if="false"></template>
+                <template v-if="edit===false">
+                    {{sub.value}}
+                </template>
                 <template v-else-if="sub.type==='text'">
                     <input type="text" v-model="sub.value"/>
                 </template>
@@ -35,7 +37,8 @@
         </tr>
         <tr>
             <td colspan="2">
-                <button :class="['btn','btn-dark','sysIcon','sysIcon_save']"></button>
+                <button :class="['btn','btn-dark','sysIcon','sysIcon_save']" v-if="edit" v-on:click="submit"> Submit</button>
+                <button :class="['btn','btn-dark','sysIcon','sysIcon_edit']" v-else v-on:click="modify"> Modify</button>
             </td>
         </tr>
     </table>
@@ -92,6 +95,7 @@
         },
         data     : function () {
             return {
+                edit: false,
                 item: {},
             }
         },
@@ -103,7 +107,11 @@
             this.item = {};
         },
         methods  : {
+            modify: function () {
+                this.edit = true;
+            },
             submit: function () {
+                this.edit = false;
             },
             cancel: function () {
             },

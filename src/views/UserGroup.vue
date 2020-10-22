@@ -201,7 +201,7 @@
         @media(max-width: 1500px) {
             .groupMain {
                 margin: $fontSize*0.5;
-                min-width: 90%;
+                width: 100%;
             }
             font-size: $fontSize*1;
         }

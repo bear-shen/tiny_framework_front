@@ -205,6 +205,9 @@
             flex-direction: row;
             flex-wrap: nowrap;
             text-align: center;
+            .navIcon {
+                padding-left: 0;
+            }
 
             .navTxt {
                 display: none;

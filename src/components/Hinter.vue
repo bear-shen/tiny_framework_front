@@ -14,6 +14,7 @@ Props:
         >
         <ul v-if="active"
             class="float_hinter">
+            <li v-if="loading">loading...</li>
             <li
                     v-for="(item,index) in list"
                     v-on:click.stop="htCallback(item)"
@@ -62,8 +63,10 @@ Props:
             return {
                 list   : [],
                 active : 0,
+                loading : 0,
                 htData : '',
                 htShow : [],
+                //对传入值是否为空做一个判断，如果传入为undefined则回调完成后自动清空数组
                 empData: false,
             }
         },
@@ -104,6 +107,7 @@ Props:
                 if (!this.htData.length) return;
                 if (!this.query) return;
                 this.active = 1;
+                this.loading=1;
                 this.query(this.htData).then(this.fillData);
             },
             htCallback : function (item) {
@@ -115,6 +119,7 @@ Props:
                 if(this.empData)this.htData='';
             },
             fillData   : function (resolveData) {
+                this.loading=0;
                 this.list = resolveData.list;
             },
             searchClear: function () {

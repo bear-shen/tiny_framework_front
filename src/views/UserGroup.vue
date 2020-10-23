@@ -110,7 +110,7 @@
                                         <input type="checkbox" v-model="dir.delete" :id="`ug_${item.id}_${dir.dir_id}_delete`">
                                         <label :for="`ug_${item.id}_${dir.dir_id}_delete`">{{dir.delete?'On':'Off'}}</label>
                                     </td>
-                                    <td class="sysIcon sysIcon_delete" v-on:click="delAuth(index)"></td>
+                                    <td class="sysIcon sysIcon_delete" v-on:click="delAuth(groupIndex,dirIndex)"></td>
                                 </tr>
                                 <tr>
                                     <td colspan="6" class="sysIcon sysIcon_plus-square-o addRow" v-on:click="addAuth()"></td>
@@ -422,10 +422,10 @@
                 this.list[groupIndex].control_dir[dirIndex].dir_id = current.dir_id;
                 this.list[groupIndex].control_dir[dirIndex].path   = current.path;
             },
-            delAuth       : function (itemIndex) {
-                console.info('UserGroup: delAuth')
-                this.list[this.editGroupId]
-                    .control_dir.splice(itemIndex, 1)
+            delAuth       : function (groupIndex,dirIndex) {
+                console.info(`UserGroup: delAuth ${groupIndex} ${dirIndex}`)
+                this.list[groupIndex]
+                    .control_dir.splice(dirIndex, 1)
                 ;
             },
             /**

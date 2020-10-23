@@ -352,6 +352,7 @@
         },
         methods   : {
             /**
+             * @todo api
              * 查询方法，返回的 promise
              * */
             query    : function (query, page) {
@@ -437,10 +438,16 @@
                     )
                 }
             },
+            /**
+             * @todo api
+             * */
             saveGroup: function (id) {
                 this.editMode = 0;
                 this.editId   = 0;
             },
+            /**
+             * @todo api
+             * */
             delGroup : function (id) {
             },
             modTag   : function (id) {
@@ -458,10 +465,16 @@
                     )
                 }
             },
+            /**
+             * @todo api
+             * */
             saveTag  : function (id) {
                 this.editMode = 0;
                 this.editId   = 0;
             },
+            /**
+             * @todo api
+             * */
             delTag   : function (id) {
             },
             goto     : function (type, targetId) {

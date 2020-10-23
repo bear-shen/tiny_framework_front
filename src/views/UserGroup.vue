@@ -7,11 +7,15 @@
                         <th>ID</th>
                         <td class="idRow">
                             <span>{{item.id}}</span>
-                            <span class="sysIcon sysIcon_edit" v-if="editGroupId!==item.id" v-on:click="modGroup(item.id)"></span>
-                            <span class="sysIcon sysIcon_save" v-else v-on:click="saveGroup(item.id)"></span>
+                            <div>
+                            <span class="sysIcon sysIcon_edit" v-if="groupIndex!==editGroupIndex" v-on:click="modGroup(groupIndex)"></span>
+                            <span class="sysIcon sysIcon_save" v-else v-on:click="saveGroup(groupIndex)"></span>
+                                &nbsp;
+                            <span class="sysIcon sysIcon_delete" v-on:click="delGroup(groupIndex)"></span>
+                            </div>
                         </td>
                     </tr>
-                    <template v-if="editGroupId===item.id">
+                    <template v-if="editGroupIndex===groupIndex">
                         <tr>
                             <th>Name</th>
                             <td><input type="text" v-model="item.name"></td>
@@ -207,7 +211,7 @@
         }
         @media(max-width: 700px) {
             .userRow {
-                .subTable td,.subTable th{
+                .subTable td, .subTable th {
                     &:nth-child(4) {
                         display: none;
                     }
@@ -326,7 +330,7 @@
                 },
                 // page: 1,
                 editGroup         : 0,
-                editGroupId       : 0,
+                editGroupIndex    : -1,
                 //
                 editAuth          : 0,
                 editAuthGroupIndex: -1,
@@ -375,21 +379,32 @@
                         time_update  : '',
                         user         : [],
                     });
-                this.editGroupId = 0;
-                this.editGroup   = 1;
+                this.editGroupIndex = -1;
+                this.editGroup      = 1;
             },
-            modGroup      : function (itemId) {
+            modGroup      : function (groupIndex) {
                 console.info('UserGroup: modGroup')
                 this.saveGroup();
-                for (let i1 = 0; i1 < this.list.length; i1++) {
-                    if (this.list[i1].id !== itemId) continue;
-                    this.editGroupId = itemId;
-                }
-                this.editGroup = 1;
+                this.editGroupIndex = groupIndex;
+                this.editGroup      = 1;
             },
+            /**
+             * @todo api
+             * */
             saveGroup     : function () {
-                this.editGroupId = 0;
-                this.editGroup   = 0;
+                this.editGroupIndex = -1;
+                this.editGroup      = 0;
+            },
+            /**
+             * @todo api
+             * */
+            delGroup      : function (groupIndex) {
+                this.editGroup          = 0;
+                this.editGroupIndex     = -1;
+                this.editAuth           = 0;
+                this.editAuthGroupIndex = -1;
+                this.editAuthIndex      = -1;
+                this.list.splice(groupIndex, 1);
             },
             // ---------------------------------
             modAuthGroup  : function (groupId) {
@@ -398,6 +413,9 @@
                 this.editAuthGroupIndex = groupId;
                 this.editAuth           = 1;
             },
+            /**
+             * @todo api
+             * */
             saveAuthGroup : function () {
                 this.editAuthGroupIndex = -1;
                 this.editAuth           = 0;
@@ -422,7 +440,7 @@
                 this.list[groupIndex].control_dir[dirIndex].dir_id = current.dir_id;
                 this.list[groupIndex].control_dir[dirIndex].path   = current.path;
             },
-            delAuth       : function (groupIndex,dirIndex) {
+            delAuth       : function (groupIndex, dirIndex) {
                 console.info(`UserGroup: delAuth ${groupIndex} ${dirIndex}`)
                 this.list[groupIndex]
                     .control_dir.splice(dirIndex, 1)
@@ -456,6 +474,7 @@
             },
             // ---------------------------------
             /**
+             * @todo api
              * 查询方法，返回的 promise
              * */
             query         : function (query, page) {

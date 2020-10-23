@@ -189,11 +189,17 @@
                 this.editUserIndex = userIndex;
                 this.editUser      = 1;
             },
+            /**
+             * @todo api
+             * */
             saveUser      : function () {
                 console.info('User: saveUser');
                 this.editUserIndex = -1;
                 this.editUser      = 0;
             },
+            /**
+             * @todo api
+             * */
             hinterQuery   : function () {
                 console.debug(`User: hinterQuery`);
                 //
@@ -218,6 +224,7 @@
             },
             // ---------------------------------
             /**
+             * @todo api
              * 查询方法，返回的 promise
              * */
             query         : function (query, page) {

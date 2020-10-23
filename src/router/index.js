@@ -1,6 +1,5 @@
 import Vue       from 'vue'
 import VueRouter from 'vue-router'
-import Home      from '../views/Home.vue'
 import List      from "../views/List";
 import Tag       from "../views/Tag";
 import Favourite from "../views/Favourite";

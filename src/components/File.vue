@@ -599,6 +599,9 @@ from 来自对象 {list|favourite|recycle}
                     this.$parent.list.splice(i1, 1);
                 }
             },
+            /**
+             * @todo api
+             * */
             moveFile:function(){
                 console.info('list: moveFile');
                 return store.commit('popup', {

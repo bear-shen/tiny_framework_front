@@ -151,6 +151,9 @@
                 this.sub_hide = this.sub;
                 this.sub      = [];
             },
+            /**
+             * @todo api
+             * */
             query : function (queryData, queryType) {
                 let listData = [];
                 for (let i1 = 0; i1 < Math.floor(Math.random() * 10); i1++) {

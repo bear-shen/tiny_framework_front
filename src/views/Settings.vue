@@ -69,7 +69,6 @@
 
 <script>
     // @ is an alias to /src
-    import HelloWorld from '@/components/HelloWorld.vue'
     import store      from "../store";
     import router     from "../router";
     import GenFunc    from '../lib/GenFuncLib'

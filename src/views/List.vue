@@ -857,6 +857,9 @@
             },
             addFile       : function () {
                 console.info('list: addFile');
+                /*store.commit('popup', {
+                    type: 'login',
+                });*/
                 store.commit('popup', {
                     type: 'uploader',
                     info: {

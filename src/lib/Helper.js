@@ -25,5 +25,8 @@ const Helper = {
         }
         return !modified;
     },
+    query:function (path,data) {
+
+    }
 };
 export {Helper as default};

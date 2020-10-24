@@ -18,6 +18,9 @@
         <template v-else-if="type==='list'">
             <popup-file-list v-bind:info="popupInfo"></popup-file-list>
         </template>
+        <template v-else-if="type==='login'">
+            <popup-login v-bind:info="popupInfo"></popup-login>
+        </template>
     </div>
 </template>
 
@@ -62,6 +65,7 @@
     import PopupUploader   from "./PopupUploader";
     import PopupFileDetail from "./PopupFileDetail";
     import PopupFileList   from "./PopupFileList";
+    import PopupLogin      from "./PopupLogin";
 
     /**
      * @var isShow          (internal)
@@ -78,7 +82,7 @@
      * */
     export default {
         name      : "Popup",
-        components: {PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
+        components: {PopupLogin, PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
         watch     : {},
         data      : function () {

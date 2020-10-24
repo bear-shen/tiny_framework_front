@@ -543,7 +543,7 @@ from 来自对象 {list|favourite|recycle}
                 this.editMetaFlag = 1;
             },
             /**
-             * @todo api
+             * @todo api tag_del
              * */
             delTag        : function (tagId) {
                 console.info('list: del tag:' + this.item.id + '\t' + tagId);
@@ -558,14 +558,14 @@ from 来自对象 {list|favourite|recycle}
                 }
             },
             /**
-             * @todo api
+             * @todo api file_mod
              * */
             saveMeta      : function () {
                 console.info('list: saveMeta');
                 this.editMetaFlag = 0;
             },
             /**
-             * @todo api
+             * @todo api file_cover
              * */
             setCover      : function () {
                 console.info('list: setCover');
@@ -573,14 +573,14 @@ from 来自对象 {list|favourite|recycle}
                     this.dir.cover_id = this.item.id;
             },
             /**
-             * @todo api
+             * @todo api file_favourite
              * */
             favourite     : function () {
                 console.info(`list: favourite ${this.item.id}`);
                 this.item.favourite = this.item.favourite ? 0 : 1;
             },
             /**
-             * @todo api @use $parent
+             * @todo api file_delete @use $parent
              * */
             deleteFile    : function () {
                 console.info('list: deleteFile');
@@ -590,7 +590,7 @@ from 来自对象 {list|favourite|recycle}
                 }
             },
             /**
-             * @todo api @use $parent
+             * @todo api file_recover @use $parent
              * */
             recoverFile    : function () {
                 console.info('list: recoverFile');
@@ -600,7 +600,7 @@ from 来自对象 {list|favourite|recycle}
                 }
             },
             /**
-             * @todo api
+             * @todo api file_move
              * */
             moveFile:function(){
                 console.info('list: moveFile');
@@ -620,14 +620,14 @@ from 来自对象 {list|favourite|recycle}
                 this.editTagFlag = 1;
             },
             /**
-             * @todo api
+             * @todo api tag_apply
              * */
             saveTag       : function () {
                 console.info('list: saveTag');
                 this.editTagFlag = 0;
             },
             /**
-             * @todo api
+             * @todo api tag_get
              * */
             hinterQuery   : function (searchTxt) {
                 console.debug(`User: hinterQuery ${searchTxt}`);

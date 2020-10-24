@@ -110,6 +110,9 @@
             modify: function () {
                 this.edit = true;
             },
+            /**
+             * @todo api config_set
+             * */
             submit: function () {
                 this.edit = false;
             },

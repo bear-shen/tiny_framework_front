@@ -351,7 +351,7 @@
         },
         methods   : {
             /**
-             * @todo api
+             * @todo api tag_get
              * 查询方法，返回的 promise
              * */
             query    : function (query, page) {
@@ -438,14 +438,14 @@
                 }
             },
             /**
-             * @todo api
+             * @todo api tag_group_mod
              * */
             saveGroup: function (id) {
                 this.editMode = 0;
                 this.editId   = 0;
             },
             /**
-             * @todo api
+             * @todo api tag_group_del
              * */
             delGroup : function (id) {
             },
@@ -465,14 +465,14 @@
                 }
             },
             /**
-             * @todo api
+             * @todo api tag_mod
              * */
             saveTag  : function (id) {
                 this.editMode = 0;
                 this.editId   = 0;
             },
             /**
-             * @todo api
+             * @todo api tag_del
              * */
             delTag   : function (id) {
             },

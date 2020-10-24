@@ -228,7 +228,7 @@
                 this.$parent.hide();
             },
             /**
-             * @todo api
+             * @todo api file_upload
              * */
             upload       : function () {
                 console.info(`popup uploader: upload`);

@@ -271,7 +271,7 @@ api 有了以后改改就能用的
         },
         methods      : {
             /**
-             * @todo api
+             * @todo api file_list
              * 拆开是为了方便外部调用
              *
              * @return Promise

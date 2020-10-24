@@ -152,7 +152,7 @@
                 this.sub      = [];
             },
             /**
-             * @todo api
+             * @todo api file_list
              * */
             query : function (queryData, queryType) {
                 let listData = [];

@@ -388,14 +388,14 @@
                 this.editGroup      = 1;
             },
             /**
-             * @todo api
+             * @todo api user_group_mod
              * */
             saveGroup     : function () {
                 this.editGroupIndex = -1;
                 this.editGroup      = 0;
             },
             /**
-             * @todo api
+             * @todo api user_group_del
              * */
             delGroup      : function (groupIndex) {
                 this.editGroup          = 0;
@@ -413,7 +413,7 @@
                 this.editAuth           = 1;
             },
             /**
-             * @todo api
+             * @todo api user_group_auth
              * */
             saveAuthGroup : function () {
                 this.editAuthGroupIndex = -1;
@@ -446,7 +446,7 @@
                 ;
             },
             /**
-             * @todo api
+             * @todo api file_list
              * */
             hinterQuery   : function (searchTxt) {
                 console.debug(`UserGroup: hinterQuery ${searchTxt}`);
@@ -473,7 +473,7 @@
             },
             // ---------------------------------
             /**
-             * @todo api
+             * @todo api user_group_get
              * 查询方法，返回的 promise
              * */
             query         : function (query, page) {

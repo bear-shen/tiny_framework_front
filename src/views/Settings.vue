@@ -127,7 +127,7 @@
         methods      : {
             // ---------------------------------
             /**
-             * @todo api
+             * @todo api config_get
              * 查询方法，返回的 promise
              * */
             query    : function (query, page) {

@@ -189,7 +189,7 @@
                 this.editUser      = 1;
             },
             /**
-             * @todo api
+             * @todo api user_mod
              * */
             saveUser      : function () {
                 console.info('User: saveUser');
@@ -197,7 +197,7 @@
                 this.editUser      = 0;
             },
             /**
-             * @todo api
+             * @todo api user_group_get
              * */
             hinterQuery   : function () {
                 console.debug(`User: hinterQuery`);
@@ -223,7 +223,7 @@
             },
             // ---------------------------------
             /**
-             * @todo api
+             * @todo api user_get
              * 查询方法，返回的 promise
              * */
             query         : function (query, page) {

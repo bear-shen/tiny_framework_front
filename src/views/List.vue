@@ -304,7 +304,7 @@
         },
         methods      : {
             /**
-             * @todo api
+             * @todo api file_list
              * 拆开是为了方便外部调用
              *
              * @return Promise
@@ -788,7 +788,7 @@
                 router.push(targetRoute);
             },
             /**
-             * @todo api
+             * @todo api file_mkdir
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
@@ -855,15 +855,12 @@
                  );*/
                 // this.$parent.showConfirm();
             },
-            /**
-             * @todo api
-             * */
             addFile       : function () {
                 console.info('list: addFile');
                 store.commit('popup', {
                     type: 'uploader',
                     info: {
-                        dir_id: 1,
+                        dir_id: this.dir.id,
                     }
                 });
                 /*this.$parent.showLoader(

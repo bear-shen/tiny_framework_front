@@ -309,9 +309,9 @@
 </style>
 
 <script>
-    import GenFuncLib from "../lib/GenFuncLib";
-    import Helper     from "../lib/Helper";
-    import router     from "../router";
+    import GenFuncLib from "../../lib/GenFuncLib";
+    import Helper     from "../../lib/Helper";
+    import router     from "../../router";
 
     /**
      * 文件详细页

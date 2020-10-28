@@ -70,7 +70,7 @@
 </style>
 
 <script>
-    import PopupFileListSub from "./PopupFileListSub";
+    import PopupFileListSub from "./FileListSub";
 
     /**
      * */

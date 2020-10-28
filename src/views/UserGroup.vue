@@ -35,10 +35,10 @@
                         </tr>
                         <tr>
                             <th>Admin</th>
-                            <td :class="{positive:item.control_admin,negative:!item.control_admin,}">
-                                <input type="radio" :value="1" v-model="item.control_admin" :id="`ug_${item.id}_admin_0`">
+                            <td :class="{positive:item.admin,negative:!item.admin,}">
+                                <input type="radio" :value="1" v-model="item.admin" :id="`ug_${item.id}_admin_0`">
                                 <label :for="`ug_${item.id}_admin_0`">Yey</label>
-                                <input type="radio" :value="0" v-model="item.control_admin" :id="`ug_${item.id}_admin_1`">
+                                <input type="radio" :value="0" v-model="item.admin" :id="`ug_${item.id}_admin_1`">
                                 <label :for="`ug_${item.id}_admin_1`">Nay</label>
                             </td>
                         </tr>
@@ -58,7 +58,7 @@
                         </tr>
                         <tr>
                             <th>Admin</th>
-                            <td :class="{positive:item.status,negative:!item.status,}">{{item.control_admin?'Y':'N'}}</td>
+                            <td :class="{positive:item.status,negative:!item.status,}">{{item.admin?'Y':'N'}}</td>
                         </tr>
                     </template>
                     <tr>
@@ -77,7 +77,7 @@
                                     <th>Delete</th>
                                 </tr>
                                 <tr v-for="dir in item.control_dir">
-                                    <td>{{dir.dir_id}}</td>
+                                    <td>{{dir.id_node}}</td>
                                     <td>{{dir.path}}</td>
                                     <td :class="{positive:dir.access,negative:!dir.access,}">{{dir.access?'Allow':'Deny'}}</td>
                                     <td :class="{positive:dir.modify,negative:!dir.modify,}">{{dir.modify?'Allow':'Deny'}}</td>
@@ -95,24 +95,24 @@
                                 <tr v-for="(dir,dirIndex) in item.control_dir">
                                     <td>
                                         <Hinter
-                                                :data="dir.dir_id"
-                                                :show="['dir_id','path']"
+                                                :data="dir.id_node"
+                                                :show="['id_node','path']"
                                                 :query="hinterQuery"
                                                 :callback="hinterCallback.bind(this,groupIndex,dirIndex)"
                                         />
                                     </td>
                                     <td>{{dir.path}}</td>
                                     <td :class="{positive:dir.access,negative:!dir.access,}">
-                                        <input type="checkbox" v-model="dir.access" :id="`ug_${item.id}_${dir.dir_id}_access`">
-                                        <label :for="`ug_${item.id}_${dir.dir_id}_access`">{{dir.access?'On':'Off'}}</label>
+                                        <input type="checkbox" v-model="dir.access" :id="`ug_${item.id}_${dir.id_node}_access`">
+                                        <label :for="`ug_${item.id}_${dir.id_node}_access`">{{dir.access?'On':'Off'}}</label>
                                     </td>
                                     <td :class="{positive:dir.modify,negative:!dir.modify,}">
-                                        <input type="checkbox" v-model="dir.modify" :id="`ug_${item.id}_${dir.dir_id}_modify`">
-                                        <label :for="`ug_${item.id}_${dir.dir_id}_modify`">{{dir.modify?'On':'Off'}}</label>
+                                        <input type="checkbox" v-model="dir.modify" :id="`ug_${item.id}_${dir.id_node}_modify`">
+                                        <label :for="`ug_${item.id}_${dir.id_node}_modify`">{{dir.modify?'On':'Off'}}</label>
                                     </td>
                                     <td :class="{positive:dir.delete,negative:!dir.delete,}">
-                                        <input type="checkbox" v-model="dir.delete" :id="`ug_${item.id}_${dir.dir_id}_delete`">
-                                        <label :for="`ug_${item.id}_${dir.dir_id}_delete`">{{dir.delete?'On':'Off'}}</label>
+                                        <input type="checkbox" v-model="dir.delete" :id="`ug_${item.id}_${dir.id_node}_delete`">
+                                        <label :for="`ug_${item.id}_${dir.id_node}_delete`">{{dir.delete?'On':'Off'}}</label>
                                     </td>
                                     <td class="sysIcon sysIcon_delete" v-on:click="delAuth(groupIndex,dirIndex)"></td>
                                 </tr>
@@ -371,9 +371,9 @@
                         description  : '',
                         status       : 0,
                         control_dir  : [
-                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                            {id_node: 0, access: 1, modify: 0, delete: 0, path: 'root',},
                         ],
-                        control_admin: 0,
+                        admin: 0,
                         time_create  : '',
                         time_update  : '',
                         user         : [],
@@ -425,7 +425,7 @@
                 this.list[this.editAuthGroupIndex]
                     .control_dir.push(
                     {
-                        dir_id: '',
+                        id_node: '',
                         path  : '',
                         access: 1,
                         modify: 1,
@@ -436,7 +436,7 @@
             setAuth       : function (groupIndex, dirIndex, selectIndex) {
                 console.info('UserGroup: setAuth');
                 let current                                        = this.selector[selectIndex];
-                this.list[groupIndex].control_dir[dirIndex].dir_id = current.dir_id;
+                this.list[groupIndex].control_dir[dirIndex].id_node = current.id_node;
                 this.list[groupIndex].control_dir[dirIndex].path   = current.path;
             },
             delAuth       : function (groupIndex, dirIndex) {
@@ -455,10 +455,10 @@
                     return resolve(
                         {
                             list: [
-                                {dir_id: 4, path: '/root/tentacles',},
-                                {dir_id: 2, path: '/root/dilf',},
-                                {dir_id: 3, path: '/root/rape',},
-                                {dir_id: 1, path: '/root/netorare',},
+                                {id_node: 4, path: '/root/tentacles',},
+                                {id_node: 2, path: '/root/dilf',},
+                                {id_node: 3, path: '/root/rape',},
+                                {id_node: 1, path: '/root/netorare',},
                             ],
                         });
                 });
@@ -467,7 +467,7 @@
                 console.debug(`UserGroup: hinterCallback ${groupIndex} ${dirIndex}`);
                 console.debug(target);
                 this.list[groupIndex].control_dir[dirIndex]
-                    .dir_id = target.dir_id;
+                    .id_node = target.id_node;
                 this.list[groupIndex].control_dir[dirIndex]
                     .path   = target.path;
             },
@@ -487,11 +487,11 @@
                         description  : 'admin group',
                         status       : 1,
                         control_dir  : [
-                            {dir_id: 0, access: 1, modify: 1, delete: 1, path: 'root',},
-                            {dir_id: 1, access: 1, modify: 1, delete: 1, path: 'root/hentai',},
-                            {dir_id: 9, access: 1, modify: 0, delete: 0, path: 'root/doujinshi',},
+                            {id_node: 0, access: 1, modify: 1, delete: 1, path: 'root',},
+                            {id_node: 1, access: 1, modify: 1, delete: 1, path: 'root/hentai',},
+                            {id_node: 9, access: 1, modify: 0, delete: 0, path: 'root/doujinshi',},
                         ],
-                        control_admin: 1,
+                        admin: 1,
                         time_create  : '1919-08-10 11:45:14',
                         time_update  : '1919-08-10 11:45:14',
                         user         : [
@@ -508,9 +508,9 @@
                         status       : 1,
                         sort         : 1,
                         control_dir  : [
-                            {dir_id: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                            {id_node: 0, access: 1, modify: 0, delete: 0, path: 'root',},
                         ],
-                        control_admin: 0,
+                        admin: 0,
                         time_create  : '1919-08-10 11:45:14',
                         time_update  : '1919-08-10 11:45:14',
                         user         : [

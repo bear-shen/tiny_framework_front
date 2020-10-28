@@ -59,13 +59,14 @@
 </style>
 
 <script>
-    import PopupLoader     from "./PopupLoader";
-    import PopupForm       from "./PopupForm";
-    import PopupConfirm    from "./PopupConfirm";
-    import PopupUploader   from "./PopupUploader";
-    import PopupFileDetail from "./PopupFileDetail";
-    import PopupFileList   from "./PopupFileList";
-    import PopupLogin      from "./PopupLogin";
+    import PopupLoader     from "./popup/Loader";
+    import PopupForm       from "./popup/Form";
+    import PopupConfirm    from "./popup/Confirm";
+    import PopupUploader   from "./popup/Uploader";
+    import PopupFileDetail from "./popup/FileDetail";
+    import PopupFileList   from "./popup/FileList";
+    import PopupLogin      from "./popup/Login";
+    import PopupFileVersion      from "./popup/FileVersion";
 
     /**
      * @var isShow          (internal)

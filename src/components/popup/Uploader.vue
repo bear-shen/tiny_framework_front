@@ -140,8 +140,8 @@
 </style>
 
 <script>
-    import config     from '../config';
-    import GenFuncLib from '../lib/GenFuncLib';
+    import config     from '../../config';
+    import GenFuncLib from '../../lib/GenFuncLib';
 
     /**
      * UploaderLib.js 里的分片功能正在考虑要不要去掉，想想都觉得烦。。。

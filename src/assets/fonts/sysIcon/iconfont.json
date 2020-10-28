@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8748930",
+      "name": "version",
+      "font_class": "equalizer-line",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "10035168",
+      "name": "git branch",
+      "font_class": "branch",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "15949522",
+      "name": "version number",
+      "font_class": "hex",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "16579310",
+      "name": "version",
+      "font_class": "stack",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
       "icon_id": "15218230",
       "name": "minus-square-o",
       "font_class": "minus-square-o",

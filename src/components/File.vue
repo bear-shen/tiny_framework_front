@@ -86,6 +86,11 @@ from 来自对象 {list|favourite|recycle}
                 <div :class="['btn', 'btn-dark']" v-on:click="moveFile()">
                     <span class="sysIcon sysIcon_inbox"></span>&nbsp;move
                 </div>
+                <template v-if="item.type!=='folder'">
+                <div :class="['btn', 'btn-dark']" v-on:click="fileVersion()">
+                    <span class="sysIcon sysIcon_stack"></span>&nbsp;version
+                </div>
+                </template>
             </div>
         </div>
         <template v-if="editTagFlag">
@@ -614,6 +619,17 @@ from 来自对象 {list|favourite|recycle}
                     }
                 });
             },
+            /**
+             * */
+            fileVersion:function(){
+                console.info('list: fileVersion');
+                return store.commit('popup', {
+                    type: 'version',
+                    info: {
+                        id:this.item.id,
+                    }
+                });
+            },
             // -------------------------------------------
             editTag       : function () {
                 console.info('list: editTag');
@@ -671,10 +687,4 @@ from 来自对象 {list|favourite|recycle}
                     return;
                 }
                 this.item.tag[groupIndex].sub.push(
-                    {id: target.id, name: target.name,}
-                );
-
-            },
-        }
-    }
-</script>
+                    {id: target.id, n

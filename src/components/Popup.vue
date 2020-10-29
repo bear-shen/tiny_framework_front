@@ -21,6 +21,9 @@
         <template v-else-if="type==='login'">
             <popup-login v-bind:info="popupInfo"></popup-login>
         </template>
+        <template v-else-if="type==='version'">
+            <popup-file-version v-bind:info="popupInfo"></popup-file-version>
+        </template>
     </div>
 </template>
 
@@ -59,14 +62,14 @@
 </style>
 
 <script>
-    import PopupLoader     from "./popup/Loader";
-    import PopupForm       from "./popup/Form";
-    import PopupConfirm    from "./popup/Confirm";
-    import PopupUploader   from "./popup/Uploader";
-    import PopupFileDetail from "./popup/FileDetail";
-    import PopupFileList   from "./popup/FileList";
-    import PopupLogin      from "./popup/Login";
-    import PopupFileVersion      from "./popup/FileVersion";
+    import PopupLoader      from "./popup/Loader";
+    import PopupForm        from "./popup/Form";
+    import PopupConfirm     from "./popup/Confirm";
+    import PopupUploader    from "./popup/Uploader";
+    import PopupFileDetail  from "./popup/FileDetail";
+    import PopupFileList    from "./popup/FileList";
+    import PopupLogin       from "./popup/Login";
+    import PopupFileVersion from "./popup/FileVersion";
 
     /**
      * @var isShow          (internal)
@@ -83,7 +86,7 @@
      * */
     export default {
         name      : "Popup",
-        components: {PopupLogin, PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
+        components: {PopupFileVersion, PopupLogin, PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
         watch     : {},
         data      : function () {

@@ -16,15 +16,18 @@
                     </div>
                 </div>
                 <div class="operate">
-                    <button type="button" class="btn btn-dark sysIcon sysIcon_download">
+                    <button type="button" class="btn btn-dark sysIcon sysIcon_download" v-on:click="download(index)">
                         download
                     </button>
-                    <button type="button" class="btn btn-dark sysIcon sysIcon_link">
+                    <button type="button" class="btn btn-dark sysIcon sysIcon_link" v-on:click="setCurrent(index)">
                         set current
                     </button>
                 </div>
             </li>
         </ul>
+        <div class="btnClose" v-on:click="close">
+            <span class="sysIcon sysIcon_close"></span>
+        </div>
     </div>
 </template>
 
@@ -32,9 +35,93 @@
 <style scoped lang="scss">
     .fileVersion {
         position: relative;
-        display: flex;
         width: 100%;
         height: 100%;
+
+        ul {
+            width: 95%;
+            height: calc(95% - #{$fontSize*4});
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: $fontSize*2 0;
+            overflow: auto;
+
+            @include smallScroll;
+
+            li {
+                $liMaxWidth: 500px;
+                width: $liMaxWidth;
+                list-style: none;
+
+                .content {
+                    display: flex;
+                    min-height: $liMaxWidth*0.5;
+                    margin-top: $fontSize;
+                    margin-bottom: $fontSize;
+
+                    .cover {
+                        height: $liMaxWidth*0.5;
+                        width: $liMaxWidth*0.5;
+                        position: relative;
+
+                        text-align: center;
+
+                        .ct_icon,
+                        .ct_cover {
+                            max-width: calc(#{$liMaxWidth} * 0.5);
+                            max-height: calc(#{$liMaxWidth} * 0.5);
+                            margin-left: auto;
+                            margin-right: auto;
+                            display: block;
+                        }
+
+                        .ct_icon {
+                            z-index: 1;
+                            font-size: $liMaxWidth*0.4;
+                            line-height: $liMaxWidth*0.5;
+                            text-align: center;
+                        }
+
+                        .ct_cover {
+                            z-index: 2;
+                        }
+                    }
+
+                    .meta {
+                        width: 50%;
+
+                        div {
+                            white-space: normal;
+                            word-break: break-all;
+                        }
+                    }
+                }
+
+                .operate {
+                    text-align: center;
+
+                    button {
+                        margin: 0 $fontSize*1;
+                    }
+                }
+            }
+        }
+
+        .btnClose {
+            position: absolute;
+            top: 2%;
+            right: 1.5%;
+            background-color: rgba(0, 0, 0, 0.25);
+            width: $fontSize*2;
+            height: $fontSize*2;
+            line-height: $fontSize*2;
+            text-align: center;
+            border-radius: $fontSize;
+            color: white;
+            //text-shadow: black 0 0 5px;
+        }
     }
 </style>
 
@@ -43,15 +130,6 @@
     import Helper     from "../../lib/Helper";
     import router     from "../../router";
 
-    /**
-     * 文件详细页
-     * 已知两个问题，
-     * 历史版本不知道摆哪
-     * 文本文件的详情还没有优化，最好做成ajax的，否则数组太大，而且格式没有测
-     *
-     * 这边暂且做成通过给查询增加某个参数后自行获取所有的文件信息，回传估计会很大但是总之没什么办法
-     * 然后因为popup是单层的也不好做加载进度，得看看要不要自己实现一个
-     * */
     export default {
         name     : 'PopupFileVersion',
         props    : ['info'],
@@ -73,11 +151,17 @@
             console.info(`popup FileDetail: mounted`);
         },
         methods  : {
-            close   : function () {
-                console.info(`popup FileDetail: close`);
-                this.$parent.hide();
+            download  : function (itemIndex) {
             },
-            query   : function (itemId) {
+            /**
+             * @todo api file_ver_mod
+             * */
+            setCurrent: function (itemIndex) {
+            },
+            /**
+             * @todo api file_ver
+             * */
+            query     : function (itemId) {
                 let targetList = [];
                 for (let i1 = 0; i1 < 20; i1++) {
                     targetList.push(
@@ -95,7 +179,26 @@
                             favourite  : '1',
                             time_create: '1919-08-10 11:45:14',
                             time_update: '1919-08-10 11:45:14',
-                            is_current:0,
+                            //
+                            is_current : 0,
+                        });
+                    targetList.push(
+                        {
+                            id         : '0',
+                            raw        : '/sample/cover.jpg',
+                            normal     : '/sample/cover.jpg',
+                            cover      : '',
+                            cover_id   : '1',
+                            title      : 'this is title this is title this is title this is title this is title',
+                            description: 'this is description',
+                            size       : '996 KB',
+                            hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+                            type       : 'image',
+                            favourite  : '1',
+                            time_create: '1919-08-10 11:45:14',
+                            time_update: '1919-08-10 11:45:14',
+                            //
+                            is_current : 0,
                         });
                 }
                 return new Promise((resolve, reject) => {
@@ -105,9 +208,13 @@
                         });
                 });
             },
-            fillData: function (resolveData) {
+            fillData  : function (resolveData) {
                 console.info('popup FileDetail: fillData');
                 this.list = resolveData.list;
+            },
+            close     : function () {
+                console.info(`popup FileDetail: close`);
+                this.$parent.hide();
             },
         },
     }

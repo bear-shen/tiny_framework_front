@@ -687,4 +687,9 @@ from 来自对象 {list|favourite|recycle}
                     return;
                 }
                 this.item.tag[groupIndex].sub.push(
-                    {id: target.id, n
+                    {id: target.id, name: target.name,}
+                );
+            },
+        }
+    }
+</script>

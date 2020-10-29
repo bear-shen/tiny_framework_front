@@ -17,10 +17,10 @@
                 </div>
                 <div class="operate">
                     <button type="button" class="btn btn-dark sysIcon sysIcon_download" v-on:click="download(index)">
-                        download
+                        down
                     </button>
-                    <button type="button" class="btn btn-dark sysIcon sysIcon_link" v-on:click="setCurrent(index)">
-                        set current
+                    <button v-if="item.is_current" type="button" class="btn btn-dark sysIcon sysIcon_link" v-on:click="setCurrent(index)">
+                        current
                     </button>
                 </div>
             </li>
@@ -40,7 +40,7 @@
 
         ul {
             width: 95%;
-            height: calc(95% - #{$fontSize*4});
+            height: calc(100% - #{$fontSize*4});
             padding: 0;
             display: flex;
             flex-wrap: wrap;
@@ -180,7 +180,7 @@
                             time_create: '1919-08-10 11:45:14',
                             time_update: '1919-08-10 11:45:14',
                             //
-                            is_current : 0,
+                            is_current : 1,
                         });
                     targetList.push(
                         {

@@ -56,7 +56,7 @@
 
     @media(max-width: 767px) {
         #popup {
-            top: 0;
+            top: $footerHeight*0.75;
         }
     }
 </style>

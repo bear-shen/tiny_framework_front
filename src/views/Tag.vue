@@ -1,8 +1,8 @@
 <template>
     <div class="tagGroup">
         <ul class="groupList">
-            <li v-for="group in list">
-                <template v-if="editMode===1 && group.id===editId">
+            <li v-for="(group,groupIndex) in list">
+                <template v-if="editMode===1 && groupIndex===editIndex">
                     <div class="groupMain editMode">
                         <span class="">ID:{{group.id}}</span>
                         <input type="text" v-model="group.name">
@@ -12,7 +12,7 @@
                         <!--<span class="">{{group.time_update}}</span>-->
                         <span class="operator">
                         <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup(group.id)"></span>
+                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup(groupIndex)"></span>
                         </span>
                     </div>
                     <textarea class="groupAlt" v-model="group.alt"></textarea>
@@ -27,8 +27,8 @@
                         <!--<span class="">{{group.time_update}}</span>-->
                         <span class="operator">
                         <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_delete" v-on:click="delGroup(group.id)"></span>
-                        <span class="sysIcon sysIcon_edit" v-on:click="modGroup(group.id)"></span>
+                        <span class="sysIcon sysIcon_delete" v-on:click="delGroup(groupIndex)"></span>
+                        <span class="sysIcon sysIcon_edit" v-on:click="modGroup(groupIndex)"></span>
                         </span>
                     </div>
                     <div class="groupAlt">
@@ -39,13 +39,13 @@
                     </div>
                 </template>
                 <ul class="tagList">
-                    <li v-for="tag in group.child">
-                        <template v-if="editMode===2 && tag.id===editId">
+                    <li v-for="(tag,tagIndex) in group.child">
+                        <template v-if="editMode===2 && tagIndex===editIndex">
                             <div class="tagMain editMode">
                                 <!--<span class="">ID:{{tag.id}}</span>-->
                                 <input type="text" v-model="tag.name">
                                 <!--<span class=""><input v-model="tag.sort"></span>-->
-                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(tag.id)"></span>
+                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(groupIndex,tagIndex)"></span>
                             </div>
                             <textarea class="tagAlt" v-model="tag.alt"></textarea>
                             <textarea class="tagDescription" v-model="tag.description"></textarea>
@@ -53,13 +53,13 @@
                         <template v-else>
                             <div class="tagMain">
                                 <!--<span class="">ID:{{tag.id}}. {{tag.name}}</span>-->
-                                <span class="" v-on:click="goto('tag',tag.id)">{{tag.name}}</span>
+                                <span class="" v-on:click="goto('tag',tagIndex)">{{tag.name}}</span>
                                 <!--<span class="">{{tag.sort}}</span>-->
                                 <!--<span class="">{{tag.time_create}}<br>{{tag.time_update}}</span>-->
                                 <span class="operator">
                                 <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                                <span class="sysIcon sysIcon_delete" v-on:click="delTag(tag.id)"></span>
-                                <span class="sysIcon sysIcon_edit" v-on:click="modTag(tag.id)"></span>
+                                <span class="sysIcon sysIcon_delete" v-on:click="delTag(groupIndex,tagIndex)"></span>
+                                <span class="sysIcon sysIcon_edit" v-on:click="modTag(groupIndex,tagIndex)"></span>
                                 </span>
                             </div>
                             <div class="tagAlt">
@@ -70,43 +70,10 @@
                             </div>
                         </template>
                     </li>
-                    <li>
-                        <template v-if="editMode===2 && editId===0">
-                            <div class="tagMain editMode">
-                                <!--<span class="">ID:{{tag.id}}</span>-->
-                                <input type="text" v-model="newTag.name">
-                                <!--<span class=""><input v-model="tag.sort"></span>-->
-                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(newTag.id)"></span>
-                            </div>
-                            <textarea class="tagAlt" v-model="newTag.alt"></textarea>
-                            <textarea class="tagDescription" v-model="newTag.description"></textarea>
-                        </template>
-                        <template v-else>
-                            <div class="sysIcon sysIcon_plus-square-o addBtn" v-on:click="modTag(0)"></div>
-                        </template>
-                    </li>
                 </ul>
             </li>
             <li>
-                <template v-if="editMode===1 && editId===0">
-                    <div class="groupMain editMode">
-                        <span class="">ID:0</span>
-                        <input type="text" v-model="newGroup.name">
-                        <input type="text" v-model="newGroup.sort">
-                        <!--<span class="">{{group.sort}}</span>-->
-                        <!--<span class="">{{group.time_create}}</span>-->
-                        <!--<span class="">{{group.time_update}}</span>-->
-                        <span class="operator">
-                        <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_edit" v-on:click="saveGroup(newGroup.id)"></span>
-                        </span>
-                    </div>
-                    <textarea class="groupAlt" v-model="newGroup.alt"></textarea>
-                    <textarea class="groupDescription" v-model="newGroup.description"></textarea>
-                </template>
-                <template v-else>
-                    <div class="sysIcon sysIcon_plus-square-o addBtn" v-on:click="modGroup(0)"></div>
-                </template>
+                <div class="sysIcon sysIcon_plus-square-o addBtn" v-on:click="modGroup(-1)"></div>
             </li>
         </ul>
     </div>
@@ -286,10 +253,10 @@
 
 <script>
     // @ is an alias to /src
-    import store      from "../store";
-    import router     from "../router";
-    import GenFunc    from '../lib/GenFuncLib'
-    import Helper     from "../lib/Helper";
+    import store   from "../store";
+    import router  from "../router";
+    import GenFunc from '../lib/GenFuncLib'
+    import Helper  from "../lib/Helper";
 
     export default {
         name      : 'Tag',
@@ -306,20 +273,20 @@
         },
         data      : function () {
             return {
-                queryData   : {
+                queryData: {
                     name: '',
                 },
                 // page: 1,
-                editMode: 0,//0 none 1 group 2 tag
-                editId  : 0,//targetId
-                list    : [],
-                newTag  : {
+                editMode : 0,//0 none 1 group 2 tag
+                editIndex: -1,//targetId
+                list     : [],
+                newTag   : {
                     name       : '',
                     sort       : '',
                     alt        : '',
                     description: '',
                 },
-                newGroup: {
+                newGroup : {
                     name       : '',
                     sort       : '',
                     alt        : '',
@@ -327,8 +294,7 @@
                 },
             }
         },
-        computed  : {
-        },
+        computed  : {},
         created   : function () {
             console.info('Tag.vue create');
             // console.info(this);
@@ -400,7 +366,7 @@
             /**
              * 写入参数
              * */
-            fillQuery     : function (query) {
+            fillQuery: function (query) {
                 console.info('list: fillQuery');
                 // console.warn(query);
                 let queryNames = Object.getOwnPropertyNames(query);
@@ -422,9 +388,10 @@
                 this.list = resolveData.list;
                 this.fillQuery(resolveData.query);
             },
-            modGroup : function (id) {
-                this.editMode = 1;
-                this.editId   = id;
+            //
+            modGroup : function (groupIndex) {
+                this.editMode  = 1;
+                this.editIndex = groupIndex;
                 if (!id) {
                     Object.assign(
                         this.newGroup,
@@ -440,18 +407,19 @@
             /**
              * @todo api tag_group_mod
              * */
-            saveGroup: function (id) {
-                this.editMode = 0;
-                this.editId   = 0;
+            saveGroup: function (groupIndex) {
+                this.editMode  = 0;
+                this.editIndex = 0;
             },
             /**
              * @todo api tag_group_del
              * */
-            delGroup : function (id) {
+            delGroup : function (groupIndex) {
             },
-            modTag   : function (id) {
-                this.editMode = 2;
-                this.editId   = id;
+            //
+            modTag   : function (groupIndex, tagIndex) {
+                this.editMode  = 2;
+                this.editIndex = id;
                 if (!id) {
                     Object.assign(
                         this.newTag,
@@ -467,15 +435,16 @@
             /**
              * @todo api tag_mod
              * */
-            saveTag  : function (id) {
-                this.editMode = 0;
-                this.editId   = 0;
+            saveTag  : function (groupIndex, tagIndex) {
+                this.editMode  = 0;
+                this.editIndex = 0;
             },
             /**
              * @todo api tag_del
              * */
-            delTag   : function (id) {
+            delTag   : function (groupIndex, tagIndex) {
             },
+            //
             goto     : function (type, targetId) {
                 console.info(`list: goto ${type} ${targetId}`);
                 let query = {};

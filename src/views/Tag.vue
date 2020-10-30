@@ -5,18 +5,18 @@
                 <template v-if="editMode===1 && groupIndex===editIndex">
                     <div class="groupMain editMode">
                         <span class="">ID:{{group.id}}</span>
-                        <input type="text" v-model="group.name">
-                        <input type="text" v-model="group.sort">
+                        <input type="text" v-model="group.name" placeholder="group name">
+                        <input type="text" v-model="group.sort" placeholder="group sort">
                         <!--<span class="">{{group.sort}}</span>-->
                         <!--<span class="">{{group.time_create}}</span>-->
                         <!--<span class="">{{group.time_update}}</span>-->
                         <span class="operator">
                         <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup(groupIndex)"></span>
+                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup()"></span>
                         </span>
                     </div>
-                    <textarea class="groupAlt" v-model="group.alt"></textarea>
-                    <textarea class="groupDescription" v-model="group.description"></textarea>
+                    <textarea class="groupAlt" v-model="group.alt" placeholder="group alt name"></textarea>
+                    <textarea class="groupDescription" v-model="group.description" placeholder="group description"></textarea>
                 </template>
                 <template v-else>
                     <div class="groupMain">
@@ -40,15 +40,15 @@
                 </template>
                 <ul class="tagList">
                     <li v-for="(tag,tagIndex) in group.child">
-                        <template v-if="editMode===2 && tagIndex===editIndex">
+                        <template v-if="editMode===2 && `${groupIndex}-${tagIndex}`===editIndex">
                             <div class="tagMain editMode">
                                 <!--<span class="">ID:{{tag.id}}</span>-->
-                                <input type="text" v-model="tag.name">
+                                <input type="text" v-model="tag.name" placeholder="tag name">
                                 <!--<span class=""><input v-model="tag.sort"></span>-->
-                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(groupIndex,tagIndex)"></span>
+                                <span class="sysIcon sysIcon_save" v-on:click="saveTag()"></span>
                             </div>
-                            <textarea class="tagAlt" v-model="tag.alt"></textarea>
-                            <textarea class="tagDescription" v-model="tag.description"></textarea>
+                            <textarea class="tagAlt" v-model="tag.alt" placeholder="tag alt name"></textarea>
+                            <textarea class="tagDescription" v-model="tag.description" placeholder="tag description"></textarea>
                         </template>
                         <template v-else>
                             <div class="tagMain">
@@ -69,6 +69,9 @@
                                 {{tag.description}}
                             </div>
                         </template>
+                    </li>
+                    <li>
+                        <div class="sysIcon sysIcon_plus-square-o addBtn" v-on:click="modTag(groupIndex,-1)"></div>
                     </li>
                 </ul>
             </li>
@@ -280,18 +283,6 @@
                 editMode : 0,//0 none 1 group 2 tag
                 editIndex: -1,//targetId
                 list     : [],
-                newTag   : {
-                    name       : '',
-                    sort       : '',
-                    alt        : '',
-                    description: '',
-                },
-                newGroup : {
-                    name       : '',
-                    sort       : '',
-                    alt        : '',
-                    description: '',
-                },
             }
         },
         computed  : {},
@@ -324,16 +315,24 @@
                 console.info('Tag: query');
                 query    = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 //
-                let list = [
-                    {
-                        id         : 1,
-                        name       : 'group1',
-                        alt        : 'group1,group1,group1',
-                        description: 'this is group 1',
-                        sort       : 1,
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        child      : [
+                let list = [];
+                for (let i = 0; i < Math.floor(Math.random() * 7); i++) {
+                    list.push(
+                        {
+                            id         : 1,
+                            name       : 'group1',
+                            alt        : 'group1,group1,group1',
+                            description: 'this is group 1',
+                            sort       : 1,
+                            time_create: '1919-08-10 11:45:14',
+                            time_update: '1919-08-10 11:45:14',
+                            child      : [],
+                        });
+                }
+                for (let i = 0; i < list.length; i++) {
+                    let sub = [];
+                    for (let j = 0; j < Math.floor(Math.random() * 7); j++) {
+                        sub.push(
                             {
                                 id         : 1,
                                 group_id   : 1,
@@ -344,16 +343,7 @@
                                 time_create: '1919-08-10 11:45:14',
                                 time_update: '1919-08-10 11:45:14',
                             }
-                        ],
-                    }
-                ];
-                for (let i = 0; i < Math.floor(Math.random() * 7); i++) {
-                    list.push(list[0]);
-                }
-                for (let i = 0; i < list.length; i++) {
-                    let sub = [];
-                    for (let j = 0; j < Math.floor(Math.random() * 7); j++) {
-                        sub.push(list[i].child[0]);
+                        );
                         list[i].child = sub;
                     }
                 }
@@ -390,24 +380,36 @@
             },
             //
             modGroup : function (groupIndex) {
-                this.editMode  = 1;
-                this.editIndex = groupIndex;
-                if (!id) {
-                    Object.assign(
-                        this.newGroup,
+                switch (this.editMode) {
+                    case 1:
+                        this.saveGroup();
+                        break;
+                    case 2:
+                        this.saveTag();
+                        break;
+                }
+                this.editMode = 1;
+                if (groupIndex === -1) {
+                    this.list.push(
                         {
+                            id         : 0,
                             name       : '',
-                            sort       : '',
                             alt        : '',
                             description: '',
+                            sort       : 1,
+                            time_create: '',
+                            time_update: '',
+                            child      : [],
                         }
                     )
+                    groupIndex = this.list.length - 1;
                 }
+                this.editIndex = groupIndex;
             },
             /**
              * @todo api tag_group_mod
              * */
-            saveGroup: function (groupIndex) {
+            saveGroup: function () {
                 this.editMode  = 0;
                 this.editIndex = 0;
             },
@@ -415,27 +417,40 @@
              * @todo api tag_group_del
              * */
             delGroup : function (groupIndex) {
+                this.list.splice(groupIndex, 1);
             },
             //
             modTag   : function (groupIndex, tagIndex) {
-                this.editMode  = 2;
-                this.editIndex = id;
-                if (!id) {
-                    Object.assign(
-                        this.newTag,
+                switch (this.editMode) {
+                    case 1:
+                        this.saveGroup();
+                        break;
+                    case 2:
+                        this.saveTag();
+                        break;
+                }
+                if (!this.list[groupIndex]) return;
+                this.editMode = 2;
+                if (tagIndex === -1) {
+                    this.list[groupIndex].child.push(
                         {
+                            id         : 0,
+                            group_id   : this.list[groupIndex].id,
                             name       : '',
-                            sort       : '',
                             alt        : '',
                             description: '',
-                        }
-                    )
+                            sort       : 1,
+                            time_create: '',
+                            time_update: '',
+                        });
+                    tagIndex = this.list[groupIndex].child.length - 1;
                 }
+                this.editIndex = `${groupIndex}-${tagIndex}`;
             },
             /**
              * @todo api tag_mod
              * */
-            saveTag  : function (groupIndex, tagIndex) {
+            saveTag  : function () {
                 this.editMode  = 0;
                 this.editIndex = 0;
             },

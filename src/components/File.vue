@@ -41,42 +41,51 @@ from 来自对象 {list|favourite|recycle}
                     </div>
                 </template>
 
-                <template v-if="editMetaFlag">
-                    <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta()">
-                        <span class="sysIcon sysIcon_save"></span>&nbsp;info
-                    </div>
-                </template>
-                <template v-else>
-                    <div :class="['btn', 'btn-dark']" v-on:click="editMeta()">
-                        <span class="sysIcon sysIcon_edit"></span>&nbsp;info
-                    </div>
-                </template>
+                <template v-if="['list','favourite'].indexOf(from)!==-1">
+                    <template v-if="editMetaFlag">
+                        <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta()">
+                            <span class="sysIcon sysIcon_save"></span>&nbsp;info
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div :class="['btn', 'btn-dark']" v-on:click="editMeta()">
+                            <span class="sysIcon sysIcon_edit"></span>&nbsp;info
+                        </div>
+                    </template>
 
-                <template v-if="editTagFlag">
-                    <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveTag()">
-                        <span class="sysIcon sysIcon_save"></span>&nbsp;tag
-                    </div>
+                    <template v-if="editTagFlag">
+                        <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveTag()">
+                            <span class="sysIcon sysIcon_save"></span>&nbsp;tag
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div :class="['btn', 'btn-dark']" v-on:click="editTag()">
+                            <span class="sysIcon sysIcon_edit"></span>&nbsp;tag
+                        </div>
+                    </template>
+                    <template v-if="item.favourite">
+                        <div :class="['btn', 'btn-dark']" v-on:click="favourite()">
+                            <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div :class="['btn', 'btn-dark','active']" v-on:click="favourite()">
+                            <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
+                        </div>
+                    </template>
+                    <template v-if="item.type!=='folder'">
+                        <div :class="['btn', 'btn-dark']" v-on:click="fileVersion()">
+                            <span class="sysIcon sysIcon_stack"></span>&nbsp;version
+                        </div>
+                    </template>
                 </template>
-                <template v-else>
-                    <div :class="['btn', 'btn-dark']" v-on:click="editTag()">
-                        <span class="sysIcon sysIcon_edit"></span>&nbsp;tag
-                    </div>
-                </template>
-                <template v-if="item.favourite">
-                    <div :class="['btn', 'btn-dark']" v-on:click="favourite()">
-                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
-                    </div>
-                </template>
-                <template v-else>
-                    <div :class="['btn', 'btn-dark','active']" v-on:click="favourite()">
-                        <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
-                    </div>
-                </template>
-
                 <template v-if="from==='recycle'">
-                <div :class="['btn', 'btn-dark']" v-on:click="recoverFile()">
-                    <span class="sysIcon sysIcon_delete"></span>&nbsp;recover
-                </div>
+                    <div :class="['btn', 'btn-dark']" v-on:click="recoverFile()">
+                        <span class="sysIcon sysIcon_sync"></span>&nbsp;recover
+                    </div>
+                    <div :class="['btn', 'btn-dark']" v-on:click="deleteForever()">
+                        <span class="sysIcon sysIcon_delete"></span>&nbsp;delete forever
+                    </div>
                 </template>
                 <template v-else>
                     <div :class="['btn', 'btn-dark']" v-on:click="deleteFile()">
@@ -86,11 +95,6 @@ from 来自对象 {list|favourite|recycle}
                 <div :class="['btn', 'btn-dark']" v-on:click="moveFile()">
                     <span class="sysIcon sysIcon_inbox"></span>&nbsp;move
                 </div>
-                <template v-if="item.type!=='folder'">
-                <div :class="['btn', 'btn-dark']" v-on:click="fileVersion()">
-                    <span class="sysIcon sysIcon_stack"></span>&nbsp;version
-                </div>
-                </template>
             </div>
         </div>
         <template v-if="editTagFlag">
@@ -597,8 +601,18 @@ from 来自对象 {list|favourite|recycle}
             /**
              * @todo api file_recover @use $parent
              * */
-            recoverFile    : function () {
+            recoverFile   : function () {
                 console.info('list: recoverFile');
+                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
+                    if (this.item.id !== this.item.id) continue;
+                    this.$parent.list.splice(i1, 1);
+                }
+            },
+            /**
+             * @todo api file_delete_forever @use $parent
+             * */
+            deleteForever   : function () {
+                console.info('list: deleteForever');
                 for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
                     if (this.item.id !== this.item.id) continue;
                     this.$parent.list.splice(i1, 1);
@@ -607,13 +621,13 @@ from 来自对象 {list|favourite|recycle}
             /**
              * @todo api file_move
              * */
-            moveFile:function(){
+            moveFile      : function () {
                 console.info('list: moveFile');
                 return store.commit('popup', {
                     type: 'list',
                     info: {
-                        title:'move to:',
-                        submit:(dirItem,dirRoute)=>{
+                        title : 'move to:',
+                        submit: (dirItem, dirRoute) => {
                             console.info(`moveFile to ${JSON.stringify(dirItem)}`)
                         },
                     }
@@ -621,12 +635,12 @@ from 来自对象 {list|favourite|recycle}
             },
             /**
              * */
-            fileVersion:function(){
+            fileVersion   : function () {
                 console.info('list: fileVersion');
                 return store.commit('popup', {
                     type: 'version',
                     info: {
-                        id:this.item.id,
+                        id: this.item.id,
                     }
                 });
             },
@@ -682,7 +696,7 @@ from 来自对象 {list|favourite|recycle}
                     if (this.item.tag[groupIndex].sub[i1].id != target.id) continue;
                     tagIndex = i1;
                 }
-                if(tagIndex!==-1){
+                if (tagIndex !== -1) {
                     console.warn('tag duplicated');
                     return;
                 }

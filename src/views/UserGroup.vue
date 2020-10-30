@@ -147,7 +147,7 @@
                     </tr>
                 </table>
             </li>
-            <li class="groupMain sysIcon sysIcon_plus-square-o addGroup" v-on:click="addGroup()">
+            <li class="groupMain sysIcon sysIcon_plus-square-o addGroup" v-on:click="modGroup(-1)">
             </li>
         </ul>
     </div>
@@ -362,28 +362,26 @@
             // this.page = this.$store.state.pageSet;
         },
         methods      : {
-            addGroup      : function () {
-                console.info('UserGroup: modGroup')
-                this.list.push(
-                    {
-                        id           : 0,
-                        name         : '',
-                        description  : '',
-                        status       : 0,
-                        control_dir  : [
-                            {id_node: 0, access: 1, modify: 0, delete: 0, path: 'root',},
-                        ],
-                        admin: 0,
-                        time_create  : '',
-                        time_update  : '',
-                        user         : [],
-                    });
-                this.editGroupIndex = -1;
-                this.editGroup      = 1;
-            },
             modGroup      : function (groupIndex) {
                 console.info('UserGroup: modGroup')
                 this.saveGroup();
+                if(groupIndex===-1){
+                    this.list.push(
+                        {
+                            id           : 0,
+                            name         : '',
+                            description  : '',
+                            status       : 0,
+                            control_dir  : [
+                                {id_node: 0, access: 1, modify: 0, delete: 0, path: 'root',},
+                            ],
+                            admin: 0,
+                            time_create  : '',
+                            time_update  : '',
+                            user         : [],
+                        });
+                    groupIndex=this.list.length-1;
+                }
                 this.editGroupIndex = groupIndex;
                 this.editGroup      = 1;
             },

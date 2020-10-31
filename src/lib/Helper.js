@@ -1,3 +1,5 @@
+import config from "../config";
+
 const Helper = {
     /**
      * @param from Object
@@ -25,8 +27,27 @@ const Helper = {
         }
         return !modified;
     },
-    query:function (path,data) {
+    query      : function (api, data) {
+        return new Promise(((resolve, reject) => {
+            let targetUrl              = `${
+                config.apiSite.replace(/^\/*(.*?)\/*$/, '$1')
+            }/${
+                config.api(api)
+            }`;
+            let xmlHttp                = new XMLHttpRequest();
+            xmlHttp.withCredentials    = true;
+            xmlHttp.open('POST', targetUrl, true);
+            xmlHttp.onreadystatechange = function () {
+                if (xmlHttp.readyState !== 4 /*&& xmlhttp.status < 400*/) return ;
+                // console.warn(xmlHttp.responseText);
+                if (xmlHttp.status > 400) return reject(xmlHttp.responseText);
 
+                let targetData = JSON.parse(xmlHttp.responseText);
+                if (!targetData) return reject(xmlHttp.responseText);
+                return resolve(targetData.data);
+            };
+            xmlHttp.send(JSON.stringify(data?data:{}));
+        }));
     }
 };
 export {Helper as default};

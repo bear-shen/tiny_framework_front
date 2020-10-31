@@ -49,9 +49,10 @@
             height: 100%;
 
             tr:first-child {
-                >*{
+                > * {
                     padding-bottom: $fontSize;
                 }
+
                 th {
                     text-align: center;
                     font-size: 2em;
@@ -76,7 +77,7 @@
 
                 .login_captcha_img {
                     background-color: brown;
-                    height: calc(#{$fontSize}*2 + 2px);
+                    height: calc(#{$fontSize} * 2 + 2px);
                 }
 
                 .login_captcha_img,
@@ -106,6 +107,8 @@
 </style>
 
 <script>
+    import helper from '../../lib/Helper';
+
     /**
      * @var data            (internal)
      * @var callback        (internal)
@@ -143,15 +146,25 @@
              * @todo api user/register
              * */
             register: function () {
-                this.callback.submit();
+                // this.callback.submit();
                 this.$parent.hide();
             },
             /**
              * @todo api user/login
              * */
-            login  : function () {
-                this.callback.submit();
-                this.$parent.hide();
+            login   : function () {
+                // this.callback.submit();
+                // this.$parent.hide();
+                helper.query(
+                    'user_login',
+                    {
+                        name   : this.name,
+                        pass   : this.pass,
+                        captcha: this.captcha,
+                    }
+                ).then((data) => {
+                    console.info(data);
+                })
             },
         }
     }

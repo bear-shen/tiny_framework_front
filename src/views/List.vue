@@ -294,6 +294,7 @@
             // console.info(this);
             // this.page = this.$store.state.pageSet;
             store.commit('usePagination');
+
         },
         beforeDestroy: function () {
         },
@@ -301,6 +302,7 @@
             // console.info('List.vue update');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
+
         },
         methods      : {
             /**
@@ -856,6 +858,11 @@
                 // this.$parent.showConfirm();
             },
             addFile       : function () {
+                store.commit('popup', {
+                    type: 'login',
+                    info: {},
+                });
+                return;
                 console.info('list: addFile');
                 /*store.commit('popup', {
                     type: 'login',

@@ -24,6 +24,9 @@
         <template v-else-if="type==='version'">
             <popup-file-version v-bind:info="popupInfo"></popup-file-version>
         </template>
+        <template v-else-if="type==='register'">
+            <popup-register v-bind:info="popupInfo"></popup-register>
+        </template>
     </div>
 </template>
 
@@ -70,6 +73,7 @@
     import PopupFileList    from "./popup/FileList";
     import PopupLogin       from "./popup/Login";
     import PopupFileVersion from "./popup/FileVersion";
+    import PopupRegister    from "./popup/Register";
 
     /**
      * @var isShow          (internal)
@@ -86,7 +90,7 @@
      * */
     export default {
         name      : "Popup",
-        components: {PopupFileVersion, PopupLogin, PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
+        components: {PopupRegister, PopupFileVersion, PopupLogin, PopupFileList, PopupFileDetail, PopupUploader, PopupConfirm, PopupForm, PopupLoader},
         // el     : '#popup',
         watch     : {},
         data      : function () {

@@ -29,11 +29,7 @@ const Helper = {
     },
     query      : function (api, data) {
         return new Promise(((resolve, reject) => {
-            let targetUrl              = `${
-                config.apiSite.replace(/^\/*(.*?)\/*$/, '$1')
-            }/${
-                config.api(api)
-            }`;
+            let targetUrl              = config.api(api);
             let xmlHttp                = new XMLHttpRequest();
             xmlHttp.withCredentials    = true;
             xmlHttp.open('POST', targetUrl, true);
@@ -44,7 +40,7 @@ const Helper = {
 
                 let targetData = JSON.parse(xmlHttp.responseText);
                 if (!targetData) return reject(xmlHttp.responseText);
-                return resolve(targetData.data);
+                return resolve(targetData);
             };
             xmlHttp.send(JSON.stringify(data?data:{}));
         }));

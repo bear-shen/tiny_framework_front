@@ -1,16 +1,24 @@
 <template>
-    <div class="popup_login">
+    <div class="popup_register">
         <table>
             <tr>
-                <th colspan="2">Login</th>
+                <th colspan="2">Register</th>
             </tr>
             <tr>
-                <td>Name / Email :</td>
+                <td>Name :</td>
                 <td><input type="text" class="login_name" v-model="name"></td>
             </tr>
             <tr>
-                <td>Password :</td>
+                <td>Email :</td>
+                <td><input type="text" class="login_name" v-model="mail"></td>
+            </tr>
+            <tr>
+                <td>Pass :</td>
                 <td><input type="password" class="login_pass" v-model="pass"></td>
+            </tr>
+            <tr>
+                <td>Pass Chk :</td>
+                <td><input type="password" class="login_pass" v-model="pass1"></td>
             </tr>
             <tr>
                 <td>Captcha :</td>
@@ -22,8 +30,8 @@
             <tr>
                 <th colspan="2">
                     <span>{{responseErr}}</span>
-                    <button type="button" class="btn btn-primary" v-on:click="register">Register</button>
-                    <button type="button" class="btn btn-success" v-on:click="login">Login</button>
+                    <button type="button" class="btn btn-primary" v-on:click="login">Login</button>
+                    <button type="button" class="btn btn-success" v-on:click="register">Register</button>
                 </th>
             </tr>
         </table>
@@ -33,7 +41,7 @@
 <style lang="scss">
     //和loader相似但是多少有些区别，因此单独写
 
-    .popup_login {
+    .popup_register {
         z-index: 2;
         position: relative;
         max-width: 90vw;
@@ -124,7 +132,7 @@
 <script>
     import helper from '../../lib/Helper';
     import config from '../../config';
-    import store  from '../../store';
+    import store  from "../../store";
 
     /**
      * @var data            (internal)
@@ -136,7 +144,7 @@
      * show -> template {name:{type:('text'|'datetime'),default:'',editable:(true|false)}}
      * */
     export default {
-        name     : "PopupLogin",
+        name     : "PopupRegister",
         // el     : '#popup',
         props    : ['info'],
         watch    : {
@@ -149,7 +157,9 @@
         data     : function () {
             return {
                 name        : '',
+                mail        : '',
                 pass        : '',
+                pass1       : '',
                 captcha     : '',
                 captchaUrl  : '',
                 captchaStamp: (new Date()) * 1,
@@ -166,26 +176,24 @@
             refreshCaptcha: function () {
                 this.captchaStamp = (new Date()) * 1
             },
-            /**
-             * @todo api user/register
-             * */
-            register      : function () {
-                // this.callback.submit();
+            login         : function () {
                 return store.commit('popup', {
-                    type: 'register',
-                    info: {}
+                    type: 'login',
                 });
             },
             /**
              * @todo api user/login
              * */
-            login         : function () {
+            register      : function () {
+                if (this.pass !== this.pass1)
+                    return this.responseErr = 'password mismatch';
                 // this.callback.submit();
                 // this.$parent.hide();
                 helper.query(
-                    'user_login',
+                    'user_register',
                     {
                         name   : this.name,
+                        mail   : this.mail,
                         pass   : this.pass,
                         captcha: this.captcha,
                     }

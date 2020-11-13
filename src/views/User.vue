@@ -1,5 +1,16 @@
 <template>
     <div class="User">
+        <div class="listHeader">
+            <label>
+                UserName :
+                <input type="text" placeholder="search" v-model="queryData.name">
+            </label>
+            <label>
+                GroupName :
+                <input type="text" placeholder="search" v-model="queryData.group">
+            </label>
+            <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('user')"></button>
+        </div>
         <table class="userList">
             <tr>
                 <th>Id</th>
@@ -23,7 +34,7 @@
                         />
                     </td>
                     <td><input type="text" v-model="user.name"></td>
-                    <td><input type="text" v-model="user.email"></td>
+                    <td><input type="text" v-model="user.mail"></td>
                     <td><input type="text" v-model="user.description"></td>
                     <td :class="{positive:user.status,negative:!user.status,}">
                         <input type="radio" :value="1" v-model="user.status" :id="`us_${user.id}_admin_0`">
@@ -42,7 +53,7 @@
                     <td>{{user.id}}</td>
                     <td>{{user.group.id}} : {{user.group.name}}</td>
                     <td>{{user.name}}</td>
-                    <td>{{user.email}}</td>
+                    <td>{{user.mail}}</td>
                     <td>{{user.description}}</td>
                     <td :class="{positive:user.status,negative:!user.status,}">
                         {{user.status?'Enable':'Disable'}}
@@ -63,6 +74,27 @@
 
 <style lang="scss">
     .User {
+        .listHeader {
+            justify-content: left;
+
+            label, button, input {
+                line-height: $fontSize*2;
+                height: $fontSize*2;
+                margin: 0 0 0 0;
+                padding: 0;
+            }
+
+            label {
+                display: inline-block;
+                padding: 0 $fontSize 0 0;
+            }
+
+            button {
+                width: $fontSize*2;
+                text-align: center;
+            }
+        }
+
         .userList {
             width: 100%;
 
@@ -126,11 +158,11 @@
 
 <script>
     // @ is an alias to /src
-    import store      from "../store";
-    import router     from "../router";
-    import GenFunc    from '../lib/GenFuncLib'
-    import Helper     from "../lib/Helper";
-    import Hinter     from "../components/Hinter";
+    import store   from "../store";
+    import router  from "../router";
+    import GenFunc from '../lib/GenFuncLib'
+    import Helper  from "../lib/Helper";
+    import Hinter  from "../components/Hinter";
 
     export default {
         name         : 'User',
@@ -148,9 +180,10 @@
         data         : function () {
             return {
                 queryData    : {
-                    name: '',
+                    name : '',
+                    group: '',
                 },
-                // page: 1,
+                page         : 1,
                 editUser     : 0,
                 editUserIndex: -1,
                 //
@@ -171,7 +204,7 @@
             console.info('User.vue mount');
             // console.info(this);
             // this.page = this.$store.state.pageSet;
-            store.commit('closePagination');
+            store.commit('usePagination');
             document.getElementById('app').addEventListener('click', this.searchClear);
         },
         beforeDestroy: function () {
@@ -223,7 +256,7 @@
             },
             // ---------------------------------
             /**
-             * @todo api user_get
+             * @todo api user_list
              * 查询方法，返回的 promise
              * */
             query         : function (query, page) {
@@ -234,7 +267,7 @@
                     {
                         id         : 1,
                         name       : 'admin',
-                        email      : 'admin@admin.com',
+                        mail       : 'admin@admin.com',
                         description: 'admin group',
                         group      : {
                             id         : 1,
@@ -249,7 +282,7 @@
                     {
                         id         : 1,
                         name       : 'admin',
-                        email      : 'admin@admin.com',
+                        mail       : 'admin@admin.com',
                         description: 'admin group',
                         group      : {
                             id         : 1,
@@ -264,7 +297,7 @@
                     {
                         id         : 1,
                         name       : 'admin',
-                        email      : 'admin@admin.com',
+                        mail       : 'admin@admin.com',
                         description: 'admin group',
                         group      : {
                             id         : 1,
@@ -320,8 +353,8 @@
                         path           = '/user';
                         break;
                     case 'user':
-                        query.uid = targetId;
-                        path      = '/user';
+                        query = GenFunc.copyObject(this.queryData);
+                        path  = '/user';
                         break;
                 }
                 let targetRoute = {path: path, query: Object.assign(query, {page: 1})};

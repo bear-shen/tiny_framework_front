@@ -42,7 +42,7 @@ api 有了以后改改就能用的
 
 <style lang="scss">
 
-    .listHeader {
+    .recycle .listHeader {
         display: flex;
         justify-content: space-between;
         flex-wrap: nowrap;
@@ -98,7 +98,7 @@ api 有了以后改改就能用的
     }
 
     @media (max-width: 1199px) {
-        .listHeader {
+        .recycle .listHeader {
             flex-wrap: wrap;
             white-space: normal;
             // height: $fontSize*4.5;
@@ -147,11 +147,11 @@ api 有了以后改改就能用的
 
 <script>
     // @ is an alias to /src
-    import store      from "../store";
-    import router     from "../router";
-    import GenFunc    from '../lib/GenFuncLib'
-    import Helper     from '../lib/Helper'
-    import File       from "../components/File";
+    import store   from "../store";
+    import router  from "../router";
+    import GenFunc from '../lib/GenFuncLib'
+    import Helper  from '../lib/Helper'
+    import File    from "../components/File";
     // import Popup    from '../components/Popup'
 
     /**

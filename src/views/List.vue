@@ -55,7 +55,7 @@
 
 <style lang="scss">
 
-    .listHeader {
+    .list .listHeader {
         display: flex;
         justify-content: space-between;
         flex-wrap: nowrap;
@@ -119,7 +119,7 @@
     }
 
     @media (max-width: 1199px) {
-        .listHeader {
+        .list .listHeader {
             flex-wrap: wrap;
             white-space: normal;
             // height: $fontSize*4.5;
@@ -180,11 +180,11 @@
 
 <script>
     // @ is an alias to /src
-    import store      from "../store";
-    import router     from "../router";
-    import GenFunc    from '../lib/GenFuncLib'
-    import Helper     from '../lib/Helper'
-    import File       from "../components/File";
+    import store   from "../store";
+    import router  from "../router";
+    import GenFunc from '../lib/GenFuncLib'
+    import Helper  from '../lib/Helper'
+    import File    from "../components/File";
     // import Popup    from '../components/Popup'
 
     /**
@@ -865,8 +865,8 @@
                 return;
                 console.info('list: addFile');
                 /*store.commit('popup', {
-                    type: 'login',
-                });*/
+                 type: 'login',
+                 });*/
                 store.commit('popup', {
                     type: 'uploader',
                     info: {

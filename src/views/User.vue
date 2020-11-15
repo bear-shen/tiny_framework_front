@@ -87,6 +87,7 @@
             label {
                 display: inline-block;
                 padding: 0 $fontSize 0 0;
+                white-space: nowrap;
             }
 
             button {
@@ -161,7 +162,7 @@
     import store   from "../store";
     import router  from "../router";
     import GenFunc from '../lib/GenFuncLib'
-    import Helper  from "../lib/Helper";
+    import helper  from "../lib/Helper";
     import Hinter  from "../components/Hinter";
 
     export default {
@@ -256,65 +257,40 @@
             },
             // ---------------------------------
             /**
-             * @todo api user_list
+             * @api user_list
              * 查询方法，返回的 promise
              * */
             query         : function (query, page) {
                 console.info('User: query');
-                query    = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
+                query = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 //
-                let list = [
-                    {
-                        id         : 1,
-                        name       : 'admin',
-                        mail       : 'admin@admin.com',
-                        description: 'admin group',
-                        group      : {
-                            id         : 1,
-                            name       : 'admin',
-                            description: 'admin description',
-                            admin      : 1,
-                        },
-                        status     : 1,
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                    },
-                    {
-                        id         : 1,
-                        name       : 'admin',
-                        mail       : 'admin@admin.com',
-                        description: 'admin group',
-                        group      : {
-                            id         : 1,
-                            name       : 'admin',
-                            description: 'admin description',
-                            admin      : 1,
-                        },
-                        status     : 1,
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                    },
-                    {
-                        id         : 1,
-                        name       : 'admin',
-                        mail       : 'admin@admin.com',
-                        description: 'admin group',
-                        group      : {
-                            id         : 1,
-                            name       : 'admin',
-                            description: 'admin description',
-                            admin      : 1,
-                        },
-                        status     : 1,
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                    },
-                ];
-                //
-                return new Promise((resolve, reject) => {
-                    console.debug({list});
-                    return resolve({list, query});
-                });
+                return new Promise(((resolve, reject) => {
+                    helper.query(
+                        'user_list',
+                        query
+                    ).then((data) => {
+                        console.info(data);
+                        console.info(data.data);
+                        return resolve({list: data.data, query: data.query});
+                    });
+                }));
+                /*let list = [
+                 {
+                 id         : 1,
+                 name       : 'admin',
+                 mail       : 'admin@admin.com',
+                 description: 'admin group',
+                 group      : {
+                 id         : 1,
+                 name       : 'admin',
+                 description: 'admin description',
+                 admin      : 1,
+                 },
+                 status     : 1,
+                 time_create: '1919-08-10 11:45:14',
+                 time_update: '1919-08-10 11:45:14',
+                 },
+                 ];*/
             },
             /**
              * 写入参数
@@ -358,7 +334,7 @@
                         break;
                 }
                 let targetRoute = {path: path, query: Object.assign(query, {page: 1})};
-                if (Helper.isSameRoute(targetRoute, router.currentRoute)) {
+                if (helper.isSameRoute(targetRoute, router.currentRoute)) {
                     console.debug(`isSameRoute`);
                     return false;
                 }

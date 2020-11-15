@@ -29,20 +29,20 @@ const Helper = {
     },
     query      : function (api, data) {
         return new Promise(((resolve, reject) => {
-            let targetUrl              = config.api(api);
-            let xmlHttp                = new XMLHttpRequest();
-            xmlHttp.withCredentials    = true;
+            let targetUrl           = config.api(api);
+            let xmlHttp             = new XMLHttpRequest();
+            xmlHttp.withCredentials = true;
             xmlHttp.open('POST', targetUrl, true);
             xmlHttp.onreadystatechange = function () {
-                if (xmlHttp.readyState !== 4 /*&& xmlhttp.status < 400*/) return ;
+                if (xmlHttp.readyState !== 4 /*&& xmlhttp.status < 400*/) return;
                 // console.warn(xmlHttp.responseText);
                 if (xmlHttp.status > 400) return reject(xmlHttp.responseText);
 
                 let targetData = JSON.parse(xmlHttp.responseText);
                 if (!targetData) return reject(xmlHttp.responseText);
-                return resolve(targetData);
+                return resolve(targetData.data ? targetData.data : null);
             };
-            xmlHttp.send(JSON.stringify(data?data:{}));
+            xmlHttp.send(JSON.stringify(data ? data : {}));
         }));
     }
 };

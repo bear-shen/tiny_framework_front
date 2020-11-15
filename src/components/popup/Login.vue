@@ -166,9 +166,6 @@
             refreshCaptcha: function () {
                 this.captchaStamp = (new Date()) * 1
             },
-            /**
-             * @todo api user/register
-             * */
             register      : function () {
                 // this.callback.submit();
                 return store.commit('popup', {
@@ -177,7 +174,7 @@
                 });
             },
             /**
-             * @todo api user/login
+             * @api user/login
              * */
             login         : function () {
                 // this.callback.submit();
@@ -191,10 +188,6 @@
                     }
                 ).then((data) => {
                     console.info(data);
-                    if (data.code !== 0) {
-                        this.responseErr = `${data.code} : ${data.msg}`;
-                        return;
-                    }
                     this.$parent.hide();
                 }).catch((data) => {
                     this.responseErr = data;

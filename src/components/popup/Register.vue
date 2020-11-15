@@ -182,7 +182,7 @@
                 });
             },
             /**
-             * @todo api user/login
+             * @api user/login
              * */
             register      : function () {
                 if (this.pass !== this.pass1)
@@ -199,10 +199,6 @@
                     }
                 ).then((data) => {
                     console.info(data);
-                    if (data.code !== 0) {
-                        this.responseErr = `${data.code} : ${data.msg}`;
-                        return;
-                    }
                     this.$parent.hide();
                 }).catch((data) => {
                     this.responseErr = data;

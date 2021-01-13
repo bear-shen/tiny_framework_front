@@ -1,63 +1,62 @@
 <template>
-    <div id="header" class="nav nav-tabs navbar-fixed-top hidden-xs">
-        <div class="container">
-            <div class="navbar-brand">{{title}}</div>
-            <ul class="nav navbar-nav">
-                <li v-for="(href,name) in list" :class="{active:name===current}"><a :href="href">{{name}}</a></li>
-            </ul>
-            <div class="navbar-text navbar-right">{{time}}</div>
-        </div>
+    <div id="header">
+        <div id="headerBrand">{{title}}</div>
+        <ul id="headerNav">
+            <li v-for="(href,name) in list" :class="{active:name===current}">
+                <a :href="href">{{name}}</a>
+            </li>
+        </ul>
+        <div class="headerRight">{{time}}</div>
     </div>
 </template>
-
 <style lang="scss">
-    #header.navbar-fixed-top {
-        background-image: linear-gradient(0deg, #202020 0%, #2f2f2f 100%);
-        border: none;
-
-        .navbar-nav, .navbar-brand, .navbar-text, .nav.navbar-nav > li > a {
-            height: $footerHeight;
-            line-height: $footerHeight;
-            padding-top: 0;
-            padding-bottom: 0;
-            margin-top: 0;
-            margin-bottom: 0;
+    #header {
+        display: flex;
+        height: $headerHeight;
+        line-height: $headerHeight;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 0 $fontSize*2;
+        width: calc(100% - #{$fontSize*4});
+        background-color: map_get($colors, bar_bk);
+        z-index: $layoutIndex;
+        //box-shadow: 0px 0px 10px white;
+        > * {
+            height: 100%;
         }
-
-        .navbar-nav {
-            flex-direction: row;
-        }
-
-        .navbar-text {
-        }
-
-        .navbar-nav {
-            flex-direction: row;
-        }
-
-        .nav > li > a:hover, .nav > li > a:focus {
-            background-color: #202020;
-        }
-
-        .nav.navbar-nav > li > a {
-            color: #ddd;
-            text-decoration: none;
-            text-shadow: 0 0 0;
-
-            &:hover, &:focus {
-                background-color: rgba(0, 0, 0, 0.25);
-                color: #ddd;
+        #headerNav {
+            white-space: nowrap;
+            max-width: 80%;
+            @include smallScroll;
+            overflow-y: hidden;
+            li {
+                display: inline-block;
+                line-height: $headerHeight;
+                height: 100%;
+                a {
+                    padding: 0 $fontSize;
+                    display: block;
+                    height: 100%;
+                }
+            }
+            li:hover, li.active {
+                background-color: map_get($colors, bar_active);
             }
         }
-
-        .active {
-            background-color: #666;
-            color: #fff;
+    }
+    @media (max-width: $tabletWidth) {
+        #header {
+            justify-content: center;
+            > div {
+                display: none;
+            }
         }
-
-        .nav-pills > li > a:focus {
-            background-color: rgba(0, 0, 0, 0.25);
-            color: #343a40;
+    }
+    @media (max-width: $mobileWidth) {
+        #header {
+            display: none;
         }
     }
 </style>

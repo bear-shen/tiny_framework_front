@@ -1,9 +1,36 @@
-
-
+//
+$headerHeight: 30px;
 $footerHeight: 30px;
+$headerPad: 7.5px;
+$footerPad: 7.5px;
+//
+$navWidth: 150px;
+$navFoldWidth: 50px;
+//
 $fontSize: 16px;
+//
+$tabletWidth: 1024px;
+$mobileWidth: 600px;
+//
+$colors: (
+        bk:rgba(50, 50, 50, 1),
+        bar_bk:rgba(20, 20, 20, 1),
+        bar_active:rgba(50, 50, 50, 1),
+        bar_shadow:box,
+        nav_bk:rgba(30, 30, 30, 1),
+        nav_active:rgba(50, 50, 50, 1),
+        alpha:rgba(0, 0, 0, 0.5),
+        font:rgba(200, 200, 200, 1),
+);
+$layoutIndex: 500;
+$alphaIndex: 1000;
 
-@mixin smallScroll{
+
+/*
+ *  @see https://www.cnblogs.com/amylis_chen/p/11995324.html
+ *  @see https://www.cnblogs.com/ertingbo/p/7151566.html
+ */
+@mixin smallScroll {
   &::-webkit-scrollbar-track {
     background-color: rgba(0, 0, 0, 0.5);
   }
@@ -16,7 +43,11 @@ $fontSize: 16px;
     background-color: rgba(127, 127, 127, 0.5);
     border-radius: 3px;
   }
-  &::-webkit-scrollbar-corner{
+  &::-webkit-scrollbar-corner {
     background-color: rgba(0, 0, 0, 0.0);
   }
+}
+
+.pointer {
+  cursor: pointer;
 }

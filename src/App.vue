@@ -1,29 +1,25 @@
 <template>
     <div id="app">
         <Header/>
-        <div id="body" :class="['container-fluid']">
-            <div id="" :class="['row',{showTitle:showTitle}]">
-                <div :class="['col-lg-1','nav-col']">
-                    <ul id="leftNavi" :class="['nav','nav-pills','nav-stacked']">
-                        <li class="toggler" v-on:click="toggler">
-                            <a href="javascript:void(0)" title="toggle"><span class="sysIcon sysIcon_swap"></span></a>
-                        </li>
-                        <li v-for="r in routes" :class="{active:currentRoute.path===r.path}">
-                            <router-link :to="r.path" :title="r.title">
-                                <span :class="['navTxt']">{{r.title}}</span>
-                                <span :class="['navIcon','sysIcon',r.icon,]"></span>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-                <!--<div id="content" class=" col-lg-11">
-                    <form id="contentForm">
-                        <label>Name:<input type="text" name="name" value=""></label>
-                    </form>
-                    <div id="contentList"></div>
-                </div>-->
-                <router-view id="content" class=" col-lg-11"></router-view>
-            </div>
+        <div id="body" :class="[{foldNav:foldNav}]">
+            <ul id="nav">
+                <li class="toggler" v-on:click="toggler">
+                    <a href="javascript:void(0)" title="toggle"><span class="sysIcon sysIcon_swap"></span></a>
+                </li>
+                <li v-for="r in routes" :class="{active:currentRoute.path===r.path}">
+                    <router-link :to="r.path" :title="r.title">
+                        <span :class="['sysIcon',r.icon,]"></span>
+                        <span :class="['txt']">{{r.title}}</span>
+                    </router-link>
+                </li>
+            </ul>
+            <!--<div id="content" class=" col-lg-11">
+                <form id="contentForm">
+                    <label>Name:<input type="text" name="name" value=""></label>
+                </form>
+                <div id="contentList"></div>
+            </div>-->
+            <router-view id="content" class=" col-lg-11"></router-view>
         </div>
         <div id="footer" class="nav navbar-fixed-bottom">
             <!--            <div class="">-->
@@ -36,236 +32,133 @@
 </template>
 
 <style lang="scss">
-
-
     body {
-        padding-top: $footerHeight*1.25;
-        padding-bottom: $footerHeight*1.25;
-        min-height: calc(100vh /*- #{$footerHeight * 1.25*2}*/
-        );
-    }
-
-    body > div {
-        transition: 0.5s all;
-    }
-
-    #body {
-        position: relative;
-        display: block;
-        padding-left: 0;
-        padding-right: 0;
-
-        .row {
-            margin-right: 0;
-            margin-left: 0;
-        }
-    }
-
-    .col-lg-1 {
-        padding-right: 0;
-        padding-left: 0;
-        white-space: nowrap;
-    }
-
-    #leftNavi.nav {
-        position: fixed;
-        left: 0;
-        top: $footerHeight;
-        z-index: 20;
-        width: percentage(1/12);
-
-        li {
-            width: 100%;
-        }
-
-        > li > a {
-            padding: 10px 15px 10px 0;
-            text-align: right;
-        }
-
-        .toggler {
-            /* background-color: black; */
-            text-align: right;
-        }
-
-        .navIcon {
-            padding-left: 0.5em;
-        }
-
-        > li > a:hover, > li > a:focus {
-            background-color: rgba(0, 0, 0, 0.25);
-            color: #00aaff;
-        }
-
-        .navTxt {
-            display: none;
-        }
-    }
-
-    @media(min-width: 1200px) {
-        $iconSize: 40px;
-        .col-lg-1.nav-col {
-            flex-basis: $iconSize;
-        }
-
-        #leftNavi.nav {
-            width: $iconSize;
-        }
-
-        #content.col-lg-11 {
-            //vw对滚动条支持不好，所以%
-            width: calc(100% - #{$iconSize});
-            flex: 0 0 calc(100% - #{$iconSize});
-            max-width: calc(100% - #{$iconSize});
-        }
-
-        .showTitle {
-            .col-lg-1.nav-col {
-                flex-basis: 8.333333%;
-            }
-
-            #leftNavi.nav {
-                width: 8.333333%;
-            }
-
-            #leftNavi.nav .navTxt {
-                display: inline;
-            }
-
-            #content.col-lg-11.col-lg-11 {
-                width: 91.66666667%;
-                flex: 0 0 91.66666667%;
-                max-width: 91.66666667%;
-            }
-        }
-    }
-
-    #content {
-        min-height: 70vh;
-        word-break: break-word;
-    }
-
-
-    #footer {
-        height: $footerHeight;
-        line-height: $footerHeight;
-        //#msg,#paginator{
-        //  display: inline-block;
-        //  white-space: nowrap;
-        //}
-        background-image: linear-gradient(180deg, #202020 0%, #2f2f2f 100%);
-        border: none;
-
-        .nav > li > a:hover, .nav > li > a:focus {
-            background-color: #202020;
-        }
-
-        .nav.navbar-nav > li > a {
-            color: #ddd;
-            text-decoration: none;
-            text-shadow: 0 0 0;
-
-            &:hover, &:focus {
-                background-color: rgba(0, 0, 0, 0.25);
-                color: #ddd;
-            }
-        }
-
-        .active {
-            background-color: #666;
-            color: #fff;
-        }
-    }
-
-
-    @media(max-width: 1199px) {
-        body {
-            padding-top: $footerHeight*2;
-            padding-bottom: $footerHeight*1.5;
-        }
-
-        .col-lg-1.nav-col {
-            width: 0;
-            padding-left: 0;
-            padding-right: 0;
-            flex-basis: 0;
-        }
-        .col-lg-11#content {
-            width: 100vw;
-            max-width: 100vw;
-            flex-basis: 100%;
-        }
-
-        #leftNavi.nav {
-            //position: fixed;
-            top: $footerHeight;
-            background-image: linear-gradient(0deg, #101010 0%, #202020 100%);
-            width: 100vw;
-
-            flex-direction: row;
-            flex-wrap: nowrap;
-            text-align: center;
-            .navIcon {
-                padding-left: 0;
-            }
-
-            .navTxt {
-                display: none;
-            }
-
-            .toggler {
-                display: none;
-            }
-
-            li {
-                display: inline-block;
-
-                a {
-                    text-align: center;
-                    padding: 0 $footerHeight/4;
-                    font-size: $footerHeight/4;
-                    line-height: $footerHeight*0.75;
-                    height: $footerHeight*0.75;
-                }
-            }
-        }
-        .showTitle #leftNavi.nav .navTxt {
-            display: none;
-        }
-    }
-
-    @media(max-width: 767px) {
-        body {
-            padding-top: $footerHeight;
-            padding-bottom: $footerHeight*1.5;
-        }
-        #leftNavi.nav {
-            top: 0;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-        #footer {
-            height: $footerHeight*1.5;
-
-        }
-    }
-
-    #content {
-    }
-
-
-    /*
-     *  @see https://www.cnblogs.com/amylis_chen/p/11995324.html
-     *  @see https://www.cnblogs.com/ertingbo/p/7151566.html
-     */
-
-
-    html {
+        padding-top: $headerHeight + $headerPad;
+        padding-bottom: $footerHeight+ $footerPad;
+        min-height: calc(100vh);
+        margin: 0;
+        background-color: map_get($colors, bk);
+        color: map_get($colors, font);
+        font-size: $fontSize;
+        line-height: $fontSize;
         @include smallScroll;
     }
-
-    .pointer{
-        cursor: pointer;
+    * {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-style: inherit;
+        text-decoration: inherit;
+        color: inherit;
+        line-height: inherit;
+    }
+    #app {
+        #body {
+            position: relative;
+            display: flex;
+            > * {}
+            #nav {
+                position: fixed;
+                left: 0;
+                top: $headerHeight;
+                width: $navWidth;
+                padding: $fontSize 0;
+                height: calc(100vh - #{$headerHeight+$footerHeight+$fontSize*2});
+                background-color: map_get($colors, nav_bk);
+                z-index: $layoutIndex;
+                a {
+                    padding: 0 $fontSize;
+                    display: block;
+                    height: $fontSize*2;
+                    line-height: $fontSize*2;
+                }
+                li:hover, li.active {
+                    background-color: map_get($colors, nav_active);
+                }
+                .txt {
+                    padding-left: $fontSize*0.5;
+                }
+            }
+            #content {
+                margin-left: $navWidth;
+            }
+        }
+        #body.foldNav {
+            #nav {
+                width: $navFoldWidth;
+                li {
+                    padding: 0;
+                    text-align: center;
+                }
+                .txt {
+                    display: none;
+                }
+            }
+            #content {
+                margin-left: $navFoldWidth;
+            }
+        }
+        #footer {}
+    }
+    @media (max-width: $tabletWidth) {
+        body {
+            padding-top: $headerHeight*2+$headerPad;
+            padding-bottom: $footerHeight+$footerPad;
+        }
+        #app {
+            #body {
+                position: relative;
+                display: block;
+                > * {}
+                #nav {
+                    padding: 0;
+                    height: $headerHeight;
+                    width: 100vw;
+                    display: flex;
+                    justify-content: center;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    @include smallScroll;
+                    .toggler, .sysIcon {
+                        display: none;
+                    }
+                    a {
+                        height: $headerHeight;
+                        line-height: $headerHeight;
+                    }
+                    .txt {
+                        padding-left: 0;
+                    }
+                }
+                #content {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+            }
+            #footer {}
+        }
+    }
+    @media (max-width: $mobileWidth) {
+        body {
+            padding-top: $headerHeight+$headerPad;
+            padding-bottom: $footerHeight+$footerPad;
+        }
+        #app {
+            #body {
+                position: relative;
+                display: block;
+                > * {}
+                #nav {
+                    display: block;
+                    top: 0;
+                    white-space: nowrap;
+                    li{
+                        display: inline-block;
+                    }
+                }
+            }
+            #footer {}
+        }
     }
 </style>
 <script>
@@ -289,7 +182,7 @@
         },
         data      : function () {
             return {
-                showTitle   : true,
+                foldNav     : false,
                 routes      : [],
                 currentRoute: {},
             };
@@ -316,8 +209,8 @@
             globalDbg         = this;
         },
         methods   : {
-            toggler     : function () {
-                this.showTitle = !this.showTitle;
+            toggler: function () {
+                this.foldNav = !this.foldNav;
             },
         },
     }

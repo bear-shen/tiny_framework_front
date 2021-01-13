@@ -109,7 +109,3 @@
         methods: {}
     }
 </script>
-
-<style scoped>
-
-</style>

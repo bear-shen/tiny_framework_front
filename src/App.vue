@@ -21,12 +21,7 @@
             </div>-->
             <router-view id="content" class=" col-lg-11"></router-view>
         </div>
-        <div id="footer" class="nav navbar-fixed-bottom">
-            <!--            <div class="">-->
-            <Msg/>
-            <Paginator/>
-            <!--            </div>-->
-        </div>
+        <Footer/>
         <Popup/>
     </div>
 </template>
@@ -98,7 +93,6 @@
                 margin-left: $navFoldWidth;
             }
         }
-        #footer {}
     }
     @media (max-width: $tabletWidth) {
         body {
@@ -135,7 +129,6 @@
                     margin-right: auto;
                 }
             }
-            #footer {}
         }
     }
     @media (max-width: $mobileWidth) {
@@ -145,8 +138,6 @@
         }
         #app {
             #body {
-                position: relative;
-                display: block;
                 > * {}
                 #nav {
                     display: block;
@@ -157,7 +148,6 @@
                     }
                 }
             }
-            #footer {}
         }
     }
 </style>
@@ -167,18 +157,16 @@
 
 
     import Header    from "./components/Header";
-    import Msg       from "./components/Msg";
-    import Paginator from "./components/Paginator";
     import Popup     from "./components/Popup";
+    import Footer     from "./components/Footer";
 
     console.log('Hello world');
 
     export default {
         components: {
             Header   : Header,
-            Msg      : Msg,
-            Paginator: Paginator,
-            Popup    : Popup
+            Popup    : Popup,
+            Footer    : Footer,
         },
         data      : function () {
             return {

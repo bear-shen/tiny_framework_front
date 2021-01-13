@@ -24,8 +24,13 @@ $colors: (
 );
 $layoutIndex: 500;
 $alphaIndex: 1000;
-
-
+$msgColors: (
+        success:rgba(1, 24, 38, 1),
+        info:rgba(1, 38, 35, 1),
+        notice:rgba(1, 52, 64, 1),
+        warn:rgba(166, 101, 86, 1),
+        error:rgba(191, 52, 77, 1),
+);
 /*
  *  @see https://www.cnblogs.com/amylis_chen/p/11995324.html
  *  @see https://www.cnblogs.com/ertingbo/p/7151566.html
@@ -47,7 +52,6 @@ $alphaIndex: 1000;
     background-color: rgba(0, 0, 0, 0.0);
   }
 }
-
 .pointer {
   cursor: pointer;
 }

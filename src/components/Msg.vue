@@ -2,19 +2,19 @@
     <ul id="msg" class="nav navbar-nav ">
         <li v-for="(item,k) in list" :class="[
             'glyphicon'
-            ,{'btn-success' :item.type=='success'}  ,{'glyphicon-ok'           :item.type=='success'}
-            ,{'btn-primary' :item.type=='info'}     ,{'glyphicon-info-sign'    :item.type=='info'}
-            ,{'btn-danger'  :item.type=='error'}    ,{'glyphicon-remove-sign'  :item.type=='error'}
-            ,{'btn-warning' :item.type=='notice'}   ,{'glyphicon-alert'        :item.type=='notice'}
+            ,{'btn-success' :item.type==='success'}  ,{'glyphicon-ok'           :item.type=='success'}
+            ,{'btn-primary' :item.type==='info'}     ,{'glyphicon-info-sign'    :item.type=='info'}
+            ,{'btn-danger'  :item.type==='error'}    ,{'glyphicon-remove-sign'  :item.type=='error'}
+            ,{'btn-warning' :item.type==='notice'}   ,{'glyphicon-alert'        :item.type=='notice'}
             ,{'hiding'      :item.hide}
             ]" v-on:click.self.stop="showDetail(k)">
             <div :class="[
                 'hinter'
-                ,{'btn-success' :item.type=='success'}
-                ,{'btn-primary' :item.type=='info'}
-                ,{'btn-danger'  :item.type=='error'}
-                ,{'btn-warning' :item.type=='notice'}
-                ,{'btn-warning' :item.type=='notice'}
+                ,{'btn-success' :item.type==='success'}
+                ,{'btn-primary' :item.type==='info'}
+                ,{'btn-danger'  :item.type==='error'}
+                ,{'btn-warning' :item.type==='notice'}
+                ,{'btn-warning' :item.type==='notice'}
                 ,{'hide' :!item.detail}
                 ]">{{item.msg}}
             </div>
@@ -29,10 +29,8 @@
         margin-bottom: 0;
         width: 75%;
         white-space: nowrap;
-
         justify-content: flex-start;
         flex-direction: row;
-
         li {
             display: inline-block;
             font-size: initial;
@@ -42,7 +40,6 @@
             text-align: center;
             position: relative;
             transition: width 0s, height 0s;
-
             .hinter {
                 /*display: none;*/
                 position: absolute;
@@ -58,11 +55,9 @@
                 text-overflow: ellipsis;
                 overflow: hidden;
             }
-
             &.hide {
                 display: none;
             }
-
             &.hiding {
                 transition: width 1s, height 1s;
                 width: 0;
@@ -70,21 +65,17 @@
             }
         }
     }
-
     @media(max-width: 767px) {
         #msg {
             width: 90%;
             text-align: center;
             /*margin-right: auto;*/
             /*margin-left: auto;*/
-
             height: $footerHeight*0.4;
             margin: 0 auto $footerHeight*0.1;
-
             li {
                 height: $footerHeight*0.4;
                 font-size: 0;
-
                 .hinter {
                     bottom: $footerHeight*0.4;
                     line-height: $footerHeight*0.6;
@@ -124,8 +115,7 @@
                 detailTimer: 0,
             }
         },
-        watch  : {
-        },
+        watch  : {},
         created: function () {
             store.commit('registerMsgDOM', this);
         },

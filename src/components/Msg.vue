@@ -1,23 +1,11 @@
 <template>
-    <ul id="msg" class="nav navbar-nav ">
+    <ul id="msg">
         <li v-for="(item,k) in list" :class="[
-            'glyphicon'
-            ,{'btn-success' :item.type==='success'}  ,{'glyphicon-ok'           :item.type=='success'}
-            ,{'btn-primary' :item.type==='info'}     ,{'glyphicon-info-sign'    :item.type=='info'}
-            ,{'btn-danger'  :item.type==='error'}    ,{'glyphicon-remove-sign'  :item.type=='error'}
-            ,{'btn-warning' :item.type==='notice'}   ,{'glyphicon-alert'        :item.type=='notice'}
-            ,{'hiding'      :item.hide}
+            'msgBtn',
+            `msgBtn_${item.type}`  ,
+            {'hiding'      :item.hide},
             ]" v-on:click.self.stop="showDetail(k)">
-            <div :class="[
-                'hinter'
-                ,{'btn-success' :item.type==='success'}
-                ,{'btn-primary' :item.type==='info'}
-                ,{'btn-danger'  :item.type==='error'}
-                ,{'btn-warning' :item.type==='notice'}
-                ,{'btn-warning' :item.type==='notice'}
-                ,{'hide' :!item.detail}
-                ]">{{item.msg}}
-            </div>
+            <div v-if="item.detail">{{item.msg}}</div>
         </li>
     </ul>
 </template>
@@ -27,30 +15,25 @@
         font-size: 0;
         height: $footerHeight;
         margin-bottom: 0;
-        width: 75%;
         white-space: nowrap;
-        justify-content: flex-start;
-        flex-direction: row;
         li {
             display: inline-block;
-            font-size: initial;
             height: $footerHeight;
             line-height: $footerHeight;
-            width: 5%;
-            text-align: center;
+            width: $fontSize;
             position: relative;
             transition: width 0s, height 0s;
-            .hinter {
+            div {
                 /*display: none;*/
                 position: absolute;
-                z-index: 40;
+                z-index: $layoutIndex+1;
                 left: 0;
                 bottom: $footerHeight;
-                line-height: $footerHeight*0.5;
-                height: $footerHeight*0.5;
-                font-size: $footerHeight*0.25;
-                white-space: nowrap;
-                padding: 0 5px;
+                line-height: $fontSize;
+                /*height: $fontSize*1.5;*/
+                font-size: $fontSize;
+                /*white-space: nowrap;*/
+                padding: $fontSize/2;
                 max-width: 20vw;
                 text-overflow: ellipsis;
                 overflow: hidden;
@@ -64,23 +47,34 @@
                 font-size: 0;
             }
         }
+        .msgBtn {
+            background-color: map_get($msgColors, notice);
+        }
+        @each $type, $color in $msgColors {
+            .msgBtn_#{$type} {
+                background-color: $color;
+                div {
+                    background-color: $color;
+                }
+            }
+        }
     }
-    @media(max-width: 767px) {
+    @media(max-width: $tabletWidth) {
         #msg {
-            width: 90%;
+            position: absolute;
+            bottom: $footerHeight;
             text-align: center;
-            /*margin-right: auto;*/
-            /*margin-left: auto;*/
-            height: $footerHeight*0.4;
-            margin: 0 auto $footerHeight*0.1;
+            height: $footerPad*0.5;
+            width: 100%;
             li {
-                height: $footerHeight*0.4;
-                font-size: 0;
-                .hinter {
-                    bottom: $footerHeight*0.4;
-                    line-height: $footerHeight*0.6;
-                    height: $footerHeight*0.6;
-                    font-size: $footerHeight*0.6*0.5;
+                vertical-align: top;
+                display: inline-block;
+                /*bottom: $footerPad*1.5;*/
+                height: $footerPad*0.5;
+                line-height: $footerPad*0.5;
+                div {
+                    max-width: 80vw;
+                    bottom: $footerPad*0.4;
                 }
             }
         }
@@ -105,8 +99,32 @@
             return {
                 list       : [
                     {
-                        type  : 'info',
+                        type  : 'success',
                         msg   : 'success',
+                        hide  : false,
+                        detail: false,
+                    },
+                    {
+                        type  : 'info',
+                        msg   : 'info',
+                        hide  : false,
+                        detail: false,
+                    },
+                    {
+                        type  : 'notice',
+                        msg   : 'notice',
+                        hide  : false,
+                        detail: false,
+                    },
+                    {
+                        type  : 'warn',
+                        msg   : 'warn',
+                        hide  : false,
+                        detail: false,
+                    },
+                    {
+                        type  : 'error',
+                        msg   : 'error',
                         hide  : false,
                         detail: false,
                     },
@@ -155,10 +173,10 @@
                 }, 2000);
             },
             showDetail: function (index) {
+                clearInterval(this.detailTimer);
                 for (let i1 = 0; i1 < this.list.length; i1++) {
                     this.list[i1].detail = false;
                 }
-                clearInterval(this.detailTimer);
                 //
                 let curItem      = this.list[index];
                 curItem.detail   = true;

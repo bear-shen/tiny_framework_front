@@ -18,13 +18,29 @@
         width: 100%;
         background-color: map_get($colors, bar_bk);
         z-index: $layoutIndex;
+        #msg {}
+        #paginator {}
     }
     @media (max-width: $tabletWidth) {
         #footer {
+            display: block;
+            text-align: center;
+            #msg { }
+            #paginator {}
+            >* {
+                display: block;
+            }
         }
     }
     @media (max-width: $mobileWidth) {
         #footer {
+            display: block;
+            text-align: center;
+            #msg { }
+            #paginator {}
+            >* {
+                display: block;
+            }
         }
     }
 </style>

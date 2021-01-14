@@ -58,7 +58,9 @@
                 top: $headerHeight;
                 width: $navWidth;
                 padding: $fontSize 0;
-                height: calc(100vh - #{$headerHeight+$footerHeight+$fontSize*2});
+                height: calc(100vh - #{
+                $headerHeight+$footerHeight+$fontSize*2
+                });
                 background-color: map_get($colors, nav_bk);
                 z-index: $layoutIndex;
                 a {
@@ -76,6 +78,7 @@
             }
             #content {
                 margin-left: $navWidth;
+                width: calc(100vw - #{$navWidth});
             }
         }
         #body.foldNav {
@@ -143,7 +146,14 @@
                     display: block;
                     top: 0;
                     white-space: nowrap;
+                    text-align: center;
                     li{
+                        display: inline-block;
+                    }
+                    .toggler, .txt {
+                        display: none;
+                    }
+                    .sysIcon{
                         display: inline-block;
                     }
                 }

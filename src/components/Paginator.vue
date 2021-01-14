@@ -1,18 +1,14 @@
 <template>
-    <ul id="paginator" class="nav navbar-nav navbar-right" v-if="usePagination">
+    <ul id="paginator" v-if="usePagination">
         <li>
-            <a href="javascript:void(0)" v-on:click="prev">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
+            <a href="javascript:void(0)" v-on:click="prev"> &laquo; </a>
         </li>
         <li v-for="offset in pageOffsets" :class="{active:getPage()===offset}" v-on:click="goto(offset)">
             <a href="javascript:void(0)">{{offset}}</a>
         </li>
         <!--<li c0.lass="disabled"><a href="javascript:void(0)">3</a></li>-->
         <li>
-            <a href="javascript:void(0)" v-on:click="next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
+            <a href="javascript:void(0)" v-on:click="next"> &raquo; </a>
         </li>
     </ul>
 </template>
@@ -20,45 +16,36 @@
 <style lang="scss">
     #paginator {
         height: $footerHeight;
-        width: 25%;
-        margin-right: 0;
-        font-size: 0;
-
+        margin-right: $fontSize;
         li {
-            width: percentage(1/7);
             display: inline-block;
-            height: $footerHeight;
             text-align: center;
         }
-
         a {
-            font-size: $footerHeight/4;
-            padding-left: 0;
-            padding-right: 0;
-            padding-top: 0;
-            padding-bottom: 0;
+            display: block;
+            font-size: $fontSize;
+            padding: 0 $fontSize;
             line-height: $footerHeight;
+            height: $footerHeight;
+        }
+        li:hover, .active {
+            background-color: map_get($colors, nav_active);
         }
     }
-
-    @media(max-width: 767px) {
+    @media(max-width: $tabletWidth) {
         #paginator {
-            width: 90%;
-            text-align: center;
-            margin-right: auto;
-            margin-left: auto;
-
-            margin-top: 0;
-            white-space: nowrap;
-            height: $footerHeight;
-
+            margin-right: 0;
             li {
             }
-
             a {
-                line-height: $footerHeight;
-                padding: 0;
-                font-size: $footerHeight/2;
+            }
+        }
+    }
+    @media(max-width: $mobileWidth) {
+        #paginator {
+            li {
+            }
+            a {
             }
         }
     }

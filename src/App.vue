@@ -81,19 +81,22 @@
                 width: calc(100vw - #{$navWidth});
             }
         }
-        #body.foldNav {
-            #nav {
-                width: $navFoldWidth;
-                li {
-                    padding: 0;
-                    text-align: center;
+        @media(min-width: $tabletWidth+1) {
+            #body.foldNav {
+                #nav {
+                    width: $navFoldWidth;
+                    li {
+                        padding: 0;
+                        text-align: center;
+                    }
+                    .txt {
+                        display: none;
+                    }
                 }
-                .txt {
-                    display: none;
+                #content {
+                    margin-left: $navFoldWidth;
+                    width: calc(100vw - #{$navFoldWidth});
                 }
-            }
-            #content {
-                margin-left: $navFoldWidth;
             }
         }
     }
@@ -130,6 +133,7 @@
                 #content {
                     margin-left: auto;
                     margin-right: auto;
+                    width: 100vw;
                 }
             }
         }
@@ -147,13 +151,13 @@
                     top: 0;
                     white-space: nowrap;
                     text-align: center;
-                    li{
+                    li {
                         display: inline-block;
                     }
                     .toggler, .txt {
                         display: none;
                     }
-                    .sysIcon{
+                    .sysIcon {
                         display: inline-block;
                     }
                 }
@@ -166,17 +170,17 @@
     import store  from "./store";
 
 
-    import Header    from "./components/Header";
-    import Popup     from "./components/Popup";
-    import Footer     from "./components/Footer";
+    import Header from "./components/Header";
+    import Popup  from "./components/Popup";
+    import Footer from "./components/Footer";
 
     console.log('Hello world');
 
     export default {
         components: {
-            Header   : Header,
-            Popup    : Popup,
-            Footer    : Footer,
+            Header: Header,
+            Popup : Popup,
+            Footer: Footer,
         },
         data      : function () {
             return {

@@ -46,6 +46,7 @@
             li {
             }
             a {
+                padding: 0 $fontSize*0.5;
             }
         }
     }

@@ -19,7 +19,7 @@
                 </form>
                 <div id="contentList"></div>
             </div>-->
-            <router-view id="content" class=" col-lg-11"></router-view>
+            <router-view id="content"></router-view>
         </div>
         <Footer/>
         <Popup/>
@@ -30,7 +30,7 @@
     body {
         padding-top: $headerHeight + $headerPad;
         padding-bottom: $footerHeight+ $footerPad;
-        min-height: calc(100vh);
+        min-height: calc(100vh - #{$headerHeight + $headerPad+ $footerHeight+ $footerPad});
         margin: 0;
         background-color: map_get($colors, bk);
         color: map_get($colors, font);
@@ -42,10 +42,13 @@
         list-style: none;
         margin: 0;
         padding: 0;
+        border: none;
         font-style: inherit;
         text-decoration: inherit;
         color: inherit;
         line-height: inherit;
+        appearance: none;
+        outline: 0
     }
     #app {
         #body {
@@ -133,7 +136,7 @@
                 #content {
                     margin-left: auto;
                     margin-right: auto;
-                    width: 100vw;
+                    width: 100%;
                 }
             }
         }
@@ -163,6 +166,18 @@
                 }
             }
         }
+    }
+    input, button, select, textarea {
+    }
+    button, select {
+        background-color: map_get($colors, input_button_bk);
+        color: map_get($colors, input_button_font);
+        padding: 0 $fontSize*0.5;
+    }
+    input {
+        background-color: map_get($colors, input_bk);
+        color: map_get($colors, input_font);
+        padding: 0 $fontSize*0.5;
     }
 </style>
 <script>

@@ -11,14 +11,16 @@
 <template>
     <div class="list">
         <div class="listHeader">
-            <ul class="listHeaderBread breadcrumb">
-                <li class="breadcrumb-item" v-for="bread in navi" v-on:click="goto(bread.type,bread.id)">{{bread.name}}</li>
+            <ul class="headerGroup breadcrumb">
+                <li v-for="bread in navi" v-on:click="goto(bread.type,bread.id)">
+                    {{bread.name}}
+                </li>
             </ul>
-            <div class="listHeaderSearch">
+            <div class="headerGroup search">
                 <input type="text" placeholder="search" v-model="queryData.keyword">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
+                <button type="button" class="sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
             </div>
-            <div class="listHeaderSort">
+            <div class="headerGroup sort">
                 <select v-model="queryData.sort">
                     <option value="id_asc">id ↑</option>
                     <option value="id_desc">id ↓</option>
@@ -30,22 +32,19 @@
                     <option value="upd_desc">upd time ↓</option>
                 </select>
             </div>
-            <div class="listHeaderOperates">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_addfile" v-on:click="addFile"></button>
-                <button type="button" class="btn btn-dark sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
+            <div class="headerGroup operate">
+                <button type="button" class="sysIcon sysIcon_addfile" v-on:click="addFile"></button>
+                <button type="button" class="sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
-            <div class="listHeaderLayout">
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listType==='img'}]" v-on:click="changeListType('img')"></button>
+            <div class="headerGroup layout">
+                <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listType==='img'}]" v-on:click="changeListType('img')"></button>
             </div>
         </div>
-        <div :class="['listContent','listType_'+listType]">
-            <ul>
-                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'list'"></File>
-
-            </ul>
-        </div>
+        <ul :class="['listContent','listType_'+listType]">
+            <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'list'"></File>
+        </ul>
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
         <!--        </div>-->
@@ -54,126 +53,90 @@
 </template>
 
 <style lang="scss">
-
-    .list .listHeader {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: nowrap;
-        margin-bottom: $fontSize*0.5;
-
-        &, & * {
-            font-size: $fontSize;
-            height: $fontSize*2;
-            line-height: $fontSize*2;
-            padding-left: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-            padding-right: 0;
-            white-space: nowrap;
-            vertical-align: top;
-        }
-
-        button, input {
-            width: $fontSize*2;
-            height: $fontSize*2;
-            padding-left: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-            padding-right: 0;
-        }
-
-        input[type="text"] {
-            width: $fontSize * 10;
-            border-radius: $fontSize*0.25;
-            height: $fontSize*2;
-            text-indent: 0.5em;
-        }
-
-        .listHeaderBread {
-            width: 80%;
-            padding-left: 1em;
-            padding-top: 0;
-            padding-bottom: 0;
-            margin-bottom: 0;
-
-            li {
-                cursor: pointer;
-            }
-        }
-
-        .listHeaderSearch, .listHeaderOperates, .listHeaderSort, .listHeaderLayout {
-            margin-left: 1em;
-        }
-
-        .listHeaderSort {
-            option {
-                text-align: center;
-            }
-        }
-
-        .listHeaderLayout button {
-        }
-
-        .listHeaderLayout button.active {
-        }
+    input[type="text"] {
     }
-
-    @media (max-width: 1199px) {
-        .list .listHeader {
-            flex-wrap: wrap;
-            white-space: normal;
-            // height: $fontSize*4.5;
-            height: auto;
-            justify-content: flex-end;
-
-            input[type="text"] {
-                //width: calc(100vw - #{$fontSize *2 *7} - 40px);
-                width: calc(100% - #{$fontSize*2});
-                border-radius: $fontSize*0.25;
+    #content.list {
+        .listHeader {
+            line-height: $fontSize*2;
+            /*height: $fontSize*2;*/
+            font-size: $fontSize;
+            .headerGroup {
+                white-space: nowrap;
+                display: inline-block;
+                vertical-align: top;
                 height: $fontSize*2;
-                text-indent: 0.5em;
+                line-height: $fontSize*2;
+                > * {
+                    display: inline-block;
+                    vertical-align: top;
+                    height: $fontSize*2;
+                    line-height: $fontSize*2;
+                }
+                margin-right: $fontSize*0.25;
             }
-
-            .listHeaderBread,
-            .listHeaderSearch,
-            .listHeaderOperates,
-            .listHeaderSort,
-            .listHeaderLayout {
-                width: auto;
+            .breadcrumb {
+                white-space: nowrap;
+                background-color: map_get($colors, header_bread_bk);
+                width: 50vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                li {
+                    padding-left: $fontSize;
+                    &::before {
+                        content: '>';
+                        display: inline-block;
+                        padding-right: $fontSize;
+                    }
+                }
             }
-
-            .listHeaderSearch {
-                margin-left: 0;
+            .search {}
+            .sort {}
+            .operate {}
+            .layout {}
+            input {
+                width: $fontSize*10;
             }
-
-            .listHeaderOperates, .listHeaderSort, .listHeaderLayout {
-                margin-left: 8px;
-                //margin-right: 8px;
+            select {
+                width: $fontSize*5;
             }
-
-            .listHeaderBread {
-                order: 4;
-                width: 100%;
-                margin-top: 0.5*$fontSize;
+        }
+        .listContent {}
+        @media (max-width: $tabletWidth) {
+            .listHeader {
+                .headerGroup {
+                    > * {
+                    }
+                }
+                .breadcrumb {
+                    width: calc(100% - #{$fontSize*13.25});
+                }
+                .search {
+                    margin-right: 0;
+                }
+                .sort {}
+                .operate {}
+                .layout {}
             }
-
-            .listHeaderSearch {
-                order: 1;
-                margin-bottom: 8px;
-                width: 100%;
+            .listContent {}
+        }
+        @media (max-width: $mobileWidth) {
+            .listHeader {
+                .headerGroup {
+                    > * {
+                    }
+                }
+                .breadcrumb {
+                    width: 100%;
+                    margin-right: 0;
+                }
+                .search {
+                    margin-right: $fontSize*0.25;
+                }
+                .sort {}
+                .operate {}
+                .layout {}
             }
-
-            .listHeaderOperates {
-                order: 2;
-            }
-
-            .listHeaderSort {
-                order: 3;
-            }
-
-            .listHeaderLayout {
-                order: 3;
-            }
+            .listContent {}
         }
     }
 </style>

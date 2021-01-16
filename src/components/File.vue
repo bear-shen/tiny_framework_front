@@ -7,8 +7,8 @@ from 来自对象 {list|favourite|recycle}
 <template>
     <li :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
         <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)">
-            <span v-if="!item.cover || listType==='text'" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
-            <img v-if="item.cover && listType!=='text'" class="ct_cover" :src="item.cover" alt="">
+            <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
+            <img v-else class="ct_cover" :src="item.cover" :alt="item.title">
         </div>
         <div class="ct_meta">
             <template v-if="editMetaFlag">
@@ -33,68 +33,26 @@ from 来自对象 {list|favourite|recycle}
                 <div class="ct_time_update">{{item.time_update}}</div>
             </template>
             <div class="ct_operate">
-                <template v-if="from==='list'">
-                    <div v-if="item.cover"
-                         :class="['btn', 'btn-dark', {'active':dir && dir.cover_id===item.id}]"
-                         v-on:click="setCover()"
-                    ><span class="sysIcon sysIcon_edit"></span>&nbsp;cover
-                    </div>
-                </template>
+                <button v-if="from==='list'" v-on:click="setCover()" :class="['sysIcon', 'sysIcon_picture',{'active':dir && dir.cover_id===item.id}]">&nbsp;cover</button>
 
                 <template v-if="['list','favourite'].indexOf(from)!==-1">
-                    <template v-if="editMetaFlag">
-                        <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveMeta()">
-                            <span class="sysIcon sysIcon_save"></span>&nbsp;info
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div :class="['btn', 'btn-dark']" v-on:click="editMeta()">
-                            <span class="sysIcon sysIcon_edit"></span>&nbsp;info
-                        </div>
-                    </template>
+                    <button v-if="editMetaFlag" v-on:click="saveMeta()" class="sysIcon sysIcon_save active">&nbsp;info</button>
+                    <button v-else v-on:click="editMeta()" class="sysIcon sysIcon_edit">&nbsp;info</button>
 
-                    <template v-if="editTagFlag">
-                        <div :class="['btn', 'btn-dark', 'active']" v-on:click="saveTag()">
-                            <span class="sysIcon sysIcon_save"></span>&nbsp;tag
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div :class="['btn', 'btn-dark']" v-on:click="editTag()">
-                            <span class="sysIcon sysIcon_edit"></span>&nbsp;tag
-                        </div>
-                    </template>
-                    <template v-if="item.favourite">
-                        <div :class="['btn', 'btn-dark']" v-on:click="favourite()">
-                            <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div :class="['btn', 'btn-dark','active']" v-on:click="favourite()">
-                            <span class="sysIcon sysIcon_heart-o"></span>&nbsp;favourite
-                        </div>
-                    </template>
-                    <template v-if="item.type!=='folder'">
-                        <div :class="['btn', 'btn-dark']" v-on:click="fileVersion()">
-                            <span class="sysIcon sysIcon_stack"></span>&nbsp;version
-                        </div>
-                    </template>
+                    <button v-if="editTagFlag" v-on:click="saveTag()" class="sysIcon sysIcon_save active">&nbsp;tag</button>
+                    <button v-else v-on:click="editTag()" class="sysIcon sysIcon_tag-o">&nbsp;tag</button>
+
+                    <button v-if="item.favourite" v-on:click="favourite()" class="sysIcon sysIcon_heart-o active">&nbsp;favourite</button>
+                    <button v-else v-on:click="favourite()" class="sysIcon sysIcon_heart-o">&nbsp;favourite</button>
+
+                    <button v-if="item.type!=='folder'" v-on:click="fileVersion()" class="sysIcon sysIcon_stack">&nbsp;version</button>
+                    <button v-on:click="deleteFile()" class="sysIcon sysIcon_delete">&nbsp;delete</button>
                 </template>
                 <template v-if="from==='recycle'">
-                    <div :class="['btn', 'btn-dark']" v-on:click="recoverFile()">
-                        <span class="sysIcon sysIcon_sync"></span>&nbsp;recover
-                    </div>
-                    <div :class="['btn', 'btn-dark']" v-on:click="deleteForever()">
-                        <span class="sysIcon sysIcon_delete"></span>&nbsp;delete forever
-                    </div>
+                    <button v-on:click="recoverFile()" class="sysIcon sysIcon_sync">&nbsp;recover</button>
+                    <button v-on:click="deleteForever()" class="sysIcon sysIcon_delete">&nbsp;delete forever</button>
                 </template>
-                <template v-else>
-                    <div :class="['btn', 'btn-dark']" v-on:click="deleteFile()">
-                        <span class="sysIcon sysIcon_delete"></span>&nbsp;delete
-                    </div>
-                </template>
-                <div :class="['btn', 'btn-dark']" v-on:click="moveFile()">
-                    <span class="sysIcon sysIcon_inbox"></span>&nbsp;move
-                </div>
+                <button v-on:click="moveFile()" class="sysIcon sysIcon_swap">&nbsp;move</button>
             </div>
         </div>
         <template v-if="editTagFlag">
@@ -138,376 +96,49 @@ from 来自对象 {list|favourite|recycle}
 
 <style lang="scss">
     .listContent {
-        > ul {
-            width: 100%;
-            margin-left: 0;
-            padding-left: 0;
-            list-style: none;
-        }
-
-        > ul > li {
-            &:nth-child(2n) {
-                background-color: rgba(0, 0, 0, 0.25);
-            }
-        }
-
-        > ul > li > div {
-        }
-
-        .btn {
-            margin-left: 5px;
-            padding: 5px;
-            display: inline-block;
-            margin-bottom: 5px;
-            line-height: $fontSize;
-        }
-    }
-
-    .listContent.listType_text {
-        $listFontSize: $fontSize*1;
-
-        > ul {
-            display: table;
-        }
-
-        > ul > li {
-            display: table-row;
-        }
-
-        > ul > li > div {
-            line-height: 2.5 * $listFontSize;
-            font-size: $listFontSize;
-            vertical-align: middle;
-            display: contents;
-
-            > * {
-                display: table-cell;
-            }
-        }
-
-        .ct_alpha {
-            text-align: center;
-
-            * {
-                padding-right: 10px;
-            }
-        }
-
-        .ct_meta {
-            div {
-                /*display: inline-block;*/
-            }
-
-            .ct_description,
-                /*.ct_time_create,*/
-            .ct_hash,
-            .ct_operate {
-                display: none;
-            }
-        }
-
-        .ct_tag {
-            display: none;
-        }
-
-        @media (max-width: 1200px) {
-            .ct_meta {
-                .ct_time_create {
-                    display: none;
-                }
-            }
-        }
-
-        @media (max-width: 800px) {
-            .ct_meta {
-                .ct_time_update {
-                    display: none;
-                }
-            }
-        }
-
-        @media (max-width: 600px) {
-            .ct_meta {
-                .ct_size {
-                    display: none;
-                }
-
-                .ct_type {
-                    display: none;
-                }
-            }
-        }
-    }
-
-    .listContent.listType_img {
-        > ul {
+        &.listType_detail {
             display: flex;
+            justify-content: left;
             flex-wrap: wrap;
-            justify-content: space-around;
-        }
+            li {
+                &.hasTag {
+                    width: 50%;
+                    >div{
+                        width: 50%;
+                        padding: 0 $fontSize*0.5;
+                    }
+                    .ct_alpha{
 
-        $liWidth: 12vw;
-        $liMinWidth: 120px;
-        $liMaxWidth: 180px;
-        $liRate: 4/3;
-
-        > ul > li {
-            width: $liWidth;
-            height: $liWidth*$liRate;
-            min-width: $liMinWidth;
-            min-height: $liMinWidth*$liRate;
-            max-width: $liMaxWidth;
-            max-height: $liMaxWidth*$liRate;
-            position: relative;
-            margin-bottom: 5px;
-        }
-
-        > ul > li > div {
-        }
-
-        /*.ct_alpha,*/
-        /*.ct_icon,*/
-        /*.ct_cover,*/
-        /*.ct_title,*/
-        .ct_description,
-        .ct_size,
-        .ct_hash,
-        .ct_type,
-        .ct_time_create,
-        .ct_time_update,
-        .ct_operate,
-        .ct_tag {
-            display: none;
-        }
-
-        .ct_alpha,
-            /*.ct_icon,*/
-            /*.ct_cover,*/
-        .ct_title {
-            width: 100%;
-        }
-
-        .ct_title {
-            line-height: $fontSize*1.125;
-            height: $fontSize*1.125*2;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .ct_icon,
-        .ct_cover {
-            max-width: calc(#{$liMaxWidth} * 0.9);
-            max-height: calc(#{$liMaxWidth} * 0.9);
-            position: absolute;
-            left: 5%;
-            top: 15px;
-            margin-left: auto;
-            margin-right: auto;
-            right: 5%;
-        }
-
-        .ct_icon {
-            z-index: 1;
-            font-size: $liMaxWidth*0.6;
-            text-align: center;
-            width: 90%;
-        }
-
-        .ct_cover {
-            z-index: 2;
-        }
-
-        .ct_title {
-            text-align: center;
-            position: absolute;
-            top: calc(#{$liMaxWidth} * 0.9 + 30px);
-
-        }
-
-        //这俩是根据宽度比例计算的
-        @media (max-width: 1499px) {
-            .ct_icon,
-            .ct_cover {
-                top: 10px;
-                max-width: calc(#{$liWidth} * 0.9);
-                max-height: calc(#{$liWidth} * 0.9);
-            }
-            .ct_title {
-                top: calc(#{$liWidth} * 0.9 + 20px);
-            }
-            .ct_icon {
-                font-size: $liWidth*0.6;
-            }
-        }
-
-        @media (max-width: 999px) {
-            .ct_icon,
-            .ct_cover {
-                top: 5px;
-                max-width: calc(#{$liMinWidth} * 0.9);
-                max-height: calc(#{$liMinWidth} * 0.9);
-            }
-            .ct_title {
-                top: calc(#{$liMinWidth} * 0.9 + 10px);
-            }
-            .ct_icon {
-                font-size: $liMinWidth*0.6;
-            }
-        }
-
-        @media (max-width: 1199px) {
-            .ct_icon {
-                z-index: 1;
-                font-size: 80px;
-                text-align: center;
-                width: 90%;
-            }
-        }
-
-    }
-
-    .listContent.listType_detail {
-        > ul {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: row;
-            justify-content: flex-start;
-        }
-
-        $liHeight: 320px;
-        $liContentHeight: $liHeight - 20px;
-        $liImgRate: 4/3;
-        $liImgWidth: $liHeight/$liImgRate;
-        $liMetaWidth: $liHeight;
-
-        > ul > li {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            height: $liHeight;
-
-            padding: 10px;
-        }
-
-        > ul > li > div {
-            margin-right: 10px;
-            height: $liHeight - 20px;
-
-            &:last-child {
-                margin-right: 0;
-            }
-        }
-
-        .ct_alpha {
-            width: $liImgWidth;
-            max-width: $liImgWidth;
-            min-width: $liImgWidth;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            align-content: center;
-
-            .ct_icon {
-                width: $liImgWidth;
-                font-size: $liImgWidth * 0.8;
-                line-height: $liImgWidth;
-                display: block;
-                text-align: center;
-            }
-
-            .ct_cover {
-                max-width: $liImgWidth - 20px;
-                max-height: $liContentHeight - 20px;
-            }
-        }
-
-        .ct_meta {
-            > div {
-                width: $liMetaWidth - 20px;
-                display: block;
-            }
-
-            input, textarea {
-                width: $liMetaWidth - 20px;
-            }
-
-            textarea {
-                height: $fontSize*6;
-            }
-
-            .ct_operate {
-                .active {
-                    color: hsla(333, 70%, 70%, 1);
+                    }
+                }
+                &.noTag {
+                    width: 25%;
+                    >div{
+                        width: 100%;
+                    }
+                }
+                .ct_alpha {
+                    padding: $fontSize*0.5;
+                    $hWithPad: map_get($sizeConf, list_mode_image_thumb_h) - $fontSize*1;
+                    height: $hWithPad;
+                    line-height: $hWithPad;
+                    text-align: center;
+                    span, img {
+                        display: inline-block;
+                        max-width: 100%;
+                        max-height: 100%;
+                        font-size: $hWithPad*0.75;
+                        vertical-align: middle;
+                    }
                 }
             }
         }
-
-        .ct_tag {
-            min-width: $liMetaWidth;
-            /*overflow: hidden;*/
-            /*text-overflow: ellipsis;*/
-
-            dl {
-                display: block;
-                margin-bottom: 0;
-                position: relative;
-            }
-
-            dt {
-                display: inline-block;
-                margin-bottom: 5px;
-                line-height: $fontSize;
-            }
-
-            dd {
-                position: relative;
-            }
-
-            input {
-                width: $liMetaWidth;
-                text-indent: 1em;
-            }
-
-
-        }
-
-        //(240+320+320*1.5+20)/0.9166667
-        @media (max-width: 1200px) {
-            > ul > li {
-                flex-wrap: wrap;
-                height: auto;
-            }
-            .ct_tag {
-                min-width: $liImgWidth + $liMetaWidth + 10px;
-                height: fit-content;
+        &.listType_image {
+            li {
             }
         }
-        //(240+320+20)+15*2
-        @media (max-width: 610px) {
-            > ul {
-                flex-direction: column;
-            }
-            > ul > li {
-                flex-direction: column;
-            }
-            .ct_alpha {
-                width: 100%;
-                max-width: 100%;
-                min-width: 100%;
-
-                .ct_cover {
-                    max-width: 100%;
-                }
-            }
-            .ct_meta {
-                > div {
-                    width: 100%;
-                }
-            }
-            .ct_tag, .ct_meta {
-                height: fit-content;
-                min-width: auto;
+        &.listType_text {
+            li {
             }
         }
     }
@@ -611,7 +242,7 @@ from 来自对象 {list|favourite|recycle}
             /**
              * @todo api file_delete_forever @use $parent
              * */
-            deleteForever   : function () {
+            deleteForever : function () {
                 console.info('list: deleteForever');
                 for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
                     if (this.item.id !== this.item.id) continue;

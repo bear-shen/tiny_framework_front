@@ -172,12 +172,17 @@
     button, select {
         background-color: map_get($colors, input_button_bk);
         color: map_get($colors, input_button_font);
-        padding: 0 $fontSize*0.5;
+        padding: $fontSize*0.5;
     }
     input {
         background-color: map_get($colors, input_bk);
         color: map_get($colors, input_font);
-        padding: 0 $fontSize*0.5;
+        padding: $fontSize*0.5;
+    }
+    textarea {
+        background-color: map_get($colors, input_bk);
+        color: map_get($colors, input_font);
+        padding: $fontSize*0.5;
     }
 </style>
 <script>

@@ -36,6 +36,11 @@ $msgColors: (
         warn:rgba(166, 101, 86, 1),
         error:rgba(191, 52, 77, 1),
 );
+$sizeConf:(
+    list_mode_image_thumb_w:300px,
+    list_mode_image_thumb_h:300px,
+    list:'',
+);
 /*
  *  @see https://www.cnblogs.com/amylis_chen/p/11995324.html
  *  @see https://www.cnblogs.com/ertingbo/p/7151566.html

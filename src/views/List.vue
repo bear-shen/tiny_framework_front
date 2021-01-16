@@ -39,7 +39,7 @@
             <div class="headerGroup layout">
                 <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
                 <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
-                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listType==='img'}]" v-on:click="changeListType('img')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_image',{active:listType==='image'}]" v-on:click="changeListType('image')"></button>
             </div>
         </div>
         <ul :class="['listContent','listType_'+listType]">
@@ -69,8 +69,8 @@
                 > * {
                     display: inline-block;
                     vertical-align: top;
-                    height: $fontSize*2;
-                    line-height: $fontSize*2;
+                    padding: $fontSize*0.5;
+                    line-height: $fontSize;
                 }
                 margin-right: $fontSize*0.25;
             }

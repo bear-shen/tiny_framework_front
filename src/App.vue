@@ -173,16 +173,32 @@
         background-color: map_get($colors, input_button_bk);
         color: map_get($colors, input_button_font);
         padding: $fontSize*0.5;
+        &:hover, &:focus, &.active {
+            background-color: map_get($colors, input_button_bk_active);
+            color: map_get($colors, input_button_font_active);
+        }
     }
     input {
         background-color: map_get($colors, input_bk);
         color: map_get($colors, input_font);
         padding: $fontSize*0.5;
+        &:hover, &:focus, &.active {
+            background-color: map_get($colors, input_bk_active);
+            color: map_get($colors, input_font_active);
+        }
     }
     textarea {
         background-color: map_get($colors, input_bk);
         color: map_get($colors, input_font);
         padding: $fontSize*0.5;
+        &:hover, &:focus, &.active {
+            background-color: map_get($colors, input_bk_active);
+            color: map_get($colors, input_font_active);
+        }
+    }
+    ::selection {
+        background-color: map_get($colors, selection_bk);
+        color: map_get($colors, selection);
     }
 </style>
 <script>

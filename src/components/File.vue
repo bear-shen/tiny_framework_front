@@ -12,16 +12,12 @@ from 来自对象 {list|favourite|recycle}
         </div>
         <div class="ct_meta">
             <template v-if="editMetaFlag">
-                <div class="ct_title">
-                    <label>title:<br>
-                        <input type="text" v-model="item.title">
-                    </label>
-                </div>
-                <div class="ct_description">
-                    <label>description:<br>
-                        <textarea v-model="item.description"></textarea>
-                    </label>
-                </div>
+                <label class="ct_title">title:<br>
+                    <input type="text" v-model="item.title">
+                </label>
+                <label class="ct_description">description:<br>
+                    <textarea v-model="item.description"></textarea>
+                </label>
             </template>
             <template v-else>
                 <div class="ct_type">{{item.type}}</div>
@@ -100,26 +96,15 @@ from 来自对象 {list|favourite|recycle}
             display: flex;
             justify-content: left;
             flex-wrap: wrap;
+            /* */
             li {
-                &.hasTag {
-                    width: 50%;
-                    >div{
-                        width: 50%;
-                        padding: 0 $fontSize*0.5;
-                    }
-                    .ct_alpha{
-
-                    }
-                }
-                &.noTag {
-                    width: 25%;
-                    >div{
-                        width: 100%;
-                    }
+                white-space: nowrap;
+                & > div {
+                    display: inline-block;
+                    vertical-align: top;
                 }
                 .ct_alpha {
-                    padding: $fontSize*0.5;
-                    $hWithPad: map_get($sizeConf, list_mode_image_thumb_h) - $fontSize*1;
+                    $hWithPad: map_get($sizeConf, list_detail_image_thumb_h) - $fontSize*1;
                     height: $hWithPad;
                     line-height: $hWithPad;
                     text-align: center;
@@ -129,6 +114,117 @@ from 来自对象 {list|favourite|recycle}
                         max-height: 100%;
                         font-size: $hWithPad*0.75;
                         vertical-align: middle;
+                    }
+                }
+                .ct_alpha {}
+                .ct_meta {
+                    div {
+                        width: 100%;
+                        white-space: normal;
+                        word-break: break-all;
+                        padding: $fontSize*0.25 0;
+                    }
+                }
+                .ct_tag {
+                    dl {
+                        word-break: break-all;
+                        white-space: normal;
+                        line-height: $fontSize*1.5;
+                    }
+                    dt {
+                        display: inline-block;
+                    }
+                    dd {
+                        display: inline-block;
+                        color: darken(map_get($colors, tag_font), 20);
+                        padding-left: $fontSize*0.5;
+                        &:hover{
+                            color: map_get($colors, tag_font_active);
+                        }
+                    }
+                }
+                .ct_alpha, .ct_meta, .ct_tag {
+                    padding: $fontSize*0.5;
+                }
+            }
+            li.hasTag {
+                width: 50%;
+                .ct_alpha {
+                    width: calc(16.66% - #{$fontSize});
+                }
+                .ct_meta {
+                    width: calc(33.33% - #{$fontSize});
+                }
+                .ct_tag {
+                    width: calc(50% - #{$fontSize});
+                }
+            }
+            li.noTag {
+                width: 25%;
+                .ct_alpha {
+                    width: calc(33.33% - #{$fontSize});
+                }
+                .ct_meta {
+                    width: calc(66.66% - #{$fontSize});
+                }
+            }
+            @media (max-width: $narrowWidth) {
+                li.hasTag {
+                    width: 100%;
+                    .ct_alpha {
+                        width: calc(20% - #{$fontSize});
+                    }
+                    .ct_meta {
+                        width: calc(30% - #{$fontSize});
+                    }
+                    .ct_tag {
+                        width: calc(50% - #{$fontSize});
+                    }
+                }
+                li.noTag {
+                    width: 33%;
+                    .ct_alpha {
+                        width: calc(33.33% - #{$fontSize});
+                    }
+                    .ct_meta {
+                        width: calc(66.66% - #{$fontSize});
+                    }
+                }
+            }
+            @media (max-width: $tabletWidth) {
+                li.hasTag {
+                    width: 100%;
+                    .ct_alpha {
+                        width: calc(20% - #{$fontSize});
+                    }
+                    .ct_meta {
+                        width: calc(30% - #{$fontSize});
+                    }
+                    .ct_tag {
+                        width: calc(50% - #{$fontSize});
+                    }
+                }
+                li.noTag {
+                    width: 50%;
+                    .ct_alpha {
+                        width: calc(33.33% - #{$fontSize});
+                    }
+                    .ct_meta {
+                        width: calc(66.66% - #{$fontSize});
+                    }
+                }
+            }
+            @media (max-width: $mobileWidth) {
+                li{
+                    & > div {
+                        display: block;
+                        vertical-align: top;
+                    }
+                }
+                li.hasTag,li.noTag {
+                    width: 100%;
+                    .ct_alpha,.ct_meta,.ct_tag {
+                        width: calc(100% - #{$fontSize});
                     }
                 }
             }

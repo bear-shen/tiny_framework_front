@@ -9,10 +9,13 @@ $navFoldWidth: 50px;
 //
 $fontSize: 16px;
 //
+$narrowWidth: 1440px;//这个是针对文件列表这种特大号的列表重排版的
 $tabletWidth: 1024px;
 $mobileWidth: 600px;
 //
 $colors: (
+        selection:rgba(50, 50, 50, 1),
+        selection_bk:rgba(200, 200, 200, 1),
         bk:rgba(50, 50, 50, 1),
         bar_bk:rgba(20, 20, 20, 1),
         bar_active:rgba(50, 50, 50, 1),
@@ -22,10 +25,18 @@ $colors: (
         alpha:rgba(0, 0, 0, 0.5),
         font:rgba(200, 200, 200, 1),
         header_bread_bk:rgba(30, 30, 30, 1),
+  //
         input_font:rgba(200, 200, 200, 1),
         input_bk:rgba(30, 30, 30, 1),
+        input_font_active:rgba(200, 200, 200, 1),
+        input_bk_active:rgba(80, 80, 80, 1),
+  //
         input_button_font:rgba(200, 200, 200, 1),
         input_button_bk:rgba(20, 20, 20, 1),
+        input_button_font_active:rgba(200, 200, 200, 1),
+        input_button_bk_active:rgba(80, 80, 80, 1),
+        tag_font:rgba(180, 180, 180, 1),
+        tag_font_active:rgba(230, 230, 230, 1),
 );
 $layoutIndex: 500;
 $alphaIndex: 1000;
@@ -36,10 +47,13 @@ $msgColors: (
         warn:rgba(166, 101, 86, 1),
         error:rgba(191, 52, 77, 1),
 );
-$sizeConf:(
-    list_mode_image_thumb_w:300px,
-    list_mode_image_thumb_h:300px,
-    list:'',
+$sizeConf: (
+  //内容列表最小的宽度为 1024-150 = 874
+  //缩略图宽 x 详情宽 x tag 宽 y
+  //tag : (2x+y) noTag : (2x)
+  //y->2x 一行 x6 x=
+        list_detail_image_thumb_h:140px,
+        list:'',
 );
 /*
  *  @see https://www.cnblogs.com/amylis_chen/p/11995324.html
@@ -50,13 +64,13 @@ $sizeConf:(
     background-color: rgba(0, 0, 0, 0.5);
   }
   &::-webkit-scrollbar {
-    width:$fontSize*0.25;
-    height:$fontSize*0.25;
+    width: $fontSize*0.25;
+    height: $fontSize*0.25;
     background-color: rgba(0, 0, 0, 0);
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(127, 127, 127, 0.5);
-    border-radius:$fontSize*0.25;
+    border-radius: $fontSize*0.25;
   }
   &::-webkit-scrollbar-corner {
     background-color: rgba(0, 0, 0, 0.0);

@@ -239,7 +239,7 @@ from 来自对象 {list|favourite|recycle}
     import Hinter from "./Hinter";
 
     export default {
-        name         : "FileDetail",
+        name         : "FileListDetail",
         components   : {Hinter},
         // el     : '#msg',
         store        : store,

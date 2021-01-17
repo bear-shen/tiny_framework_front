@@ -43,18 +43,18 @@
             </div>
         </div>
         <ul :class="['listContent','listType_'+listType]">
-            <file-detail
-                     v-if="listType==='detail'" v-for="(item,index) in list"
+            <file-list-detail
+                    v-if="listType==='detail'" v-for="(item,index) in list"
                     :key="index" :item="item" :dir="dir" :from="'list'"
-            ></file-detail>
-            <file-detail
-                     v-if="listType==='list'" v-for="(item,index) in list"
+            ></file-list-detail>
+            <file-list-detail
+                    v-if="listType==='list'" v-for="(item,index) in list"
                     :key="index" :item="item" :dir="dir" :from="'list'"
-            ></file-detail>
-            <file-detail
-                     v-if="listType==='image'" v-for="(item,index) in list"
+            ></file-list-detail>
+            <file-list-detail
+                    v-if="listType==='image'" v-for="(item,index) in list"
                     :key="index" :item="item" :dir="dir" :from="'list'"
-            ></file-detail>
+            ></file-list-detail>
         </ul>
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
@@ -154,11 +154,11 @@
 
 <script>
     // @ is an alias to /src
-    import store   from "../store";
-    import router  from "../router";
-    import GenFunc from '../lib/GenFuncLib'
-    import Helper  from '../lib/Helper'
-    import FileDetail  from "../components/FileDetail";
+    import store          from "../store";
+    import router         from "../router";
+    import GenFunc        from '../lib/GenFuncLib'
+    import Helper         from '../lib/Helper'
+    import FileListDetail from "../components/FileListDetail";
     // import Popup    from '../components/Popup'
 
     /**
@@ -177,7 +177,7 @@
      * */
     export default {
         name         : 'List',
-        components   : {FileDetail},
+        components   : {FileListDetail},
         store        : store,
         watch        : {
             $route          : function (to, from) {

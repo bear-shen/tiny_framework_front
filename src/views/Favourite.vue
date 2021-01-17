@@ -29,7 +29,7 @@ api 有了以后改改就能用的
         </div>
         <div :class="['listContent','listType_'+listType]">
             <ul>
-                <file-detail v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'favourite'"></file-detail>
+                <file-list-detail v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'favourite'"></file-list-detail>
 
             </ul>
         </div>
@@ -147,11 +147,11 @@ api 有了以后改改就能用的
 
 <script>
     // @ is an alias to /src
-    import store   from "../store";
-    import router  from "../router";
-    import GenFunc from '../lib/GenFuncLib'
-    import Helper  from '../lib/Helper'
-    import FileDetail    from "../components/FileDetail";
+    import store          from "../store";
+    import router         from "../router";
+    import GenFunc        from '../lib/GenFuncLib'
+    import Helper         from '../lib/Helper'
+    import FileListDetail from "../components/FileListDetail";
     // import Popup    from '../components/Popup'
 
     /**
@@ -170,7 +170,7 @@ api 有了以后改改就能用的
      * */
     export default {
         name         : 'Favourite',
-        components   : {FileDetail},
+        components   : {FileListDetail,},
         store        : store,
         watch        : {
             $route          : function (to, from) {

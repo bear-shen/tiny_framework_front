@@ -29,7 +29,7 @@ api 有了以后改改就能用的
         </div>
         <div :class="['listContent','listType_'+listType]">
             <ul>
-                <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'favourite'"></File>
+                <file-detail v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'favourite'"></file-detail>
 
             </ul>
         </div>
@@ -151,7 +151,7 @@ api 有了以后改改就能用的
     import router  from "../router";
     import GenFunc from '../lib/GenFuncLib'
     import Helper  from '../lib/Helper'
-    import File    from "../components/File";
+    import FileDetail    from "../components/FileDetail";
     // import Popup    from '../components/Popup'
 
     /**
@@ -170,7 +170,7 @@ api 有了以后改改就能用的
      * */
     export default {
         name         : 'Favourite',
-        components   : {File},
+        components   : {FileDetail},
         store        : store,
         watch        : {
             $route          : function (to, from) {

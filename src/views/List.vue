@@ -43,7 +43,18 @@
             </div>
         </div>
         <ul :class="['listContent','listType_'+listType]">
-            <File v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'list'"></File>
+            <file-detail
+                     v-if="listType==='detail'" v-for="(item,index) in list"
+                    :key="index" :item="item" :dir="dir" :from="'list'"
+            ></file-detail>
+            <file-detail
+                     v-if="listType==='list'" v-for="(item,index) in list"
+                    :key="index" :item="item" :dir="dir" :from="'list'"
+            ></file-detail>
+            <file-detail
+                     v-if="listType==='image'" v-for="(item,index) in list"
+                    :key="index" :item="item" :dir="dir" :from="'list'"
+            ></file-detail>
         </ul>
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
@@ -147,7 +158,7 @@
     import router  from "../router";
     import GenFunc from '../lib/GenFuncLib'
     import Helper  from '../lib/Helper'
-    import File    from "../components/File";
+    import FileDetail  from "../components/FileDetail";
     // import Popup    from '../components/Popup'
 
     /**
@@ -166,7 +177,7 @@
      * */
     export default {
         name         : 'List',
-        components   : {File},
+        components   : {FileDetail},
         store        : store,
         watch        : {
             $route          : function (to, from) {

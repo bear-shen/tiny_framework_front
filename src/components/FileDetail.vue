@@ -1,7 +1,6 @@
 <!--
 item 当前的文件数据
 dir 当前文件夹数据
-listType 列表类型，实际上没什么用
 from 来自对象 {list|favourite|recycle}
 -->
 <template>
@@ -12,10 +11,10 @@ from 来自对象 {list|favourite|recycle}
         </div>
         <div class="ct_meta">
             <template v-if="editMetaFlag">
-                <label class="ct_title">title:<br>
+                <label class="ct_title">title:
                     <input type="text" v-model="item.title">
                 </label>
-                <label class="ct_description">description:<br>
+                <label class="ct_description">description:
                     <textarea v-model="item.description"></textarea>
                 </label>
             </template>
@@ -29,8 +28,10 @@ from 来自对象 {list|favourite|recycle}
                 <div class="ct_time_update">{{item.time_update}}</div>
             </template>
             <div class="ct_operate">
-                <button v-if="from==='list'" v-on:click="setCover()" :class="['sysIcon', 'sysIcon_picture',{'active':dir && dir.cover_id===item.id}]">&nbsp;cover</button>
-
+                <button v-if="from==='list' && item.cover" v-on:click="setCover()"
+                        :class="['sysIcon', 'sysIcon_picture',{'active':dir && dir.cover_id===item.id}]"
+                >&nbsp;cover
+                </button>
                 <template v-if="['list','favourite'].indexOf(from)!==-1">
                     <button v-if="editMetaFlag" v-on:click="saveMeta()" class="sysIcon sysIcon_save active">&nbsp;info</button>
                     <button v-else v-on:click="editMeta()" class="sysIcon sysIcon_edit">&nbsp;info</button>
@@ -55,9 +56,9 @@ from 来自对象 {list|favourite|recycle}
             <div class="ct_tag">
                 <dl v-for="group in item.tag" :data-id="group.id">
                     <dt>{{group.name}}:</dt>
-                    <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark" v-on:click="delTag(tag.id)">
+                    <dd v-for="tag in group.sub" :data-id="tag.id" class="btn btn-dark">
                         {{tag.name}}
-                        <span class="sysIcon sysIcon_delete"></span>
+                        <span class="sysIcon sysIcon_delete" v-on:click="delTag(tag.id)"></span>
                     </dd>
                 </dl>
                 <dl>
@@ -91,76 +92,100 @@ from 来自对象 {list|favourite|recycle}
 </template>
 
 <style lang="scss">
-    .listContent {
-        &.listType_detail {
-            display: flex;
-            justify-content: left;
-            flex-wrap: wrap;
-            /* */
-            li {
-                white-space: nowrap;
-                & > div {
+    .listContent.listType_detail {
+        display: flex;
+        justify-content: left;
+        flex-wrap: wrap;
+        /* */
+        li {
+            white-space: nowrap;
+            & > div {
+                display: inline-block;
+                vertical-align: top;
+            }
+            .ct_alpha {
+                $hWithPad: map_get($sizeConf, list_detail_image_thumb_h) - $fontSize*1;
+                height: $hWithPad;
+                line-height: $hWithPad;
+                text-align: center;
+                span, img {
                     display: inline-block;
-                    vertical-align: top;
-                }
-                .ct_alpha {
-                    $hWithPad: map_get($sizeConf, list_detail_image_thumb_h) - $fontSize*1;
-                    height: $hWithPad;
-                    line-height: $hWithPad;
-                    text-align: center;
-                    span, img {
-                        display: inline-block;
-                        max-width: 100%;
-                        max-height: 100%;
-                        font-size: $hWithPad*0.75;
-                        vertical-align: middle;
-                    }
-                }
-                .ct_alpha {}
-                .ct_meta {
-                    div {
-                        width: 100%;
-                        white-space: normal;
-                        word-break: break-all;
-                        padding: $fontSize*0.25 0;
-                    }
-                }
-                .ct_tag {
-                    dl {
-                        word-break: break-all;
-                        white-space: normal;
-                        line-height: $fontSize*1.5;
-                    }
-                    dt {
-                        display: inline-block;
-                    }
-                    dd {
-                        display: inline-block;
-                        color: darken(map_get($colors, tag_font), 20);
-                        padding-left: $fontSize*0.5;
-                        &:hover{
-                            color: map_get($colors, tag_font_active);
-                        }
-                    }
-                }
-                .ct_alpha, .ct_meta, .ct_tag {
-                    padding: $fontSize*0.5;
+                    max-width: 100%;
+                    max-height: 100%;
+                    font-size: $hWithPad*0.75;
+                    vertical-align: middle;
                 }
             }
+            .ct_alpha {}
+            .ct_meta {
+                div, label, input, textarea {
+                    display: block;
+                    width: 100%;
+                    white-space: normal;
+                    word-break: break-all;
+                    padding: $fontSize*0.25 0;
+                }
+                input, textarea {
+                }
+            }
+            .ct_tag {
+                dl {
+                    word-break: break-all;
+                    white-space: normal;
+                    line-height: $fontSize*1.5;
+                }
+                dt {
+                    display: inline-block;
+                }
+                dd {
+                    display: inline-block;
+                    color: darken(map_get($colors, tag_font), 20);
+                    margin-left: $fontSize*0.5;
+                    &:hover {
+                        color: map_get($colors, tag_font_active);
+                    }
+                }
+            }
+            .ct_alpha, .ct_meta, .ct_tag {
+                padding: $fontSize*0.5;
+            }
+        }
+        li.hasTag {
+            width: 50%;
+            .ct_alpha {
+                width: calc(16.66% - #{$fontSize});
+            }
+            .ct_meta {
+                width: calc(33.33% - #{$fontSize});
+            }
+            .ct_tag {
+                width: calc(50% - #{$fontSize});
+            }
+        }
+        li.noTag {
+            width: 25%;
+            .ct_alpha {
+                width: calc(33.33% - #{$fontSize});
+            }
+            .ct_meta {
+                width: calc(66.66% - #{$fontSize});
+            }
+        }
+        @media (max-width: $narrowWidth) {
             li.hasTag {
-                width: 50%;
+                width: 100%;
                 .ct_alpha {
-                    width: calc(16.66% - #{$fontSize});
+                    width: calc(20% - #{$fontSize});
                 }
                 .ct_meta {
-                    width: calc(33.33% - #{$fontSize});
+                    width: calc(30% - #{$fontSize});
                 }
                 .ct_tag {
                     width: calc(50% - #{$fontSize});
                 }
             }
             li.noTag {
-                width: 25%;
+                width: 33%;
                 .ct_alpha {
                     width: calc(33.33% - #{$fontSize});
                 }
@@ -168,73 +193,42 @@ from 来自对象 {list|favourite|recycle}
                     width: calc(66.66% - #{$fontSize});
                 }
             }
-            @media (max-width: $narrowWidth) {
-                li.hasTag {
-                    width: 100%;
-                    .ct_alpha {
-                        width: calc(20% - #{$fontSize});
-                    }
-                    .ct_meta {
-                        width: calc(30% - #{$fontSize});
-                    }
-                    .ct_tag {
-                        width: calc(50% - #{$fontSize});
-                    }
+        }
+        @media (max-width: $tabletWidth) {
+            li.hasTag {
+                width: 100%;
+                .ct_alpha {
+                    width: calc(20% - #{$fontSize});
                 }
-                li.noTag {
-                    width: 33%;
-                    .ct_alpha {
-                        width: calc(33.33% - #{$fontSize});
-                    }
-                    .ct_meta {
-                        width: calc(66.66% - #{$fontSize});
-                    }
+                .ct_meta {
+                    width: calc(30% - #{$fontSize});
+                }
+                .ct_tag {
+                    width: calc(50% - #{$fontSize});
                 }
             }
-            @media (max-width: $tabletWidth) {
-                li.hasTag {
-                    width: 100%;
-                    .ct_alpha {
-                        width: calc(20% - #{$fontSize});
-                    }
-                    .ct_meta {
-                        width: calc(30% - #{$fontSize});
-                    }
-                    .ct_tag {
-                        width: calc(50% - #{$fontSize});
-                    }
+            li.noTag {
+                width: 50%;
+                .ct_alpha {
+                    width: calc(33.33% - #{$fontSize});
                 }
-                li.noTag {
-                    width: 50%;
-                    .ct_alpha {
-                        width: calc(33.33% - #{$fontSize});
-                    }
-                    .ct_meta {
-                        width: calc(66.66% - #{$fontSize});
-                    }
-                }
-            }
-            @media (max-width: $mobileWidth) {
-                li{
-                    & > div {
-                        display: block;
-                        vertical-align: top;
-                    }
-                }
-                li.hasTag,li.noTag {
-                    width: 100%;
-                    .ct_alpha,.ct_meta,.ct_tag {
-                        width: calc(100% - #{$fontSize});
-                    }
+                .ct_meta {
+                    width: calc(66.66% - #{$fontSize});
                 }
             }
         }
-        &.listType_image {
+        @media (max-width: $mobileWidth) {
             li {
+                & > div {
+                    display: block;
+                    vertical-align: top;
+                }
             }
-        }
-        &.listType_text {
-            li {
+            li.hasTag, li.noTag {
+                width: 100%;
+                .ct_alpha, .ct_meta, .ct_tag {
+                    width: calc(100% - #{$fontSize});
+                }
             }
         }
     }
@@ -245,7 +239,7 @@ from 来自对象 {list|favourite|recycle}
     import Hinter from "./Hinter";
 
     export default {
-        name         : "File",
+        name         : "FileDetail",
         components   : {Hinter},
         // el     : '#msg',
         store        : store,
@@ -253,7 +247,6 @@ from 来自对象 {list|favourite|recycle}
         props        : [
             'item',
             'dir',
-            'listType',
             'from'
         ],
         data         : function () {
@@ -279,26 +272,15 @@ from 来自对象 {list|favourite|recycle}
                 this.editMetaFlag = 1;
             },
             /**
-             * @todo api tag_del
-             * */
-            delTag        : function (tagId) {
-                console.info('list: del tag:' + this.item.id + '\t' + tagId);
-                // console.debug(this.item);
-                for (let i2 = 0; i2 < this.item.tag.length; i2++) {
-                    for (let i3 = 0; i3 < this.item.tag[i2].sub.length; i3++) {
-                        if (this.item.tag[i2].sub[i3].id !== tagId) continue;
-                        console.debug('list: hit tag');
-                        // console.debug(this.item.tag[i2].sub);
-                        this.item.tag[i2].sub.splice(i3, 1);
-                    }
-                }
-            },
-            /**
              * @todo api file_mod
              * */
             saveMeta      : function () {
                 console.info('list: saveMeta');
                 this.editMetaFlag = 0;
+                let data          = {
+                    title      : this.item.title,
+                    description: this.item.description,
+                };
             },
             /**
              * @todo api file_cover
@@ -320,30 +302,21 @@ from 来自对象 {list|favourite|recycle}
              * */
             deleteFile    : function () {
                 console.info('list: deleteFile');
-                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
-                    if (this.item.id !== this.item.id) continue;
-                    this.$parent.list.splice(i1, 1);
-                }
+                this.delFromList();
             },
             /**
              * @todo api file_recover @use $parent
              * */
             recoverFile   : function () {
                 console.info('list: recoverFile');
-                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
-                    if (this.item.id !== this.item.id) continue;
-                    this.$parent.list.splice(i1, 1);
-                }
+                this.delFromList();
             },
             /**
              * @todo api file_delete_forever @use $parent
              * */
             deleteForever : function () {
                 console.info('list: deleteForever');
-                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
-                    if (this.item.id !== this.item.id) continue;
-                    this.$parent.list.splice(i1, 1);
-                }
+                this.delFromList();
             },
             /**
              * @todo api file_move
@@ -355,10 +328,17 @@ from 来自对象 {list|favourite|recycle}
                     info: {
                         title : 'move to:',
                         submit: (dirItem, dirRoute) => {
-                            console.info(`moveFile to ${JSON.stringify(dirItem)}`)
+                            console.info(`moveFile to ${JSON.stringify(dirItem)}`);
+                            this.delFromList();
                         },
                     }
                 });
+            },
+            delFromList:function(){
+                for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
+                    if (this.item.id !== this.item.id) continue;
+                    this.$parent.list.splice(i1, 1);
+                }
             },
             /**
              * */
@@ -372,6 +352,21 @@ from 来自对象 {list|favourite|recycle}
                 });
             },
             // -------------------------------------------
+            /**
+             * @todo api tag_del
+             * */
+            delTag        : function (tagId) {
+                console.info('list: del tag:' + this.item.id + '\t' + tagId);
+                // console.debug(this.item);
+                for (let i2 = 0; i2 < this.item.tag.length; i2++) {
+                    for (let i3 = 0; i3 < this.item.tag[i2].sub.length; i3++) {
+                        if (this.item.tag[i2].sub[i3].id !== tagId) continue;
+                        console.debug('list: hit tag');
+                        // console.debug(this.item.tag[i2].sub);
+                        this.item.tag[i2].sub.splice(i3, 1);
+                    }
+                }
+            },
             editTag       : function () {
                 console.info('list: editTag');
                 this.editTagFlag = 1;
@@ -404,6 +399,7 @@ from 来自对象 {list|favourite|recycle}
             hinterCallback: function (target) {
                 console.debug(`User: hinterCallback ${JSON.stringify(target)}`);
                 console.debug(target);
+                //获取分组index
                 let groupIndex = -1;
                 for (let i1 = 0; i1 < this.item.tag.length; i1++) {
                     if (this.item.tag[i1].id != target.group_id) continue;
@@ -418,6 +414,7 @@ from 来自对象 {list|favourite|recycle}
                         });
                     groupIndex = this.item.tag.length - 1;
                 }
+                //获取tag index
                 let tagIndex = -1;
                 for (let i1 = 0; i1 < this.item.tag[groupIndex].sub.length; i1++) {
                     if (this.item.tag[groupIndex].sub[i1].id != target.id) continue;
@@ -427,6 +424,7 @@ from 来自对象 {list|favourite|recycle}
                     console.warn('tag duplicated');
                     return;
                 }
+                //
                 this.item.tag[groupIndex].sub.push(
                     {id: target.id, name: target.name,}
                 );

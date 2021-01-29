@@ -172,7 +172,7 @@
     button, select {
         background-color: map_get($colors, input_button_bk);
         color: map_get($colors, input_button_font);
-        padding: $fontSize*0.5;
+        padding: map_get($sizeConf, btn_padding);
         &:hover, &.active {
             background-color: map_get($colors, input_button_bk_active);
             color: map_get($colors, input_button_font_active);
@@ -181,7 +181,7 @@
     input {
         background-color: map_get($colors, input_bk);
         color: map_get($colors, input_font);
-        padding: $fontSize*0.5;
+        padding: map_get($sizeConf, btn_padding);
         &:hover, &:focus, &.active {
             background-color: map_get($colors, input_bk_active);
             color: map_get($colors, input_font_active);
@@ -190,7 +190,7 @@
     textarea {
         background-color: map_get($colors, input_bk);
         color: map_get($colors, input_font);
-        padding: $fontSize*0.5;
+        padding: map_get($sizeConf, btn_padding);
         &:hover, &:focus, &.active {
             background-color: map_get($colors, input_bk_active);
             color: map_get($colors, input_font_active);

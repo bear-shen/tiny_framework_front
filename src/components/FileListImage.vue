@@ -9,7 +9,8 @@ from 来自对象 {list|favourite|recycle}
             <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
             <img v-else class="ct_cover" :src="item.cover" :alt="item.title">
         </div>
-        <div class="ct_title">{{item.title}}</div>
+        <div v-if="!editMetaFlag" class="ct_title">{{item.title}}</div>
+        <div v-else class="ct_title"><input type="text" v-model="item.title"></div>
         <div class="ct_operate">
             <template v-if="['list','favourite'].indexOf(from)!==-1">
                 <button v-if="editMetaFlag" v-on:click="saveMeta()" class="sysIcon sysIcon_save active"></button>
@@ -61,19 +62,27 @@ from 来自对象 {list|favourite|recycle}
                 text-overflow: ellipsis;
                 overflow: hidden;
                 font-size: $fontSize;
-                line-height: $fontSize*1.5;
-                bottom: $fontSize*2;
-                height: $fontSize*3;
+                //
+                $availHeight: map_get($sizeConf, list_image_body_h)
+                - map_get($sizeConf, list_image_body_w)
+                -$fontSize - $fontSize*0.5*2;
+                $pad: map_get($sizeConf, list_image_title_pad);
+                $lineHeight: ($availHeight - $pad*2)/2;
+                //
+                line-height: $lineHeight;
+                bottom: $fontSize+map_get($sizeConf, btn_padding)*2 + $pad;
+                max-height: $lineHeight*2;
+                min-height: $lineHeight*1.5;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
             }
-            .ct_operate{
+            .ct_operate {
                 bottom: 0;
-                button{
+                button {
                 }
             }
-            .ct_title,.ct_operate {
+            .ct_title, .ct_operate {
                 position: absolute;
                 left: 0;
                 width: 100%;

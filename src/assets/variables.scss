@@ -37,6 +37,8 @@ $colors: (
         input_button_bk_active:rgba(80, 80, 80, 1),
         tag_font:rgba(180, 180, 180, 1),
         tag_font_active:rgba(230, 230, 230, 1),
+        //
+        list_bk_2:rgba(60, 60, 60, 1),
 );
 $layoutIndex: 500;
 $alphaIndex: 1000;
@@ -53,6 +55,8 @@ $sizeConf: (
   //tag : (2x+y) noTag : (2x)
   //y->2x 一行 x6 x=
         list_detail_image_thumb_h:140px,
+        list_image_body_w:200px,
+        list_image_body_h:280px,
         list:'',
 );
 /*

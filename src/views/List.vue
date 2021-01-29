@@ -1,12 +1,6 @@
 <!--
-这里还是有些毛病的，
-现在的想法是文件夹和文件都具有同样的属性
-点击文件则进入不同的处理环节
-点击文件夹则进入文件夹
-
-关键是文件夹和文件的数据怎么整合，
-要么就功能全部做在列表上，详情页什么都不做
-
+几种列表使用不不同的vue文件导入
+但是没想好操作怎么合并，现在是复制过去的
 -->
 <template>
     <div class="list">
@@ -47,14 +41,14 @@
                     v-if="listType==='detail'" v-for="(item,index) in list"
                     :key="index" :item="item" :dir="dir" :from="'list'"
             ></file-list-detail>
-            <file-list-detail
-                    v-if="listType==='list'" v-for="(item,index) in list"
+            <file-list-text
+                    v-if="listType==='text'" v-for="(item,index) in list"
                     :key="index" :item="item" :dir="dir" :from="'list'"
-            ></file-list-detail>
-            <file-list-detail
+            ></file-list-text>
+            <file-list-image
                     v-if="listType==='image'" v-for="(item,index) in list"
                     :key="index" :item="item" :dir="dir" :from="'list'"
-            ></file-list-detail>
+            ></file-list-image>
         </ul>
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
@@ -159,6 +153,8 @@
     import GenFunc        from '../lib/GenFuncLib'
     import Helper         from '../lib/Helper'
     import FileListDetail from "../components/FileListDetail";
+    import FileListText   from "../components/FileListText";
+    import FileListImage  from "../components/FileListImage";
     // import Popup    from '../components/Popup'
 
     /**
@@ -177,7 +173,7 @@
      * */
     export default {
         name         : 'List',
-        components   : {FileListDetail},
+        components   : {FileListImage, FileListText, FileListDetail},
         store        : store,
         watch        : {
             $route          : function (to, from) {
@@ -851,7 +847,7 @@
                  {type:'loader'}
                  );*/
                 // this.$parent.showConfirm();
-            }
+            },
 
         },
     }

@@ -106,6 +106,28 @@
             }
         }
     }
+
+    .listHeader {
+        line-height: $fontSize*2;
+        /*height: $fontSize*2;*/
+        font-size: $fontSize;
+        .headerGroup {
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: top;
+            height: $fontSize*2;
+            line-height: $fontSize*2;
+            padding-top: 0;
+            padding-bottom: 0;
+            > * {
+                display: inline-block;
+                vertical-align: top;
+                padding: $fontSize*0.5;
+                line-height: $fontSize;
+            }
+            margin-right: $fontSize*0.25;
+        }
+    }
     @media (max-width: $tabletWidth) {
         body {
             padding-top: $headerHeight*2+$headerPad;

@@ -1,15 +1,15 @@
 <template>
     <div class="User">
         <div class="listHeader">
-            <label>
+            <label class="headerGroup">
                 UserName :
                 <input type="text" placeholder="search" v-model="queryData.name">
             </label>
-            <label>
+            <label class="headerGroup">
                 GroupName :
                 <input type="text" placeholder="search" v-model="queryData.group">
             </label>
-            <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('user')"></button>
+            <button class="headerGroup sysIcon sysIcon_search" type="button" v-on:click="goto('user')"></button>
         </div>
         <table class="userList">
             <tr>
@@ -73,29 +73,7 @@
 </template>
 
 <style lang="scss">
-    .User {
-        .listHeader {
-            justify-content: left;
-
-            label, button, input {
-                line-height: $fontSize*2;
-                height: $fontSize*2;
-                margin: 0 0 0 0;
-                padding: 0;
-            }
-
-            label {
-                display: inline-block;
-                padding: 0 $fontSize 0 0;
-                white-space: nowrap;
-            }
-
-            button {
-                width: $fontSize*2;
-                text-align: center;
-            }
-        }
-
+    #content.User {
         .userList {
             width: 100%;
 
@@ -265,32 +243,37 @@
                 query = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 //
                 return new Promise(((resolve, reject) => {
-                    helper.query(
+                    /*helper.query(
                         'user_list',
                         query
                     ).then((data) => {
                         console.info(data);
                         console.info(data.data);
                         return resolve({list: data.data, query: data.query});
-                    });
+                    });*/
+                    resolve(
+                        {
+                            list:[
+                                {
+                                    id         : 1,
+                                    name       : 'admin',
+                                    mail       : 'admin@admin.com',
+                                    description: 'admin group',
+                                    group      : {
+                                        id         : 1,
+                                        name       : 'admin',
+                                        description: 'admin description',
+                                        admin      : 1,
+                                    },
+                                    status     : 1,
+                                    time_create: '1919-08-10 11:45:14',
+                                    time_update: '1919-08-10 11:45:14',
+                                },
+                            ],
+                            query:query,
+                        }
+                    );
                 }));
-                /*let list = [
-                 {
-                 id         : 1,
-                 name       : 'admin',
-                 mail       : 'admin@admin.com',
-                 description: 'admin group',
-                 group      : {
-                 id         : 1,
-                 name       : 'admin',
-                 description: 'admin description',
-                 admin      : 1,
-                 },
-                 status     : 1,
-                 time_create: '1919-08-10 11:45:14',
-                 time_update: '1919-08-10 11:45:14',
-                 },
-                 ];*/
             },
             /**
              * 写入参数

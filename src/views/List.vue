@@ -62,23 +62,6 @@
     }
     #content.list {
         .listHeader {
-            line-height: $fontSize*2;
-            /*height: $fontSize*2;*/
-            font-size: $fontSize;
-            .headerGroup {
-                white-space: nowrap;
-                display: inline-block;
-                vertical-align: top;
-                height: $fontSize*2;
-                line-height: $fontSize*2;
-                > * {
-                    display: inline-block;
-                    vertical-align: top;
-                    padding: $fontSize*0.5;
-                    line-height: $fontSize;
-                }
-                margin-right: $fontSize*0.25;
-            }
             .breadcrumb {
                 white-space: nowrap;
                 background-color: map_get($colors, header_bread_bk);

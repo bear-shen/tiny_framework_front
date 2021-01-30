@@ -736,38 +736,6 @@ api 有了以后改改就能用的
              * */
             addFolder: function () {
                 console.info('list: addFolder');
-                /*store.commit('popup', {
-                 type: 'file',
-                 info: {
-                 currentId: 1,
-                 query    : this.query,
-                 queryData: this.queryData,
-                 }
-                 });
-                 return;
-                 store.commit('popup', {
-                 type: 'uploader',
-                 info: {
-                 dir_id: 1,
-                 }
-                 });
-                 return;
-                 store.commit('popup', {
-                 type: 'confirm',
-                 info: {
-                 data: 'confirm test',
-                 }
-                 });
-                 return;
-                 store.commit('popup', {
-                 type: 'loader',
-                 });
-                 setTimeout(() => {
-                 store.commit('popup', {
-                 type: 'hide',
-                 });
-                 }, 1000);
-                 return;*/
                 store.commit('popup', {
                     type: 'form',
                     info: {

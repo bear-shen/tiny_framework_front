@@ -747,38 +747,6 @@
              * */
             addFolder     : function () {
                 console.info('list: addFolder');
-                /*store.commit('popup', {
-                 type: 'file',
-                 info: {
-                 currentId: 1,
-                 query    : this.query,
-                 queryData: this.queryData,
-                 }
-                 });
-                 return;
-                 store.commit('popup', {
-                 type: 'uploader',
-                 info: {
-                 dir_id: 1,
-                 }
-                 });
-                 return;
-                 store.commit('popup', {
-                 type: 'confirm',
-                 info: {
-                 data: 'confirm test',
-                 }
-                 });
-                 return;
-                 store.commit('popup', {
-                 type: 'loader',
-                 });
-                 setTimeout(() => {
-                 store.commit('popup', {
-                 type: 'hide',
-                 });
-                 }, 1000);
-                 return;*/
                 store.commit('popup', {
                     type: 'form',
                     info: {
@@ -831,7 +799,57 @@
                  );*/
                 // this.$parent.showConfirm();
             },
-
+            popupDev      : function () {
+                let type = 'form';
+                switch (type) {
+                    case 'form':
+                        break;
+                    case 'loader':
+                        store.commit('popup', {
+                            type: 'loader',
+                        });
+                        break;
+                    case 'confirm':
+                        store.commit('popup', {
+                            type: 'confirm',
+                            info: {
+                                data: 'confirm test',
+                            }
+                        });
+                        break;
+                    case 'uploader':
+                        store.commit('popup', {
+                            type: 'uploader',
+                            info: {
+                                dir_id: 1,
+                            }
+                        });
+                        break;
+                    case 'file':
+                        store.commit('popup', {
+                            type: 'file',
+                            info: {
+                                currentId: 1,
+                                query    : this.query,
+                                queryData: this.queryData,
+                            }
+                        });
+                        break;
+                    case 'list':
+                        break;
+                    case 'login':
+                        break;
+                    case 'version':
+                        break;
+                    case 'register':
+                        break;
+                    case 'hide':
+                        store.commit('popup', {
+                            type: 'hide',
+                        });
+                        break;
+                }
+            }
         },
     }
 </script>

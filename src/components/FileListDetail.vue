@@ -139,10 +139,10 @@ from 来自对象 {list|favourite|recycle}
                 }
                 dd {
                     display: inline-block;
-                    color: darken(map_get($colors, tag_font), 20);
+                    color: map_get($colors, sub_font);
                     margin-left: $fontSize*0.5;
                     &:hover {
-                        color: map_get($colors, tag_font_active);
+                        color: map_get($colors, sub_font_active);
                     }
                 }
             }

@@ -5,11 +5,11 @@ api 有了以后改改就能用的
 <template>
     <div class="favourite">
         <div class="listHeader">
-            <div class="listHeaderSearch">
+            <div class="headerGroup search">
                 <input type="text" placeholder="search" v-model="queryData.keyword">
-                <button type="button" class="btn btn-dark sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
+                <button type="button" class="sysIcon sysIcon_search" v-on:click="goto('search',0)"></button>
             </div>
-            <div class="listHeaderSort">
+            <div class="headerGroup sort">
                 <select v-model="queryData.sort">
                     <option value="id_asc">id ↑</option>
                     <option value="id_desc">id ↓</option>
@@ -21,18 +21,26 @@ api 有了以后改改就能用的
                     <option value="upd_desc">upd time ↓</option>
                 </select>
             </div>
-            <div class="listHeaderLayout">
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
-                <button type="button" :class="['btn','btn-dark','sysIcon','sysIcon_listType_img',{active:listType==='img'}]" v-on:click="changeListType('img')"></button>
+            <div class="headerGroup layout">
+                <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listType==='image'}]" v-on:click="changeListType('image')"></button>
             </div>
         </div>
-        <div :class="['listContent','listType_'+listType]">
-            <ul>
-                <file-list-detail v-for="(item,index) in list" :key="index" :item="item" :dir="dir" :listType="listType" :from="'favourite'"></file-list-detail>
-
-            </ul>
-        </div>
+        <ul :class="['listContent','listType_'+listType]">
+                <file-list-detail
+                        v-if="listType==='detail'" v-for="(item,index) in list"
+                        :key="index" :item="item" :dir="dir" :from="'list'"
+                ></file-list-detail>
+                <file-list-text
+                        v-if="listType==='text'" v-for="(item,index) in list"
+                        :key="index" :item="item" :dir="dir" :from="'list'"
+                ></file-list-text>
+                <file-list-image
+                        v-if="listType==='image'" v-for="(item,index) in list"
+                        :key="index" :item="item" :dir="dir" :from="'list'"
+                ></file-list-image>
+        </ul>
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
         <!--        </div>-->
@@ -41,106 +49,90 @@ api 有了以后改改就能用的
 </template>
 
 <style lang="scss">
-
-    .favourite .listHeader {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: nowrap;
-        margin-bottom: $fontSize*0.5;
-
-        &, & * {
-            font-size: $fontSize;
-            height: $fontSize*2;
-            line-height: $fontSize*2;
-            padding-left: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-            padding-right: 0;
-            white-space: nowrap;
-            vertical-align: top;
-        }
-
-        button, input {
-            width: $fontSize*2;
-            height: $fontSize*2;
-            padding-left: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-            padding-right: 0;
-        }
-
-        input[type="text"] {
-            width: calc(100% - #{$fontSize} * 2);
-            border-radius: $fontSize*0.25;
-            height: $fontSize*2;
-            text-indent: 0.5em;
-        }
-
-        .listHeaderSearch, .listHeaderSort, .listHeaderLayout {
-            margin-left: 1em;
-        }
-
-        .listHeaderSearch {
-            width: 85%;
-        }
-
-        .listHeaderSort {
-            option {
-                text-align: center;
-            }
-        }
-
-        .listHeaderLayout button {
-        }
-
-        .listHeaderLayout button.active {
-        }
+    input[type="text"] {
     }
-
-    @media (max-width: 1199px) {
-        .favourite .listHeader {
-            flex-wrap: wrap;
-            white-space: normal;
-            // height: $fontSize*4.5;
-            height: auto;
-            justify-content: space-around;
-
-            input[type="text"] {
-                //width: calc(100vw - #{$fontSize *2 *7} - 40px);
-                width: calc(100% - #{$fontSize*2});
-                border-radius: $fontSize*0.25;
+    #content.favourite {
+        .listHeader {
+            line-height: $fontSize*2;
+            /*height: $fontSize*2;*/
+            font-size: $fontSize;
+            .headerGroup {
+                white-space: nowrap;
+                display: inline-block;
+                vertical-align: top;
                 height: $fontSize*2;
-                text-indent: 0.5em;
+                line-height: $fontSize*2;
+                > * {
+                    display: inline-block;
+                    vertical-align: top;
+                    padding: $fontSize*0.5;
+                    line-height: $fontSize;
+                }
+                margin-right: $fontSize*0.25;
             }
-
-            .listHeaderSearch,
-            .listHeaderSort,
-            .listHeaderLayout {
-                width: auto;
+            .breadcrumb {
+                white-space: nowrap;
+                background-color: map_get($colors, header_bread_bk);
+                width: 50vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                li {
+                    padding-left: $fontSize;
+                    &::before {
+                        content: '>';
+                        display: inline-block;
+                        padding-right: $fontSize;
+                    }
+                }
             }
-
-            .listHeaderSearch {
-                margin-left: 0;
+            .search {}
+            .sort {}
+            .operate {}
+            .layout {}
+            input {
+                width: $fontSize*10;
             }
-
-            .listHeaderSort, .listHeaderLayout {
-                margin-left: 8px;
-                //margin-right: 8px;
+            select {
+                width: $fontSize*5;
             }
-
-            .listHeaderSearch {
-                order: 1;
-                margin-bottom: 8px;
-                width: 100%;
+        }
+        .listContent {}
+        @media (max-width: $tabletWidth) {
+            .listHeader {
+                .headerGroup {
+                    > * {
+                    }
+                }
+                .breadcrumb {
+                    width: calc(100% - #{$fontSize*13.25});
+                }
+                .search {
+                    margin-right: 0;
+                }
+                .sort {}
+                .operate {}
+                .layout {}
             }
-
-            .listHeaderSort {
-                order: 3;
+            .listContent {}
+        }
+        @media (max-width: $mobileWidth) {
+            .listHeader {
+                .headerGroup {
+                    > * {
+                    }
+                }
+                .breadcrumb {
+                    width: 100%;
+                    margin-right: 0;
+                }
+                .search {
+                    margin-right: $fontSize*0.25;
+                }
+                .sort {}
+                .operate {}
+                .layout {}
             }
-
-            .listHeaderLayout {
-                order: 3;
-            }
+            .listContent {}
         }
     }
 </style>
@@ -152,6 +144,8 @@ api 有了以后改改就能用的
     import GenFunc        from '../lib/GenFuncLib'
     import Helper         from '../lib/Helper'
     import FileListDetail from "../components/FileListDetail";
+    import FileListText   from "../components/FileListText";
+    import FileListImage  from "../components/FileListImage";
     // import Popup    from '../components/Popup'
 
     /**
@@ -170,7 +164,7 @@ api 有了以后改改就能用的
      * */
     export default {
         name         : 'Favourite',
-        components   : {FileListDetail,},
+        components   : {FileListImage, FileListText, FileListDetail},
         store        : store,
         watch        : {
             $route          : function (to, from) {
@@ -753,6 +747,95 @@ api 有了以后改改就能用的
                     return false;
                 }
                 router.push(targetRoute);
+            },
+            /**
+             * @todo api file_mkdir
+             * */
+            addFolder     : function () {
+                console.info('list: addFolder');
+                /*store.commit('popup', {
+                 type: 'file',
+                 info: {
+                 currentId: 1,
+                 query    : this.query,
+                 queryData: this.queryData,
+                 }
+                 });
+                 return;
+                 store.commit('popup', {
+                 type: 'uploader',
+                 info: {
+                 dir_id: 1,
+                 }
+                 });
+                 return;
+                 store.commit('popup', {
+                 type: 'confirm',
+                 info: {
+                 data: 'confirm test',
+                 }
+                 });
+                 return;
+                 store.commit('popup', {
+                 type: 'loader',
+                 });
+                 setTimeout(() => {
+                 store.commit('popup', {
+                 type: 'hide',
+                 });
+                 }, 1000);
+                 return;*/
+                store.commit('popup', {
+                    type: 'form',
+                    info: {
+                        title   : 'addFolder',
+                        data    : {
+                            title      : '',
+                            description: '',
+                        },
+                        template: {
+                            title      : {type: 'text', default: '', editable: true,},
+                            description: {type: 'text', default: '', editable: true,},
+                        },
+                        submit  : function (data) {
+                            console.info('list: callback: submit');
+                            console.info(data);
+                        },
+                        cancel  : function (data) {
+                            console.info('list: callback: cancel');
+                            console.info(data);
+                        },
+                        error   : function (data) {
+                            console.info('list: callback: error');
+                            console.info(data);
+                        },
+                    },
+                });
+                /*this.$parent.showLoader(
+                 {type:'loader'}
+                 );*/
+                // this.$parent.showConfirm();
+            },
+            addFile       : function () {
+                store.commit('popup', {
+                    type: 'login',
+                    info: {},
+                });
+                return;
+                console.info('list: addFile');
+                /*store.commit('popup', {
+                 type: 'login',
+                 });*/
+                store.commit('popup', {
+                    type: 'uploader',
+                    info: {
+                        dir_id: this.dir.id,
+                    }
+                });
+                /*this.$parent.showLoader(
+                 {type:'loader'}
+                 );*/
+                // this.$parent.showConfirm();
             },
 
         },

@@ -35,10 +35,13 @@ $colors: (
         input_button_bk:rgba(20, 20, 20, 1),
         input_button_font_active:rgba(200, 200, 200, 1),
         input_button_bk_active:rgba(80, 80, 80, 1),
-        tag_font:rgba(180, 180, 180, 1),
-        tag_font_active:rgba(230, 230, 230, 1),
+        sub_font:rgb(135, 135, 135),
+        sub_font_active:rgba(230, 230, 230, 1),
         //
         list_bk_2:rgba(60, 60, 60, 1),
+        //
+        positive:rgba(0, 160, 255, 0.2),
+        negative:rgba(255, 40, 40, 0.2),
 );
 $layoutIndex: 500;
 $alphaIndex: 1000;

@@ -50,6 +50,9 @@
         appearance: none;
         outline: 0
     }
+    table{
+        border-collapse: collapse;
+    }
     #app {
         #body {
             position: relative;

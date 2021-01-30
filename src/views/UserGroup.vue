@@ -159,14 +159,17 @@
             list-style: none;
             margin: 0;
             padding: 0;
-            display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
+            column-count: 2;
         }
 
         .groupMain {
             margin: $fontSize*0.5;
-            width: 45%;
+            break-inside: avoid;
+            tr{
+                break-inside: avoid;
+            }
         }
 
         .groupMain > table {
@@ -177,12 +180,13 @@
             background-color: rgba(0, 0, 0, 0.2);
         }
 
-        tr {
-            line-height: $fontSize*2;
-        }
-
         td, th {
             padding: 0 $fontSize*1;
+            line-height: $fontSize*2;
+            height: $fontSize*2;
+            >*{
+                vertical-align: top;
+            }
         }
 
         th {
@@ -218,14 +222,13 @@
                 }
             }
         }
-        font-size: $fontSize*1.2;
 
         .positive {
-            background-color: rgba(0, 160, 255, 0.2);
+            background-color: map_get($colors,positive);
         }
 
         .negative {
-            background-color: rgba(255, 40, 40, 0.2);
+            background-color: map_get($colors,negative);
         }
 
         .subTable {
@@ -240,18 +243,10 @@
 
                 &:nth-child(1) {
                     width: $fontSize*3;
-
-                    input {
-                        width: 100%;
-                    }
                 }
 
                 &:nth-child(2) {
                     width: $fontSize*15;
-
-                    input {
-                        width: 100%;
-                    }
                 }
 
                 &:nth-child(3),
@@ -288,6 +283,13 @@
                     background-color: rgba(255, 255, 255, 0.2);
                 }
             }
+        }
+
+        input {
+            width: calc(100% - #{$fontSize*2});
+            padding: 0 $fontSize*1;
+            line-height: 2*$fontSize;
+            height: 2*$fontSize;
         }
 
         .float_hinter {

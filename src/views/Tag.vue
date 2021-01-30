@@ -2,17 +2,13 @@
     <div class="tagGroup">
         <ul class="groupList">
             <li v-for="(group,groupIndex) in list">
-                <template v-if="editMode===1 && groupIndex===editIndex">
+                <template v-if="group.editing">
                     <div class="groupMain editMode">
                         <span class="">ID:{{group.id}}</span>
-                        <input type="text" v-model="group.name" placeholder="group name">
-                        <input type="text" v-model="group.sort" placeholder="group sort">
-                        <!--<span class="">{{group.sort}}</span>-->
-                        <!--<span class="">{{group.time_create}}</span>-->
-                        <!--<span class="">{{group.time_update}}</span>-->
+                        <input type="text" class="name" v-model="group.name" placeholder="group name">
+                        <input type="text" class="sort" v-model="group.sort" placeholder="group sort">
                         <span class="operator">
-                        <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
-                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup()"></span>
+                        <span class="sysIcon sysIcon_save" v-on:click="saveGroup(groupIndex)"></span>
                         </span>
                     </div>
                     <textarea class="groupAlt" v-model="group.alt" placeholder="group alt name"></textarea>
@@ -20,32 +16,23 @@
                 </template>
                 <template v-else>
                     <div class="groupMain">
-                        <!--<span class="">ID:{{group.id}}</span>-->
                         <span class="">{{group.name}}</span>
-                        <!--<span class="">{{group.sort}}</span>-->
-                        <!--<span class="">{{group.time_create}}</span>-->
-                        <!--<span class="">{{group.time_update}}</span>-->
                         <span class="operator">
-                        <!--<span class="sysIcon sysIcon_plus-square-o" v-on:click="modGroup(tag.id)"></span>-->
                         <span class="sysIcon sysIcon_delete" v-on:click="delGroup(groupIndex)"></span>
                         <span class="sysIcon sysIcon_edit" v-on:click="modGroup(groupIndex)"></span>
                         </span>
                     </div>
-                    <div class="groupAlt">
-                        {{group.alt}}
-                    </div>
-                    <div class="groupDescription">
-                        {{group.description}}
-                    </div>
+                    <div class="groupAlt">{{group.alt}}</div>
+                    <div class="groupDescription">{{group.description}}</div>
                 </template>
                 <ul class="tagList">
                     <li v-for="(tag,tagIndex) in group.child">
-                        <template v-if="editMode===2 && `${groupIndex}-${tagIndex}`===editIndex">
+                        <template v-if="tag.editing">
                             <div class="tagMain editMode">
                                 <!--<span class="">ID:{{tag.id}}</span>-->
                                 <input type="text" v-model="tag.name" placeholder="tag name">
                                 <!--<span class=""><input v-model="tag.sort"></span>-->
-                                <span class="sysIcon sysIcon_save" v-on:click="saveTag()"></span>
+                                <span class="sysIcon sysIcon_save" v-on:click="saveTag(groupIndex,tagIndex)"></span>
                             </div>
                             <textarea class="tagAlt" v-model="tag.alt" placeholder="tag alt name"></textarea>
                             <textarea class="tagDescription" v-model="tag.description" placeholder="tag description"></textarea>
@@ -62,12 +49,8 @@
                                 <span class="sysIcon sysIcon_edit" v-on:click="modTag(groupIndex,tagIndex)"></span>
                                 </span>
                             </div>
-                            <div class="tagAlt">
-                                {{tag.alt}}
-                            </div>
-                            <div class="tagDescription">
-                                {{tag.description}}
-                            </div>
+                            <div class="tagAlt">{{tag.alt}}</div>
+                            <div class="tagDescription">{{tag.description}}</div>
                         </template>
                     </li>
                     <li>
@@ -87,168 +70,93 @@
         ul {
             padding: 0;
         }
-
         li {
             list-style: none;
 
             .operator {
                 span {
-                    padding-left: 0.5em;
-
-                    &:hover {
-                        color: rgba(255, 255, 255, 0.4);
-                    }
+                    padding-left: $fontSize*0.5;
                 }
             }
         }
-    }
-
-    .tagGroup {
-
-        .groupList {
-            display: flex;
-            flex-wrap: wrap;
-            font-size: $fontSize*1.2;
-            line-height: $fontSize*1.5;
-
-            > li {
-                width: 32%;
-                background-color: rgba(0, 0, 0, 0.2);
-
-                &:nth-child(2n) {
-                    background-color: rgba(0, 0, 0, 0.1);
-                }
-
-                margin: $fontSize*0.5;
-                padding: $fontSize*0.5;
-
-                .groupMain {
-                    display: flex;
-                    justify-content: space-between;
-                    vertical-align: middle;
-                    align-items: center;
-                    white-space: nowrap;
-                    height: $fontSize*1.5;
-                    line-height: $fontSize*1.5;
-
-                    &.editMode {
-                        margin-bottom: $fontSize*0.5;
-
-                        & > * {
-                            height: $fontSize*1.5;
-                            line-height: $fontSize*1.5;
-                        }
-
-                        & > *:nth-child(1) {
-                            margin-right: 0.5em;
-                        }
-
-                        & > *:nth-child(2) {width: 70%;}
-
-                        & > *:nth-child(3) {width: 20%;}
-
-                        & > *:nth-child(4) {width: 1.5em;}
-                    }
-                }
-
-                .groupAlt, .groupDescription {
-                    color: rgba(100, 100, 100, 1);
-                    display: block;
-                    width: 100%;
-                }
-
-                .groupAlt {}
-
-                .groupDescription {}
-
-                > .addBtn {
-                    font-size: $fontSize*5;
-                    width: $fontSize*5;
-                    height: $fontSize*5;
-                    line-height: $fontSize*5;
-                    color: rgba(100, 100, 100, 1);
-                }
-            }
-        }
-
-        .tagList {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            background-color: rgba(255, 255, 255, 0.1);
-            margin-top: $fontSize*0.25;
-            padding: $fontSize*0.25;
+        input, textarea {
+            line-height: $fontSize;
+            width: inherit;
             font-size: $fontSize;
-
+            padding: $fontSize*0.25;
+        }
+    }
+    .tagGroup {
+        .groupList {
+            column-count: 3;
+            width: 100%;
+            color: map_get($colors, sub_font);
             > li {
-                background-color: rgba(0, 0, 0, 0.2);
-                margin: $fontSize*0.25 0;
-                padding: 0 $fontSize*0.5;
-                width: 32%;
-
-                .tagMain {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: $fontSize*0.5;
-
-                    * {
-                        height: $fontSize*1.5;
-                        line-height: $fontSize*1.5;
-                    }
-
-                    *:nth-child(1) {
-                        margin-right: 0.5em;
-                        font-size: $fontSize*0.75;
-                        cursor: pointer;
-                    }
-
-                    *:nth-child(2) {}
-
-                    input {
-                        width: calc(100% - #{$fontSize});
-                    }
-                }
-
-                .tagAlt, .tagDescription {
-                    color: rgba(100, 100, 100, 1);
+                break-inside: avoid;
+                padding: $fontSize*0.5;
+                > div, > textarea {
+                    display: block;
+                    min-height: $fontSize*1.5;
+                    line-height: $fontSize*1.5;
                     width: 100%;
                 }
-
-                .tagAlt {
+                .groupMain {
+                    justify-content: space-between;
+                    display: flex;
+                    width: 100%;
+                    color: map_get($colors, font);
+                    > span, > input {
+                        display: inline-block;
+                    }
+                    input.sort {
+                        width: $fontSize*2;
+                    }
+                    .operator span {
+                        width: $fontSize;
+                    }
                 }
-
-                .tagDescription {
-                }
-
-                > .addBtn {
-                    margin: $fontSize*0.5 0;
-                    font-size: $fontSize*1.5;
-                    width: $fontSize*1.5;
-                    height: $fontSize*1.5;
+            }
+        }
+        .tagList {
+            padding-left: $fontSize;
+            width: calc(100% - #{$fontSize});
+            color: map_get($colors, sub_font);
+            > li {
+                > div, > textarea {
+                    display: block;
+                    min-height: $fontSize*1.5;
                     line-height: $fontSize*1.5;
-                    color: rgba(100, 100, 100, 1);
+                    width: 100%;
+                }
+                .tagMain {
+                    justify-content: space-between;
+                    display: flex;
+                    width: 100%;
+                    color: map_get($colors, font);
+                    > span, > input {
+                        display: inline-block;
+                    }
+                    input.sort {
+                        width: $fontSize*2;
+                    }
+                    .operator span {
+                        width: $fontSize;
+                    }
                 }
             }
         }
     }
-
-    @media (max-width: 1600px) {
+    @media (max-width: $tabletWidth) {
         .tagGroup {
             .groupList {
-                > li {
-                    width: 48%;
-                }
+                column-count: 2;
             }
         }
     }
-
-    @media (max-width: 960px) {
+    @media (max-width: $mobileWidth) {
         .tagGroup {
             .groupList {
-                > li {
-                    width: 96%;
-                }
+                column-count: 1;
             }
         }
     }
@@ -380,15 +288,7 @@
             },
             //
             modGroup : function (groupIndex) {
-                switch (this.editMode) {
-                    case 1:
-                        this.saveGroup();
-                        break;
-                    case 2:
-                        this.saveTag();
-                        break;
-                }
-                this.editMode = 1;
+                console.info(groupIndex);
                 if (groupIndex === -1) {
                     this.list.push(
                         {
@@ -400,18 +300,22 @@
                             time_create: '',
                             time_update: '',
                             child      : [],
+                            editing    : 1,
                         }
                     )
-                    groupIndex = this.list.length - 1;
+                } else {
+                    let item     = this.list[groupIndex];
+                    item.editing = 1;
+                    this.list.splice(groupIndex, 1, item);
                 }
-                this.editIndex = groupIndex;
             },
             /**
              * @todo api tag_group_mod
              * */
-            saveGroup: function () {
-                this.editMode  = 0;
-                this.editIndex = 0;
+            saveGroup: function (groupIndex) {
+                let item     = this.list[groupIndex];
+                item.editing = 0;
+                this.list.splice(groupIndex, 1, item);
             },
             /**
              * @todo api tag_group_del
@@ -421,16 +325,7 @@
             },
             //
             modTag   : function (groupIndex, tagIndex) {
-                switch (this.editMode) {
-                    case 1:
-                        this.saveGroup();
-                        break;
-                    case 2:
-                        this.saveTag();
-                        break;
-                }
                 if (!this.list[groupIndex]) return;
-                this.editMode = 2;
                 if (tagIndex === -1) {
                     this.list[groupIndex].child.push(
                         {
@@ -442,22 +337,28 @@
                             sort       : 1,
                             time_create: '',
                             time_update: '',
+                            editing    : 1,
                         });
-                    tagIndex = this.list[groupIndex].child.length - 1;
+                } else {
+                    let item     = this.list[groupIndex].child[tagIndex];
+                    item.editing = 1;
+                    this.list[groupIndex].child.splice(tagIndex, 1, item);
                 }
-                this.editIndex = `${groupIndex}-${tagIndex}`;
             },
             /**
              * @todo api tag_mod
              * */
-            saveTag  : function () {
-                this.editMode  = 0;
-                this.editIndex = 0;
+            saveTag  : function (groupIndex, tagIndex) {
+                let item     = this.list[groupIndex].child[tagIndex];
+                item.editing = 0;
+                this.list[groupIndex].child.splice(tagIndex, 1, item);
             },
             /**
              * @todo api tag_del
              * */
             delTag   : function (groupIndex, tagIndex) {
+                if (!this.list[groupIndex]) return;
+                this.list[groupIndex].child.splice(tagIndex, 1);
             },
             //
             goto     : function (type, targetId) {

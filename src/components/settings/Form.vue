@@ -19,26 +19,22 @@
                 </template>
                 <template v-else-if="sub.type==='radio'">
                     <template v-for="(optV,optK) in sub.extra">
-                        <label>
-                            {{optV}} :
-                            <input type="radio" v-model="sub.value" :value="optK">
-                        </label>
+                        <input type="radio" v-model="sub.value" :value="optK" :id="`setting_${sub.type}_${optK}_${optV}`">
+                        <label :for="`setting_${sub.type}_${optK}_${optV}`">{{optV}}</label>
                     </template>
                 </template>
                 <template v-else-if="sub.type==='checkbox'">
                     <template v-for="(optV,optK) in sub.extra">
-                        <label>
-                            {{optV}} :
-                            <input type="checkbox" v-model="sub.value" :value="optK">
-                        </label>
+                        <input type="checkbox" v-model="sub.value" :value="optK" :id="`setting_${sub.type}_${optK}_${optV}`">
+                        <label :for="`setting_${sub.type}_${optK}_${optV}`">{{optV}}</label>
                     </template>
                 </template>
             </td>
         </tr>
         <tr>
             <td colspan="2">
-                <button :class="['btn','btn-dark','sysIcon','sysIcon_save']" v-if="edit" v-on:click="submit"> Submit</button>
-                <button :class="['btn','btn-dark','sysIcon','sysIcon_edit']" v-else v-on:click="modify"> Modify</button>
+                <button :class="['sysIcon','sysIcon_save']" v-if="edit" v-on:click="submit"> Submit</button>
+                <button :class="['sysIcon','sysIcon_edit']" v-else v-on:click="modify"> Modify</button>
             </td>
         </tr>
     </table>
@@ -46,6 +42,7 @@
 
 <style lang="scss">
     .content.form {
+        width: 100%;
         th, label {
             font-weight: normal;
         }

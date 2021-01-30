@@ -27,18 +27,18 @@
             display: block;
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: $fontSize*0.5;
-            padding: 0 $fontSize;
-            margin-bottom: $fontSize;
+            padding: 0 $fontSize*0.5;
+            margin: 0 auto $fontSize;
+            //margin: 0 $fontSize*0.5 $fontSize;
             overflow: auto;
-            width: 100%;
+            width: calc(100% - #{$fontSize*2});
             break-inside: avoid;
             @include smallScroll;
 
             > * {
-                width: 100%;
 
                 &:first-child {
-                    margin-top: $fontSize;
+                    /*margin-top: $fontSize;*/
                 }
 
                 &:last-child {
@@ -48,8 +48,8 @@
 
             .title {
                 text-align: center;
-                font-size: $fontSize*1.2;
-                margin-bottom: $fontSize*0.5;
+                font-weight: bold;
+                line-height: $fontSize*2;
             }
 
             .content {
@@ -57,11 +57,11 @@
             }
         }
 
-        @media(max-width: 1199px) {
+        @media(max-width: $narrowWidth) {
             column-count: 2;
         }
 
-        @media(max-width: 767px) {
+        @media(max-width: $tabletWidth) {
             column-count: 1;
         }
     }

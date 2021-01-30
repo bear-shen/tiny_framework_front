@@ -206,23 +206,6 @@
             justify-content: space-between;
         }
 
-        @media(max-width: 1500px) {
-            .groupMain {
-                margin: $fontSize*0.5;
-                width: 100%;
-            }
-            font-size: $fontSize*1;
-        }
-        @media(max-width: 700px) {
-            .userRow {
-                .subTable td, .subTable th {
-                    &:nth-child(4) {
-                        display: none;
-                    }
-                }
-            }
-        }
-
         .positive {
             background-color: map_get($colors,positive);
         }
@@ -276,6 +259,14 @@
         .addGroup {
             text-align: left;
             font-size: $fontSize*2;
+            height: $fontSize*2;
+            line-height: $fontSize*2;
+        }
+
+        @media(max-width: $narrowWidth) {
+            .groupList {
+                column-count: 1;
+            }
         }
     }
 </style>

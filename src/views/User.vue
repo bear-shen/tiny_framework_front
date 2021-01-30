@@ -76,59 +76,28 @@
     #content.User {
         .userList {
             width: 100%;
-
             td, th {
                 &:last-child {
                     padding-right: $fontSize;
                 }
-
                 &:first-child {
                     padding-left: $fontSize;
                 }
-
                 padding: 0 $fontSize*0.5;
             }
-
             tr:nth-child(2n) {
-                background-color: rgba(0, 0, 0, 0.2);
+                background-color: map_get($colors, list_bk_2);
             }
-
             th {
-                font-size: $fontSize*1.2;
+                line-height: $fontSize*1.5;
             }
         }
-
         .positive {
-            background-color: rgba(0, 160, 255, 0.2);
+            background-color: map_get($colors, positive);
         }
-
         .negative {
-            background-color: rgba(255, 40, 40, 0.2);
+            background-color: map_get($colors, negative);
         }
-
-        input[type='checkbox'], input[type='radio'] {
-            display: none;
-
-            + label {
-                display: inline-block;
-                width: max-content;
-                /*background-image: linear-gradient(0deg, hsla(250, 30%, 30%, 1) 0%, rgb(25, 25, 25) 100%);*/
-                background-color: rgba(0, 0, 0, 0.2);
-                font-size: 1.25*$fontSize;
-                padding: 0.25em 0.5*$fontSize;
-                line-height: 1.25*$fontSize;
-                margin: 0.25*$fontSize;
-                //border-radius: 0.5*$fontSize;
-            }
-
-            &:checked {
-                + label {
-                    //background-image: linear-gradient(0deg, rgba(100, 100, 100, 1) 0%, rgba(150, 150, 150, 1) 100%);
-                    background-color: rgba(255, 255, 255, 0.2);
-                }
-            }
-        }
-
         .float_hinter {
             background-color: rgba(0, 0, 0, 0.8);
         }
@@ -244,16 +213,16 @@
                 //
                 return new Promise(((resolve, reject) => {
                     /*helper.query(
-                        'user_list',
-                        query
-                    ).then((data) => {
-                        console.info(data);
-                        console.info(data.data);
-                        return resolve({list: data.data, query: data.query});
-                    });*/
+                     'user_list',
+                     query
+                     ).then((data) => {
+                     console.info(data);
+                     console.info(data.data);
+                     return resolve({list: data.data, query: data.query});
+                     });*/
                     resolve(
                         {
-                            list:[
+                            list : [
                                 {
                                     id         : 1,
                                     name       : 'admin',
@@ -270,7 +239,7 @@
                                     time_update: '1919-08-10 11:45:14',
                                 },
                             ],
-                            query:query,
+                            query: query,
                         }
                     );
                 }));

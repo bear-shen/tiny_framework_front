@@ -262,29 +262,6 @@
             }
         }
 
-        input[type='checkbox'], input[type='radio'] {
-            display: none;
-
-            + label {
-                display: inline-block;
-                width: max-content;
-                /*background-image: linear-gradient(0deg, hsla(250, 30%, 30%, 1) 0%, rgb(25, 25, 25) 100%);*/
-                background-color: rgba(0, 0, 0, 0.2);
-                font-size: 1.25*$fontSize;
-                padding: 0.25em 0.5*$fontSize;
-                line-height: 1.25*$fontSize;
-                margin: 0.25*$fontSize;
-                //border-radius: 0.5*$fontSize;
-            }
-
-            &:checked {
-                + label {
-                    //background-image: linear-gradient(0deg, rgba(100, 100, 100, 1) 0%, rgba(150, 150, 150, 1) 100%);
-                    background-color: rgba(255, 255, 255, 0.2);
-                }
-            }
-        }
-
         input {
             width: calc(100% - #{$fontSize*2});
             padding: 0 $fontSize*1;

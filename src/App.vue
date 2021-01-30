@@ -225,6 +225,26 @@
         background-color: map_get($colors, selection_bk);
         color: map_get($colors, selection);
     }
+    input[type='checkbox'], input[type='radio'] {
+        display: none;
+        + label {
+            display: inline-block;
+            width: max-content;
+            /*background-image: linear-gradient(0deg, hsla(250, 30%, 30%, 1) 0%, rgb(25, 25, 25) 100%);*/
+            background-color: map_get($colors, checkbox_alpha);
+            font-size: $fontSize;
+            padding: 0.25*$fontSize 0.5*$fontSize;
+            line-height: $fontSize;
+            //border-radius: 0.5*$fontSize;
+            vertical-align: baseline;
+        }
+        &:checked {
+            + label {
+                //background-image: linear-gradient(0deg, rgba(100, 100, 100, 1) 0%, rgba(150, 150, 150, 1) 100%);
+                background-color: map_get($colors, checkbox_alpha_active);
+            }
+        }
+    }
 </style>
 <script>
     import router from "./router";

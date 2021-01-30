@@ -7,11 +7,10 @@ Props:
     callback  function(itemData) :void             查询完成的回调方法
 -->
 <template>
-    <div class="hinter_div" v-on:click.stop>
-        <input type="text" v-model="htData"
-               v-on:keyup="htQuery()"
-               v-on:focus="htQuery()"
-        >
+    <div class="hinter_div" v-on:click.stop><input type="text" v-model="htData"
+                                                   v-on:keyup="htQuery()"
+                                                   v-on:focus="htQuery()"
+    >
         <ul v-if="active"
             class="float_hinter">
             <li v-if="loading">loading...</li>
@@ -25,8 +24,11 @@ Props:
 </template>
 
 <style lang="scss">
-    .hinter_div{
+    .hinter_div {
         position: relative;
+        input{
+            vertical-align: top;
+        }
     }
     .float_hinter {
         list-style: none;
@@ -35,12 +37,10 @@ Props:
         position: absolute;
         top: $fontSize*2;
         z-index: 90;
-
         li {
             width: 300px;
             line-height: $fontSize*1.5;
             padding: 0 10px;
-
             &:hover {
                 background-color: rgba(255, 255, 255, 0.3);
             }
@@ -63,7 +63,7 @@ Props:
             return {
                 list   : [],
                 active : 0,
-                loading : 0,
+                loading: 0,
                 htData : '',
                 htShow : [],
                 //对传入值是否为空做一个判断，如果传入为undefined则回调完成后自动清空数组
@@ -77,10 +77,10 @@ Props:
             }
         },
         created      : function () {
-            let td=this.data;
-            if (typeof td==='undefined') {
+            let td = this.data;
+            if (typeof td === 'undefined') {
                 this.empData = true;
-                td='';
+                td           = '';
             }
             this.htData = td;
             this.htShow = this.show;
@@ -106,8 +106,8 @@ Props:
                 console.info('Hinter.vue htQuery');
                 if (!this.htData.length) return;
                 if (!this.query) return;
-                this.active = 1;
-                this.loading=1;
+                this.active  = 1;
+                this.loading = 1;
                 this.query(this.htData).then(this.fillData);
             },
             htCallback : function (item) {
@@ -116,11 +116,11 @@ Props:
                 if (!this.callback) return;
                 this.callback(item);
                 this.searchClear();
-                if(this.empData)this.htData='';
+                if (this.empData) this.htData = '';
             },
             fillData   : function (resolveData) {
-                this.loading=0;
-                this.list = resolveData.list;
+                this.loading = 0;
+                this.list    = resolveData.list;
             },
             searchClear: function () {
                 console.info('Hinter.vue searchClear');

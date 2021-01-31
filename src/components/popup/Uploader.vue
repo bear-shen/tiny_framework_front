@@ -36,41 +36,29 @@
         height: 50vh;
         margin: 0 auto;
         background: rgba(100, 100, 100, 0.5);
-        padding: 1vw;
-        border-radius: 1vw;
-
+        padding: $fontSize;
         .dragWindow {
-            height: calc(50vh - 2vw - #{$fontSize} * 2 - 10px);
+            height: calc(50vh - #{$fontSize} * 2);
             overflow-y: auto;
-
             @include smallScroll;
-
             .dragList {
                 list-style: none;
                 padding: 0;
-                /*pointer-events: none;*/
-
+                pointer-events: none;
                 li {
                     line-height: $fontSize*2;
                     height: $fontSize*2;
-                    padding: 0 10px;
+                    padding: 0 $fontSize*0.5;
                     display: flex;
                     justify-content: space-between;
                     position: relative;
                 }
-
                 input {
                     display: none;
                 }
-
-                li:nth-child(2n) {
-                    background: rgba(0, 0, 0, 0.5);
-                }
-
                 li:nth-child(2n - 1) {
-                    background: rgba(0, 0, 0, 0.25);
+                    background: map_get($colors, popup_bk_2);
                 }
-
                 p {
                     display: inline-block;
                     padding: 0;
@@ -80,59 +68,50 @@
                     text-overflow: ellipsis;
                     z-index: 2;
                 }
-
                 p:nth-child(1) {
-                    min-width: 30vw;
+                    min-width: 50%;
                 }
-
                 p:nth-child(2),
                 p:nth-child(3) {
-                    width: 10vw;
+                    width: 20%;
                 }
-
                 .statusBar {
                     position: absolute;
                     left: 0;
                     top: 0;
                     z-index: 1;
                     height: 100%;
-                    background: rgba(51, 122, 183, 0.25);
+                    background: map_get($colors, positive);
                 }
-
                 .failed .statusBar {
-                    background: rgba(183, 51, 51, 0.25);
+                    background: map_get($colors, negative);
                 }
-
             }
-
             label {
                 font-weight: normal;
                 margin-bottom: 0;
                 width: 100%;
                 height: 100%;
             }
-
             &.dragging {
-                background: rgba(255, 255, 255, 0.5);
+                background: map_get($colors, popup_bk_active);
             }
-
             .delBtn {
                 pointer-events: all;
             }
         }
-
         .btnList {
-            display: flex;
+            /*display: flex;*/
             height: $fontSize*2;
             font-size: $fontSize;
-            justify-content: flex-end;
-            margin-top: 10px;
-
+            /*justify-content: flex-end;*/
+            margin-top: $fontSize*0.5;
+            text-align: right;
             button {
                 line-height: $fontSize*2;
                 height: $fontSize*2;
-                padding: 0 10px;
-                margin-left: 10px;
+                padding: 0 $fontSize;
+                margin-left: $fontSize*0.5;
             }
         }
     }
@@ -221,6 +200,22 @@
             this.$refs.dragWindow.addEventListener('drop', this.onDragDrop);
             this.$refs.dragWindow.addEventListener('paste', this.onDragPaste);
             this.$refs.dragInput.addEventListener('change', this.onInputChange);
+            /*this.$refs.dragList.addEventListener('dragenter', (e)=>{
+                e.stopPropagation();
+                e.preventDefault();
+            });
+            this.$refs.dragList.addEventListener('dragleave', (e)=>{
+                e.stopPropagation();
+                e.preventDefault();
+            });
+            this.$refs.dragList.addEventListener('drop', (e)=>{
+                e.stopPropagation();
+                e.preventDefault();
+            });
+            this.$refs.dragList.addEventListener('paste', (e)=>{
+                e.stopPropagation();
+                e.preventDefault();
+            });*/
         },
         methods  : {
             cancel       : function () {
@@ -247,21 +242,18 @@
             //
             onDragEnter  : function (e) {
                 console.info(`popup uploader: onDragEnter`);
+                console.info(e);
                 this.dragging = true;
             },
             onDragLeave  : function (e) {
                 console.info(`popup uploader: onDragLeave`);
-                //path中含有dragWindow，不拖拽
-                for (let i1 = 0; i1 < e.path.length; i1++) {
-                    if (e.path[i1].className.indexOf('dragWindow') === -1) continue;
-                    return;
-                }
+                console.info(e);
                 this.dragging = false;
             },
             onDragDrop   : function (e) {
                 console.info(`popup uploader: onDragDrop`);
-                this.dragging = false;
                 console.info(e);
+                this.dragging = false;
                 let fileList = e.dataTransfer.files;
                 for (let i1 = 0; i1 < fileList.length; i1++) {
                     this.addFile(fileList[i1]);
@@ -269,6 +261,7 @@
             },
             onDragPaste  : function (e) {
                 console.info(`popup uploader: onDragPaste`);
+                console.info(e);
             },
             onInputChange: function (e) {
                 console.info(`popup uploader: onInputChange`);

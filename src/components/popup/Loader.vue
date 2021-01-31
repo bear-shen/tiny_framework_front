@@ -7,7 +7,7 @@
 
 <style lang="scss">
     svg.square.popup_loader {
-        $width: 300px;
+        $width: 240px;
         $angle: 4;
         $speed: 1;
         $colorList: (
@@ -95,7 +95,7 @@
                 isShow       : false,
                 isTransparent: true,
                 angle        : 4,
-                width        : 300,
+                width        : 240,
                 rRatio       : 0.5,//外半径
                 inScale      : 0.6,//内半径（参考）
                 offsets      : [],

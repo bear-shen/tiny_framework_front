@@ -35,14 +35,13 @@
     #popup {
         //background-color: rgba(0, 0, 0, 0.25);
         width: 100vw;
-        height: calc(100vh - #{$footerHeight});
+        height: calc(100vh - #{$headerHeight});
         position: fixed;
-        top: $footerHeight;
-        z-index: 4000;
-        background-image: url(/img/bg.png);
+        top: $headerHeight;
+        z-index: $alphaIndex;
+        background-image: url(../assets/bg.png);
         backdrop-filter: blur(2px);
         opacity: 0;
-
         &::before {
             content: '';
             position: absolute;
@@ -51,15 +50,14 @@
             bottom: 0;
             left: 0;
         }
-
         display: flex;
         align-items: center;
         justify-content: center;
     }
-
-    @media(max-width: 767px) {
+    @media(max-width: $mobileWidth) {
         #popup {
-            top: $footerHeight*0.75;
+            top: 0;
+            height: 100vh;
         }
     }
 </style>

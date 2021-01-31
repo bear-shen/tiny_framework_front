@@ -1,5 +1,5 @@
 <template>
-    <div class="popup_confirm">
+    <div class="confirm">
         <table>
             <tr>
                 <th colspan="2">confirm</th>
@@ -11,8 +11,8 @@
             </tr>
             <tr>
                 <th colspan="2">
-                    <button type="button" class="btn btn-warning" v-on:click="cancel">close</button>
-                    <button type="button" class="btn btn-success" v-on:click="submit">submit</button>
+                    <button type="button" class="negative" v-on:click="cancel">close</button>
+                    <button v-if="callback.submit" type="button" class="positive" v-on:click="submit">submit</button>
                 </th>
             </tr>
         </table>
@@ -22,38 +22,34 @@
 <style lang="scss">
     //和loader相似但是多少有些区别，因此单独写
 
-    .popup_confirm {
+    #popup .confirm {
         z-index: 2;
         position: relative;
         max-width: 90vw;
-        min-width: 25vw;
-        max-height: calc(100vh - #{$footerHeight} * 2);
+        min-width: 20vw;
+        max-height: calc(100vh - #{$headerHeight + $footerHeight});
         overflow-y: auto;
         margin: 0 auto;
-        background: rgba(100, 100, 100, 0.5);
-        padding: 1vw;
-        border-radius: 1vw;
-
+        background: map_get($colors, popup_bk);
+        padding: $fontSize*0.5;
+        @include smallScroll();
+        /*border-radius: 1vw;*/
         table {
             width: 100%;
             height: 100%;
 
             tr:first-child th {
                 text-align: center;
-                font-size: 2em;
-                line-height: 1em;
             }
 
             th {
                 text-align: center;
-                font-size: 1.5em;
                 font-weight: normal;
+                padding-bottom: $fontSize;
             }
 
             td {
                 text-align: left;
-                padding-left: 1vw;
-
                 * {
                     width: 100%;
                 }
@@ -61,19 +57,11 @@
 
             tr:last-child th {
                 text-align: right;
-                line-height: 2em;
-                font-size: 2em;
+                padding-bottom: 0;
             }
         }
         button{
-            margin-left: 1em;
-        }
-    }
-
-    @media(max-width: 767px) {
-        .popup_confirm {
-            max-height: calc(100vh - #{$footerHeight*0.75} * 2);
-            overflow-y: auto;
+            margin-left: $fontSize;
         }
     }
 </style>
@@ -115,8 +103,8 @@
             let data             = Object.assign(
                 {
                     data  : '',
-                    submit: function () {},
-                    cancel: function () {},
+                    submit: false,
+                    cancel: false,
                 }, this.info);
             //
             this.data            = data.data;
@@ -129,16 +117,16 @@
         destroyed: function () {
             this.data            = {};
             //
-            this.callback.submit = () => {};
-            this.callback.cancel = () => {};
+            this.callback.submit = false;
+            this.callback.cancel = false;
         },
         methods  : {
             submit: function () {
-                this.callback.submit();
+                if(this.callback.submit)this.callback.submit();
                 this.$parent.hide();
             },
             cancel: function () {
-                this.callback.cancel();
+                if(this.callback.cancel)this.callback.cancel();
                 this.$parent.hide();
             },
         }

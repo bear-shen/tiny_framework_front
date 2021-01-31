@@ -1,6 +1,6 @@
 <template>
-    <div v-on:click.stop="empty" class="popup_form">
-        <table>
+    <div v-on:click.stop="empty" class="form">
+        <table v-on:click="dmp">
             <tr>
                 <th colspan="2">{{title?title:'Editor'}}</th>
             </tr>
@@ -8,32 +8,38 @@
                 <td>{{key}}</td>
                 <td>
                     <template v-if="key.indexOf('_')===0">
-                        {{data[key].data}}
+                        {{val.data}}
                     </template>
-                    <template v-else-if="!data[key].editable">
-                        {{data[key].data}}
+                    <template v-else-if="!val.editable">
+                        {{val.data}}
                     </template>
-                    <template v-else-if="data[key].type==='text'">
-                        <input type="text" v-model="data[key].data">
+                    <template v-else-if="val.type==='text'">
+                        <input type="text" v-model="val.data">
                     </template>
-                    <template v-else-if="data[key].type==='datetime'">
-                        <input type="datetime-local" v-model="data[key].data">
+                    <template v-else-if="val.type==='datetime'">
+                        <input type="datetime-local" v-model="val.data">
                     </template>
-                    <template v-else-if="data[key].type==='textarea'">
-                        <textarea v-model="data[key].data"></textarea>
+                    <template v-else-if="val.type==='textarea'">
+                        <textarea v-model="val.data"></textarea>
                     </template>
-                    <template v-else-if="data[key].type==='checkbox'">
-                        <template v-for="option in data[key].options">
-                            <input :id="'checkbox_'+key+'_'+option" type="checkbox" :value="option" v-model="data[key].data">
-                            <label :for="'checkbox_'+key+'_'+option">{{option}}</label>
+                    <template v-else-if="val.type==='checkbox'">
+                        <template v-for="option in val.options">
+                            <input :id="'popup_checkbox_'+key+'_'+option" type="checkbox" v-model="val.data" :value="option">
+                            <label :for="'popup_checkbox_'+key+'_'+option">{{option}}</label>
+                        </template>
+                    </template>
+                    <template v-else-if="val.type==='radio'">
+                        <template v-for="option in val.options">
+                            <input :id="'popup_radio_'+key+'_'+option" type="radio" v-model="val.data" :value="option" >
+                            <label :for="'popup_radio_'+key+'_'+option">{{option}}</label>
                         </template>
                     </template>
                 </td>
             </tr>
             <tr>
                 <th colspan="2">
-                    <button type="button" class="btn btn-warning" v-on:click="reset">close</button>
-                    <button type="button" class="btn btn-success" v-on:click="submit">submit</button>
+                    <button type="button" class="negative" v-on:click="reset">close</button>
+                    <button type="button" class="positive" v-on:click="submit">submit</button>
                 </th>
             </tr>
         </table>
@@ -42,39 +48,45 @@
 
 <style lang="scss">
     //和loader相似但是多少有些区别，因此单独写
-    .popup_form {
+    #popup .form {
         z-index: 2;
         position: relative;
         max-width: 90vw;
         min-width: 50vw;
-        max-height: calc(100vh - #{$footerHeight} * 2);
+        max-height: calc(100vh - #{$headerHeight + $footerHeight});
         overflow-y: auto;
         margin: 0 auto;
-        background: rgba(100, 100, 100, 0.5);
-        padding: 1vw;
-        border-radius: 1vw;
+        background: map_get($colors, popup_bk);
+        padding: $fontSize*0.5;
+        @include smallScroll();
+        /*border-radius: 1vw;*/
         table {
             width: 100%;
             height: 100%;
             tr:first-child th {
                 text-align: center;
-                font-size: 2em;
-                line-height: 1em;
+                line-height: $fontSize;
+                padding-bottom: $fontSize;
             }
             th {
                 text-align: right;
             }
             td {
                 text-align: left;
-                padding-left: 1vw;
+                padding-bottom: $fontSize*0.5;
                 * {
-                    width: 100%;
+                    width: -webkit-fill-available;
+                }
+                label{
+                    width: auto;
                 }
             }
             tr:last-child th {
+                padding-top: $fontSize;
                 text-align: right;
-                line-height: 2em;
-                font-size: 2em;
+                button {
+                    margin-left: $fontSize;
+                }
             }
         }
     }
@@ -188,6 +200,11 @@
             },
             empty : function () {
             },
+            dmp   : function () {
+                console.info(this);
+                console.info(this.data);
+                console.info(this.data.checkbox);
+            }
         }
     }
 </script>

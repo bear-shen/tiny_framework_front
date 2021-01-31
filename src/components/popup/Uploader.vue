@@ -59,6 +59,9 @@
                 li:nth-child(2n - 1) {
                     background: map_get($colors, popup_bk_2);
                 }
+                li:last-child {
+                    pointer-events: all;
+                }
                 p {
                     display: inline-block;
                     padding: 0;
@@ -191,6 +194,10 @@
             console.info(`popup uploader: destroyed`);
             this.removePrevent();
         },
+        updated:function() {
+            this.$refs.dragWindow.scrollTop =
+                this.$refs.dragWindow.scrollHeight - this.$refs.dragWindow.clientHeight;
+        },
         mounted  : function () {
             console.info(`popup uploader: mounted`);
             this.callPrevent();
@@ -201,21 +208,21 @@
             this.$refs.dragWindow.addEventListener('paste', this.onDragPaste);
             this.$refs.dragInput.addEventListener('change', this.onInputChange);
             /*this.$refs.dragList.addEventListener('dragenter', (e)=>{
-                e.stopPropagation();
-                e.preventDefault();
-            });
-            this.$refs.dragList.addEventListener('dragleave', (e)=>{
-                e.stopPropagation();
-                e.preventDefault();
-            });
-            this.$refs.dragList.addEventListener('drop', (e)=>{
-                e.stopPropagation();
-                e.preventDefault();
-            });
-            this.$refs.dragList.addEventListener('paste', (e)=>{
-                e.stopPropagation();
-                e.preventDefault();
-            });*/
+             e.stopPropagation();
+             e.preventDefault();
+             });
+             this.$refs.dragList.addEventListener('dragleave', (e)=>{
+             e.stopPropagation();
+             e.preventDefault();
+             });
+             this.$refs.dragList.addEventListener('drop', (e)=>{
+             e.stopPropagation();
+             e.preventDefault();
+             });
+             this.$refs.dragList.addEventListener('paste', (e)=>{
+             e.stopPropagation();
+             e.preventDefault();
+             });*/
         },
         methods  : {
             cancel       : function () {
@@ -254,7 +261,7 @@
                 console.info(`popup uploader: onDragDrop`);
                 console.info(e);
                 this.dragging = false;
-                let fileList = e.dataTransfer.files;
+                let fileList  = e.dataTransfer.files;
                 for (let i1 = 0; i1 < fileList.length; i1++) {
                     this.addFile(fileList[i1]);
                 }

@@ -120,13 +120,6 @@
             margin-left: 1em;
         }
     }
-
-    @media(max-width: 767px) {
-        .popup_login {
-            max-height: calc(100vh - #{$footerHeight*0.75} * 2);
-            overflow-y: auto;
-        }
-    }
 </style>
 
 <script>

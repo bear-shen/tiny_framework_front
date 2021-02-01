@@ -23,9 +23,6 @@
 <style lang="scss">
     #popup .file_list {
         z-index: 2;
-        /*max-height: 80%;*/
-        /*min-height: 40%;*/
-        /*max-height: 50vh;*/
         max-width: 80vw;
         min-width: 40vw;
         background-color: map_get($colors, popup_bk);

@@ -801,7 +801,7 @@
             },
             popupDev      : function () {
                 console.warn('popupDev');
-                let type = 'list';
+                let type = 'login';
                 switch (type) {
                     case 'form':
                         store.commit('popup', {

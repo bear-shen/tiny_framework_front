@@ -31,8 +31,9 @@
 </template>
 
 <style lang="scss">
-    .popup_file_list {
-        font-size: $fontSize*1.2;
+    #popup .list_content {
+        font-size: $fontSize;
+        line-height: $fontSize*1.5;
 
         .list {
             //margin-left: 2*$fontSize;

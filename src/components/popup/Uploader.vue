@@ -29,7 +29,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-    .uploader {
+    #popup .uploader {
         z-index: 2;
         position: relative;
         width: 50vw;

@@ -2,7 +2,7 @@
 移动/复制 文件用表单
 -->
 <template>
-    <div class="popup_file_list">
+    <div class="file_list">
         <div class="title">{{title}}</div>
         <div class="search"><input type="text" v-model="search"/></div>
         <div class="list_content">
@@ -21,49 +21,47 @@
 </template>
 
 <style lang="scss">
-    .popup_file_list {
-        z-index: 10;
+    #popup .file_list {
+        z-index: 2;
         /*max-height: 80%;*/
         /*min-height: 40%;*/
-        height: 50vh;
-        max-width: 90%;
-        width: 480px;
-        background-color: hsla(0, 0%, 25%, 0.75);
-        padding: $fontSize;
+        /*max-height: 50vh;*/
+        max-width: 80vw;
+        min-width: 40vw;
+        background-color: map_get($colors, popup_bk);
+        padding: $fontSize*0.5;
         position: relative;
-
         .title {
             text-align: center;
-            height: $fontSize*1.5;
-            line-height: $fontSize*1.5;
-            font-size: $fontSize*1.2;
+            height: $fontSize;
+            line-height: $fontSize;
+            font-size: $fontSize;
         }
-
         .search {
             padding: $fontSize*0.5 0;
             input {
-                width: 100%;
-                height: $fontSize*2;
-                line-height: $fontSize*2;
-                font-size: $fontSize*1.2;
-                padding: 0 $fontSize*0.5;
+                width: -webkit-fill-available;
+                height: $fontSize*1.5;
+                line-height: $fontSize*1.5;
+                font-size: $fontSize;
+                padding: 0 $fontSize*0.25;
             }
         }
-
         .list_content {
             overflow: auto;
             @include smallScroll;
-            height: calc(50vh - #{$fontSize*9.5});
+            max-height: 50vh;
+            min-height: 30vh;
         }
-
         .list_operate {
+            text-align: right;
             height: $fontSize*2;
-            position: absolute;
-            bottom: $fontSize;
-            right: $fontSize;
-
+            margin-top: $fontSize*0.5;
+            /*position: absolute;*/
+            /*bottom: $fontSize*0.5;*/
+            /*right: $fontSize*0.5;*/
             button {
-                margin-left: $fontSize;
+                margin-left: $fontSize*0.5;
             }
         }
     }
@@ -91,10 +89,10 @@
                 title : 'Title',
                 search: '',
                 root  : {
-                    id      : 0,
-                    title   : 'root',
-                    type    : 'folder',
-                 },
+                    id   : 0,
+                    title: 'root',
+                    type : 'folder',
+                },
             }
         },
         created   : function () {
@@ -123,7 +121,7 @@
                 this.$parent.hide();
                 console.info(currentRoute);
                 console.info(curItem);
-                this.info.submit(curItem,currentRoute);
+                this.info.submit(curItem, currentRoute);
             },
             empty : function () {
             },

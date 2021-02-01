@@ -1,12 +1,12 @@
 <template>
-    <svg class="popup_loader square" xmlns="http://www.w3.org/2000/svg" version="1.1" :width="width+'px'" :height="width+'px'">
+    <svg class="loader square" xmlns="http://www.w3.org/2000/svg" version="1.1" :width="width+'px'" :height="width+'px'">
         <polygon v-for="offset in offsets" :points="offset"></polygon>
         <!--<polygon v-for="offset in offsets" points="0,224.5139883 309.0169944,449.0279766 1000,224.5139883 309.0169944,0"></polygon>-->
     </svg>
 </template>
 
 <style lang="scss">
-    svg.square.popup_loader {
+    #popup svg.square.loader {
         $width: 240px;
         $angle: 4;
         $speed: 1;

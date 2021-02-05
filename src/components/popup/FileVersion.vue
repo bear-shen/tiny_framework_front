@@ -2,26 +2,23 @@
     <div class="fileVersion">
         <ul>
             <li v-for="(item,index) in list">
-                <div class="content">
-                    <div class="cover">
-                        <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
-                        <img v-if="item.cover" class="ct_cover" :src="item.cover" :alt="item.title">
-                    </div>
-                    <div class="meta">
-                        <div>{{item.hash}}</div>
-                        <div>{{item.type}} ({{item.suffix}})</div>
-                        <div>{{item.size}}</div>
-                        <div>{{item.time_create}}</div>
-                        <div>{{item.time_update}}</div>
-                    </div>
+                <div class="ct_alpha">
+                    <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
+                    <img v-else class="ct_cover" :src="item.cover" :alt="item.title">
                 </div>
-                <div class="operate">
-                    <button type="button" class="btn btn-dark sysIcon sysIcon_download" v-on:click="download(index)">
-                        down
-                    </button>
-                    <button v-if="item.is_current" type="button" class="btn btn-dark sysIcon sysIcon_link" v-on:click="setCurrent(index)">
-                        current
-                    </button>
+                <div class="ct_meta">
+                    <div class="ct_type">{{item.type}}</div>
+                    <div class="ct_title">{{item.title}}</div>
+                    <div class="ct_description">{{item.description}}</div>
+                    <div class="ct_size">{{item.size}}</div>
+                    <div class="ct_hash">{{item.hash}}</div>
+                    <div class="ct_time_create">{{item.time_create}}</div>
+                    <div class="ct_time_update">{{item.time_update}}</div>
+                </div>
+                <div class="ct_operate">
+                    <button type="button" class="sysIcon sysIcon_download" v-on:click="download(index)">&nbsp;down</button>
+                    <button v-if="item.is_current" type="button" class="sysIcon sysIcon_link" v-on:click="setCurrent(index)">&nbsp;current</button>
+                    <button type="button" class="sysIcon sysIcon_link" v-on:click="deleteNode(index)">&nbsp;delete</button>
                 </div>
             </li>
         </ul>
@@ -33,11 +30,10 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-    .fileVersion {
+    #popup .fileVersion {
         position: relative;
         width: 100%;
         height: 100%;
-
         ul {
             width: 95%;
             height: calc(100% - #{$fontSize*4});
@@ -45,75 +41,88 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
-            margin: $fontSize*2 0;
+            margin: $fontSize auto;
             overflow: auto;
-
             @include smallScroll;
-
+            .ct_alpha {
+                $hWithPad: map_get($sizeConf, list_detail_image_thumb_h) - $fontSize*1;
+                height: $hWithPad;
+                line-height: $hWithPad;
+                text-align: center;
+                span, img {
+                    display: inline-block;
+                    max-width: 100%;
+                    max-height: 100%;
+                    font-size: $hWithPad*0.75;
+                    vertical-align: middle;
+                }
+            }
+            .ct_alpha {}
+            .ct_meta {
+                div, label, input, textarea {
+                    display: block;
+                    width: 100%;
+                    white-space: normal;
+                    word-break: break-all;
+                    padding: $fontSize*0.25 0;
+                }
+                input, textarea {
+                }
+            }
+            .ct_alpha, .ct_meta {
+                padding: $fontSize*0.5;
+            }
             li {
-                $liMaxWidth: 500px;
-                width: $liMaxWidth;
-                list-style: none;
-
-                .content {
-                    display: flex;
-                    min-height: $liMaxWidth*0.5;
-                    margin-top: $fontSize;
-                    margin-bottom: $fontSize;
-
-                    .cover {
-                        height: $liMaxWidth*0.5;
-                        width: $liMaxWidth*0.5;
-                        position: relative;
-
-                        text-align: center;
-
-                        .ct_icon,
-                        .ct_cover {
-                            max-width: calc(#{$liMaxWidth} * 0.5);
-                            max-height: calc(#{$liMaxWidth} * 0.5);
-                            margin-left: auto;
-                            margin-right: auto;
-                            display: block;
-                        }
-
-                        .ct_icon {
-                            z-index: 1;
-                            font-size: $liMaxWidth*0.4;
-                            line-height: $liMaxWidth*0.5;
-                            text-align: center;
-                        }
-
-                        .ct_cover {
-                            z-index: 2;
-                        }
+                width: 25%;
+                .ct_alpha {
+                    width: calc(33.33% - #{$fontSize});
+                }
+                .ct_meta {
+                    width: calc(66.66% - #{$fontSize});
+                }
+            }
+            @media (max-width: $narrowWidth) {
+                li {
+                    width: 33%;
+                    .ct_alpha {
+                        width: calc(33.33% - #{$fontSize});
                     }
-
-                    .meta {
-                        width: 50%;
-
-                        div {
-                            white-space: normal;
-                            word-break: break-all;
-                        }
+                    .ct_meta {
+                        width: calc(66.66% - #{$fontSize});
                     }
                 }
-
-                .operate {
-                    text-align: center;
-
-                    button {
-                        margin: 0 $fontSize*1;
+            }
+            @media (max-width: $tabletWidth) {
+                li {
+                    width: 50%;
+                    .ct_alpha {
+                        width: calc(33.33% - #{$fontSize});
+                    }
+                    .ct_meta {
+                        width: calc(66.66% - #{$fontSize});
+                    }
+                }
+            }
+            @media (max-width: $mobileWidth) {
+                li {
+                    & > div {
+                        display: block;
+                        vertical-align: top;
+                    }
+                }
+                li {
+                    width: 100%;
+                    .ct_alpha, .ct_meta, .ct_tag {
+                        width: calc(100% - #{$fontSize});
                     }
                 }
             }
         }
-
         .btnClose {
             position: absolute;
             top: 2%;
             right: 1.5%;
-            background-color: rgba(0, 0, 0, 0.25);
+            background-color: map_get($colors, popup_bk_2);
             width: $fontSize*2;
             height: $fontSize*2;
             line-height: $fontSize*2;
@@ -151,6 +160,10 @@
             console.info(`popup FileDetail: mounted`);
         },
         methods  : {
+            deleteNode: function (itemIndex) {
+                if (this.list.length > 1)
+                    this.list.splice(itemIndex, 1);
+            },
             download  : function (itemIndex) {
             },
             /**

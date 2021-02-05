@@ -1,5 +1,5 @@
 <template>
-    <div class="popup_register">
+    <div class="register">
         <table>
             <tr>
                 <th colspan="2">Register</th>
@@ -40,57 +40,44 @@
 
 <style lang="scss">
     //和loader相似但是多少有些区别，因此单独写
-
-    .popup_register {
+    #popup .register {
         z-index: 2;
-        position: relative;
-        max-width: 90vw;
+        max-width: 80vw;
         min-width: 25vw;
-        max-height: calc(100vh - #{$footerHeight} * 2);
-        overflow-y: auto;
-        margin: 0 auto;
-        background: rgba(100, 100, 100, 0.5);
-        padding: 1vw;
-        border-radius: 1vw;
-
+        background-color: map_get($colors, popup_bk);
+        padding: $fontSize*0.5;
+        position: relative;
         table {
             width: 100%;
             height: 100%;
-
             tr:first-child {
                 > * {
-                    padding-bottom: $fontSize;
+                    padding-bottom: $fontSize*0.5;
                 }
-
                 th {
                     text-align: center;
-                    font-size: 2em;
-                    line-height: 1em;
+                    font-size: $fontSize;
+                    line-height: $fontSize*2;
                 }
             }
-
             th {
                 text-align: center;
-                font-size: 1.5em;
+                font-size: $fontSize;
                 font-weight: normal;
             }
-
             td {
                 text-align: left;
-                padding-left: 1vw;
-
                 * {
-                    width: 100%;
+                    width: -webkit-fill-available;
                     vertical-align: bottom;
                 }
             }
-
             tr:last-child th {
                 text-align: right;
-                line-height: 2em;
-                font-size: 2em;
+                line-height: $fontSize;
+                font-size: $fontSize;
                 white-space: nowrap;
-
+                padding-top: $fontSize*0.5;
                 span {
                     font-size: $fontSize;
                     max-width: 50vw;
@@ -99,25 +86,34 @@
                     display: inline-block;
                 }
             }
-
             .captchaRow {
                 display: flex;
-
                 .login_captcha_img {
                     background-color: brown;
-                    height: calc(#{$fontSize} * 2 + 2px);
+                    height: $fontSize*2;
                     width: auto;
                     cursor: pointer;
                 }
-
                 .login_captcha_img,
                 .login_captcha {
                 }
             }
         }
-
         button {
-            margin-left: 1em;
+            margin-left: $fontSize*0.5;
+        }
+        @media (max-width: $mobileWidth) {
+            width: 90vw;
+            max-width: 90vw;
+            table,tr{
+                display: block;
+            }
+            td,th{
+                display: block;
+                &:first-child{
+                    line-height: $fontSize*2;
+                }
+            }
         }
     }
 </style>

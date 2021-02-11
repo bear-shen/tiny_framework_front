@@ -212,36 +212,14 @@
                 query = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
                 //
                 return new Promise(((resolve, reject) => {
-                    /*helper.query(
+                    helper.query(
                      'user_list',
                      query
                      ).then((data) => {
                      console.info(data);
                      console.info(data.data);
                      return resolve({list: data.data, query: data.query});
-                     });*/
-                    resolve(
-                        {
-                            list : [
-                                {
-                                    id         : 1,
-                                    name       : 'admin',
-                                    mail       : 'admin@admin.com',
-                                    description: 'admin group',
-                                    group      : {
-                                        id         : 1,
-                                        name       : 'admin',
-                                        description: 'admin description',
-                                        admin      : 1,
-                                    },
-                                    status     : 1,
-                                    time_create: '1919-08-10 11:45:14',
-                                    time_update: '1919-08-10 11:45:14',
-                                },
-                            ],
-                            query: query,
-                        }
-                    );
+                     });
                 }));
             },
             /**
@@ -250,6 +228,7 @@
             fillQuery     : function (query) {
                 console.info('list: fillQuery');
                 // console.warn(query);
+                if(!query)query={};
                 let queryNames = Object.getOwnPropertyNames(query);
                 for (let i1 = 0; i1 < queryNames.length; i1++) {
                     let name = queryNames[i1];

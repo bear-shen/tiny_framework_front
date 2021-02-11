@@ -673,6 +673,7 @@
             fillQuery     : function (query) {
                 console.info('list: fillQuery');
                 // console.warn(query);
+                if(!query)query={};
                 let queryNames = Object.getOwnPropertyNames(query);
                 for (let i1 = 0; i1 < queryNames.length; i1++) {
                     let name = queryNames[i1];

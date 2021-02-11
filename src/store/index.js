@@ -9,13 +9,13 @@ export default new Vuex.Store(
     {
         state    : {
             //列表页用的跳转方法，想了想还是用 $parent 干脆一些
-            gotoFunc    : null,
+            gotoFunc: null,
             //
             paginatorDOM: null,
             //
-            msgDOM      : null,
+            msgDOM: null,
             //
-            popupDOM    : null,
+            popupDOM: null,
         },
         mutations: {
             // -------------------------------
@@ -44,17 +44,17 @@ export default new Vuex.Store(
              state.gotoFunc = func;
              },*/
             // -------------------------------
-            pushMsg          : (state, payload) => {
+            pushMsg       : (state, payload) => {
                 console.info('store pushMsg');
                 if (!state.msgDOM) return false;
-                state.msgDOM.push(payload.type, payload.data);
+                state.msgDOM.push(payload.data, payload.type);
             },
-            registerMsgDOM   : (state, dom) => {
+            registerMsgDOM: (state, dom) => {
                 console.info('store registerMsgDOM');
                 state.msgDOM = dom;
             },
             // -------------------------------
-            popup            : (state, payload) => {
+            popup           : (state, payload) => {
                 console.info('store popup');
                 /**
                  * ----
@@ -111,7 +111,7 @@ export default new Vuex.Store(
                 if (!state.popupDOM) return false;
                 state.popupDOM.show(payload);
             },
-            registerPopupDOM : (state, dom) => {
+            registerPopupDOM: (state, dom) => {
                 console.info('store registerPopupDOM');
                 state.popupDOM = dom;
             },

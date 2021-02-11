@@ -1,4 +1,5 @@
 import config from "../config";
+import store  from "../store";
 
 const Helper = {
     /**
@@ -40,6 +41,19 @@ const Helper = {
 
                 let targetData = JSON.parse(xmlHttp.responseText);
                 if (!targetData) return reject(xmlHttp.responseText);
+                if (targetData.code === 401) {
+                    store.commit(
+                        'popup',
+                        {type: 'login',}
+                    );
+                    reject();
+                } else if (targetData.code != 0) {
+                    store.commit(
+                        'pushMsg',
+                        {type: 'error', data: `${targetData.code}:${targetData.msg}`,}
+                    );
+                    reject();
+                }
                 return resolve(targetData.data ? targetData.data : null);
             };
             xmlHttp.send(JSON.stringify(data ? data : {}));

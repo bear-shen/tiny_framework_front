@@ -139,7 +139,7 @@
         },
         methods: {
             push      : function (data, type) {
-                // console.info('pushing');
+                //console.info('pushing');
                 switch (type) {
                     case 'success':
                     case 'info':

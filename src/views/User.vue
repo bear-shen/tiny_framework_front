@@ -36,7 +36,7 @@
                     <td><input type="text" v-model="user.name"></td>
                     <td><input type="text" v-model="user.mail"></td>
                     <td><input type="text" v-model="user.description"></td>
-                    <td :class="{positive:user.status,negative:!user.status,}">
+                    <td :class="[user.status*1?'positive':'negative']">
                         <input type="radio" :value="1" v-model="user.status" :id="`us_${user.id}_admin_0`">
                         <label :for="`us_${user.id}_admin_0`">Enable</label>
                         <input type="radio" :value="0" v-model="user.status" :id="`us_${user.id}_admin_1`">
@@ -55,8 +55,8 @@
                     <td>{{ user.name }}</td>
                     <td>{{ user.mail }}</td>
                     <td>{{ user.description }}</td>
-                    <td :class="{positive:user.status,negative:!user.status,}">
-                        {{ user.status ? 'Enable' : 'Disable' }}
+                    <td :class="[user.status*1?'positive':'negative']">
+                        {{ user.status * 1 ? 'Enable' : 'Disable' }}
                     </td>
                     <td>
                         {{ user.time_update }}

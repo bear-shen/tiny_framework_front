@@ -68,7 +68,7 @@
                             <span class="sysIcon sysIcon_save" v-else v-on:click="saveAuthGroup(groupIndex)"></span>
                         </th>
                         <td>
-                            <table class="subTable" v-if="editAuthGroupIndex!==groupIndex">
+                            <table class="subTable" v-if="!item.editingAuth">
                                 <tr>
                                     <th>DirId</th>
                                     <th>Path</th>
@@ -117,7 +117,7 @@
                                     <td class="sysIcon sysIcon_delete" v-on:click="delAuth(groupIndex,dirIndex)"></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="6" class="sysIcon sysIcon_plus-square-o addRow" v-on:click="addAuth()"></td>
+                                    <td colspan="6" class="sysIcon sysIcon_plus-square-o addRow" v-on:click="addAuth(groupIndex)"></td>
                                 </tr>
                             </table>
                         </td>
@@ -348,12 +348,12 @@ export default {
          * @todo api user_group_del
          * */
         delGroup: function (groupIndex) {
-            this.list.splice(groupIndex, 1, this.list[groupIndex]);
+            this.list.splice(groupIndex, 1);
         },
         // ---------------------------------
         modAuthGroup: function (groupIndex) {
             console.info('UserGroup: modAuthGroup');
-            this.list[groupIndex].editing = 1;
+            this.list[groupIndex].editingAuth = 1;
             this.list.splice(groupIndex, 1, this.list[groupIndex]);
         },
         /**
@@ -375,6 +375,8 @@ export default {
                     delete : 1,
                 })
             ;
+            this.list[groupIndex].editingAuth = 1;
+            this.list.splice(groupIndex, 1, this.list[groupIndex]);
         },
         setAuth      : function (groupIndex, dirIndex, selectIndex) {
             console.info('UserGroup: setAuth');
@@ -387,6 +389,7 @@ export default {
             this.list[groupIndex]
                 .control_dir.splice(dirIndex, 1)
             ;
+            this.list.splice(groupIndex, 1, this.list[groupIndex]);
         },
         /**
          * @todo api file_list

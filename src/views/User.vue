@@ -196,19 +196,28 @@ export default {
         /**
          * @todo api user_group_get
          * */
-        hinterQuery   : function () {
-            console.debug(`User: hinterQuery`);
+        hinterQuery   : function (searchTxt) {
+            console.debug(`User: hinterQuery ${searchTxt}`);
             //
             return new Promise((resolve, reject) => {
-                return resolve(
+                helper.query(
+                    'user_group_list',
                     {
-                        list: [
-                            {id: 4, name: 'administrator', description: 'this is description', admin: 1},
-                            {id: 2, name: 'hentai', description: 'this is description', admin: 0},
-                            {id: 3, name: 'little pony', description: 'this is description', admin: 0},
-                            {id: 1, name: 'cthulhu', description: 'this is description', admin: 0},
-                        ],
-                    });
+                        name : searchTxt,
+                        short: 1,
+                    }
+                ).then((data) => {
+                    return resolve({list: data});
+                });
+                /*return resolve(
+                 {
+                 list: [
+                 {id: 4, name: 'administrator', description: 'this is description', admin: 1},
+                 {id: 2, name: 'hentai', description: 'this is description', admin: 0},
+                 {id: 3, name: 'little pony', description: 'this is description', admin: 0},
+                 {id: 1, name: 'cthulhu', description: 'this is description', admin: 0},
+                 ],
+                 });*/
             });
         },
         hinterCallback: function (userIndex, target) {
@@ -217,6 +226,7 @@ export default {
             this.list[userIndex].group.name        = target.name;
             this.list[userIndex].group.description = target.description;
             this.list[userIndex].group.admin       = target.admin;
+            this.list.splice(userIndex, 1, this.list[userIndex]);
         },
         // ---------------------------------
         /**

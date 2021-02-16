@@ -26,7 +26,7 @@
                         </tr>
                         <tr>
                             <th>Status</th>
-                            <td :class="{positive:item.status,negative:!item.status,}">
+                            <td :class="[item.status==1?'positive':'negative']">
                                 <input type="radio" :value="1" v-model="item.status" :id="`ug_${item.id}_status_0`">
                                 <label :for="`ug_${item.id}_status_0`">On</label>
                                 <input type="radio" :value="0" v-model="item.status" :id="`ug_${item.id}_status_1`">
@@ -35,7 +35,7 @@
                         </tr>
                         <tr>
                             <th>Admin</th>
-                            <td :class="{positive:item.admin,negative:!item.admin,}">
+                            <td :class="[item.admin==1?'positive':'negative']">
                                 <input type="radio" :value="1" v-model="item.admin" :id="`ug_${item.id}_admin_0`">
                                 <label :for="`ug_${item.id}_admin_0`">Yey</label>
                                 <input type="radio" :value="0" v-model="item.admin" :id="`ug_${item.id}_admin_1`">
@@ -54,11 +54,11 @@
                         </tr>
                         <tr>
                             <th>Status</th>
-                            <td :class="{positive:item.status,negative:!item.status,}">{{ item.status ? 'On' : 'Off' }}</td>
+                            <td :class="[item.status==1?'positive':'negative']">{{ item.status == 1 ? 'On' : 'Off' }}</td>
                         </tr>
                         <tr>
                             <th>Admin</th>
-                            <td :class="{positive:item.status,negative:!item.status,}">{{ item.admin ? 'Y' : 'N' }}</td>
+                            <td :class="[item.admin==1?'positive':'negative']">{{ item.admin == 1 ? 'Y' : 'N' }}</td>
                         </tr>
                     </template>
                     <tr>
@@ -79,9 +79,9 @@
                                 <tr v-for="dir in item.control_dir">
                                     <td>{{ dir.id_node }}</td>
                                     <td>{{ dir.path }}</td>
-                                    <td :class="{positive:dir.access,negative:!dir.access,}">{{ dir.access ? 'Allow' : 'Deny' }}</td>
-                                    <td :class="{positive:dir.modify,negative:!dir.modify,}">{{ dir.modify ? 'Allow' : 'Deny' }}</td>
-                                    <td :class="{positive:dir.delete,negative:!dir.delete,}">{{ dir.delete ? 'Allow' : 'Deny' }}</td>
+                                    <td :class="[dir.access==1?'positive':'negative']">{{ dir.access == 1 ? 'Allow' : 'Deny' }}</td>
+                                    <td :class="[dir.modify==1?'positive':'negative']">{{ dir.modify == 1 ? 'Allow' : 'Deny' }}</td>
+                                    <td :class="[dir.delete==1?'positive':'negative']">{{ dir.delete == 1 ? 'Allow' : 'Deny' }}</td>
                                 </tr>
                             </table>
                             <table class="subTable editing" v-else>
@@ -139,7 +139,7 @@
                                 <tr v-for="user in item.user">
                                     <td class="pointer" v-on:click="goto('user',user.id)">{{ user.id }}</td>
                                     <td class="pointer" v-on:click="goto('user',user.id)">{{ user.name }}</td>
-                                    <td :class="{positive:user.status,negative:!user.status,}">{{ user.status ? 'On' : 'Off' }}</td>
+                                    <td :class="[user.status==1?'positive':'negative']">{{ user.status == 1 ? 'On' : 'Off' }}</td>
                                     <td>{{ user.time_update }}</td>
                                 </tr>
                             </table>
@@ -341,14 +341,45 @@ export default {
          * @todo api user_group_mod
          * */
         saveGroup: function (groupIndex) {
-            this.list[groupIndex].editing = 0;
-            this.list.splice(groupIndex, 1, this.list[groupIndex]);
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'user_group_mod',
+                    {
+                        id         : this.list[groupIndex].id,
+                        name       : this.list[groupIndex].name,
+                        description: this.list[groupIndex].description,
+                        admin      : this.list[groupIndex].admin,
+                        status     : this.list[groupIndex].status,
+                    }
+                ).then((data) => {
+                    console.info(data);
+                    this.list[groupIndex].id      = data;
+                    this.list[groupIndex].editing = 0;
+                    this.list.splice(groupIndex, 1, this.list[groupIndex]);
+                    return resolve();
+                }).catch((data) => {
+                    console.info(data);
+                });
+            });
         },
         /**
          * @todo api user_group_del
          * */
         delGroup: function (groupIndex) {
-            this.list.splice(groupIndex, 1);
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'user_group_del',
+                    {
+                        id: this.list[groupIndex].id,
+                    }
+                ).then((data) => {
+                    console.info(data);
+                    this.list.splice(groupIndex, 1);
+                    return resolve();
+                }).catch((data) => {
+                    console.info(data);
+                });
+            });
         },
         // ---------------------------------
         modAuthGroup: function (groupIndex) {
@@ -360,8 +391,22 @@ export default {
          * @todo api user_group_auth
          * */
         saveAuthGroup: function (groupIndex) {
-            this.list[groupIndex].editingAuth = 0;
-            this.list.splice(groupIndex, 1, this.list[groupIndex]);
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'user_group_auth',
+                    {
+                        id  : this.list[groupIndex].id,
+                        list: this.list[groupIndex].control_dir,
+                    }
+                ).then((data) => {
+                    console.info(data);
+                    this.list[groupIndex].editingAuth = 0;
+                    this.list.splice(groupIndex, 1, this.list[groupIndex]);
+                    return resolve();
+                }).catch((data) => {
+                    console.info(data);
+                });
+            });
         },
         addAuth      : function (groupIndex) {
             console.info('UserGroup: addAuth');
@@ -377,12 +422,6 @@ export default {
             ;
             this.list[groupIndex].editingAuth = 1;
             this.list.splice(groupIndex, 1, this.list[groupIndex]);
-        },
-        setAuth      : function (groupIndex, dirIndex, selectIndex) {
-            console.info('UserGroup: setAuth');
-            let current                                         = this.selector[selectIndex];
-            this.list[groupIndex].control_dir[dirIndex].id_node = current.id_node;
-            this.list[groupIndex].control_dir[dirIndex].path    = current.path;
         },
         delAuth      : function (groupIndex, dirIndex) {
             console.info(`UserGroup: delAuth ${groupIndex} ${dirIndex}`)

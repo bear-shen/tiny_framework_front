@@ -400,6 +400,7 @@ export default {
                     }
                 ).then((data) => {
                     console.info(data);
+                    this.list[groupIndex].control_dir = data;
                     this.list[groupIndex].editingAuth = 0;
                     this.list.splice(groupIndex, 1, this.list[groupIndex]);
                     return resolve();

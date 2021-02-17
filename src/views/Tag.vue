@@ -254,7 +254,7 @@ export default {
                     sub.push(
                         {
                             id         : 1,
-                            group_id   : 1,
+                            id_group   : 1,
                             name       : 'tag1',
                             alt        : 'tag1,tag1,tag1',
                             description: 'this is tag 1',
@@ -341,7 +341,7 @@ export default {
                 this.list[groupIndex].child.push(
                     {
                         id         : 0,
-                        group_id   : this.list[groupIndex].id,
+                        id_group   : this.list[groupIndex].id,
                         name       : '',
                         alt        : '',
                         description: '',

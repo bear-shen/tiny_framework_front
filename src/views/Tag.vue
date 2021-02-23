@@ -232,45 +232,45 @@ export default {
                     console.info(data);
                 });
             });
-            query    = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
-            //
-            let list = [];
-            for (let i = 0; i < Math.floor(Math.random() * 7); i++) {
-                list.push(
-                    {
-                        id         : 1,
-                        name       : 'group1',
-                        alt        : 'group1,group1,group1',
-                        description: 'this is group 1',
-                        sort       : 1,
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        child      : [],
-                    });
-            }
-            for (let i = 0; i < list.length; i++) {
-                let sub = [];
-                for (let j = 0; j < Math.floor(Math.random() * 7); j++) {
-                    sub.push(
-                        {
-                            id         : 1,
-                            id_group   : 1,
-                            name       : 'tag1',
-                            alt        : 'tag1,tag1,tag1',
-                            description: 'this is tag 1',
-                            //sort       : 1,
-                            time_create: '1919-08-10 11:45:14',
-                            time_update: '1919-08-10 11:45:14',
-                        }
-                    );
-                    list[i].child = sub;
-                }
-            }
-            //
-            return new Promise((resolve, reject) => {
-                console.debug({list});
-                return resolve({list, query});
-            });
+            /*query    = Object.assign(query, {page: typeof page === 'undefined' ? 1 : page})
+             //
+             let list = [];
+             for (let i = 0; i < Math.floor(Math.random() * 7); i++) {
+             list.push(
+             {
+             id         : 1,
+             name       : 'group1',
+             alt        : 'group1,group1,group1',
+             description: 'this is group 1',
+             sort       : 1,
+             time_create: '1919-08-10 11:45:14',
+             time_update: '1919-08-10 11:45:14',
+             child      : [],
+             });
+             }
+             for (let i = 0; i < list.length; i++) {
+             let sub = [];
+             for (let j = 0; j < Math.floor(Math.random() * 7); j++) {
+             sub.push(
+             {
+             id         : 1,
+             id_group   : 1,
+             name       : 'tag1',
+             alt        : 'tag1,tag1,tag1',
+             description: 'this is tag 1',
+             //sort       : 1,
+             time_create: '1919-08-10 11:45:14',
+             time_update: '1919-08-10 11:45:14',
+             }
+             );
+             list[i].child = sub;
+             }
+             }
+             //
+             return new Promise((resolve, reject) => {
+             console.debug({list});
+             return resolve({list, query});
+             });*/
         },
         /**
          * 写入参数
@@ -324,15 +324,33 @@ export default {
          * @todo api tag_group_mod
          * */
         saveGroup: function (groupIndex) {
-            let item     = this.list[groupIndex];
-            item.editing = 0;
-            this.list.splice(groupIndex, 1, item);
+            let item = this.list[groupIndex];
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'tag_group_mod',
+                    item
+                ).then((data) => {
+                    console.info(data);
+                    item.editing = 0;
+                    item.id      = data;
+                    this.list.splice(groupIndex, 1, item);
+                });
+            });
         },
         /**
          * @todo api tag_group_del
          * */
         delGroup: function (groupIndex) {
-            this.list.splice(groupIndex, 1);
+            let item = this.list[groupIndex];
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'tag_group_del',
+                    {id: item.id}
+                ).then((data) => {
+                    console.info(data);
+                    this.list.splice(groupIndex, 1);
+                });
+            });
         },
         //
         modTag: function (groupIndex, tagIndex) {

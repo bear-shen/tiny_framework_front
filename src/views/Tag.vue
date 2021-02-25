@@ -368,9 +368,6 @@ export default {
                 this.list[groupIndex].child.splice(tagIndex, 1, item);
             }
         },
-        /**
-         * @todo api tag_mod
-         * */
         saveTag: function (groupIndex, tagIndex) {
             let item = this.list[groupIndex].child[tagIndex];
             return new Promise((resolve, reject) => {
@@ -385,11 +382,10 @@ export default {
                 });
             });
         },
-        /**
-         * @todo api tag_del
-         * */
         delTag: function (groupIndex, tagIndex) {
             if (!this.list[groupIndex]) return;
+            if (!this.list[groupIndex].child[tagIndex]) return;
+            let item = this.list[groupIndex].child[tagIndex];
             return new Promise((resolve, reject) => {
                 helper.query(
                     'tag_del',

@@ -298,7 +298,7 @@ export default {
             this.fillQuery(resolveData.query);
         },
         //
-        modGroup: function (groupIndex) {
+        modGroup : function (groupIndex) {
             console.info(groupIndex);
             if (groupIndex === -1) {
                 this.list.push(
@@ -320,9 +320,6 @@ export default {
                 this.list.splice(groupIndex, 1, item);
             }
         },
-        /**
-         * @todo api tag_group_mod
-         * */
         saveGroup: function (groupIndex) {
             let item = this.list[groupIndex];
             return new Promise((resolve, reject) => {
@@ -337,10 +334,7 @@ export default {
                 });
             });
         },
-        /**
-         * @todo api tag_group_del
-         * */
-        delGroup: function (groupIndex) {
+        delGroup : function (groupIndex) {
             let item = this.list[groupIndex];
             return new Promise((resolve, reject) => {
                 helper.query(
@@ -378,16 +372,33 @@ export default {
          * @todo api tag_mod
          * */
         saveTag: function (groupIndex, tagIndex) {
-            let item     = this.list[groupIndex].child[tagIndex];
-            item.editing = 0;
-            this.list[groupIndex].child.splice(tagIndex, 1, item);
+            let item = this.list[groupIndex].child[tagIndex];
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'tag_mod',
+                    item
+                ).then((data) => {
+                    console.info(data);
+                    item.editing = 0;
+                    item.id      = data;
+                    this.list[groupIndex].child.splice(tagIndex, 1, item);
+                });
+            });
         },
         /**
          * @todo api tag_del
          * */
         delTag: function (groupIndex, tagIndex) {
             if (!this.list[groupIndex]) return;
-            this.list[groupIndex].child.splice(tagIndex, 1);
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'tag_del',
+                    {id: item.id}
+                ).then((data) => {
+                    console.info(data);
+                    this.list[groupIndex].child.splice(tagIndex, 1);
+                });
+            });
         },
         //
         goto: function (type, targetId) {

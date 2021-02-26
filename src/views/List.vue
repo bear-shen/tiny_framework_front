@@ -246,7 +246,7 @@
             // console.info(this);
             // this.page = this.$store.state.pageSet;
             store.commit('usePagination');
-            this.popupDev();
+            //this.popupDev();
 
         },
         beforeDestroy: function () {

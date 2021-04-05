@@ -788,11 +788,11 @@ export default {
             // this.$parent.showConfirm();
         },
         addFile  : function () {
-            store.commit('popup', {
-                type: 'login',
-                info: {},
-            });
-            return;
+            /*store.commit('popup', {
+             type: 'upload',
+             info: {},
+             });
+             return;*/
             console.info('list: addFile');
             /*store.commit('popup', {
              type: 'login',

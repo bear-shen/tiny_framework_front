@@ -28,11 +28,14 @@ const Helper = {
         }
         return !modified;
     },
-    query      : function (api, data) {
+    query      : function (api, data, extra) {
         return new Promise(((resolve, reject) => {
             let targetUrl           = config.api(api);
             let xmlHttp             = new XMLHttpRequest();
             xmlHttp.withCredentials = true;
+            if (extra && extra.progress) {
+                xmlHttp.addEventListener("progress", extra.progress)
+            }
             xmlHttp.open('POST', targetUrl, true);
             xmlHttp.onreadystatechange = function () {
                 if (xmlHttp.readyState !== 4 /*&& xmlhttp.status < 400*/) return;
@@ -56,7 +59,16 @@ const Helper = {
                 }
                 return resolve(targetData.data ? targetData.data : null);
             };
-            xmlHttp.send(JSON.stringify(data ? data : {}));
+            // 要传文件还是得formdata，json不能用，
+            // 虽然也可以base64再说，不过大文件总归不好
+            let formData = new FormData();
+            for (let k in data) {
+                if (data.hasOwnProperty(k)) {
+                    formData.append(k, data[k]);
+                }
+            }
+            // xmlHttp.send(JSON.stringify(data ? data : {}));
+            xmlHttp.send(formData);
         }));
     }
 };

@@ -22,7 +22,7 @@
         </div>
         <div class="btnList">
             <button type="button" class="btn btn-warning" v-on:click="cancel">close</button>
-            <button type="button" :class="['btn','btn-success',{disabled:uploading}]" v-on:click="upload">upload</button>
+            <button type="button" :class="['btn','btn-success',{disabled:uploading}]" v-on:click="upload">{{ uploading ? 'uploading' : 'upload' }}</button>
         </div>
     </div>
 </template>
@@ -247,19 +247,20 @@ export default {
                 if (this.fileList[i1].status !== 'uploading') continue;
                 hasUploader = true;
             }
-            if (!hasUploader) {
-                for (let i1 = 0; i1 < this.fileList.length; i1++) {
-                    console.info(this.info)
-                    console.info(this.fileList[i1])
-                    await this.uploadProcess(this.info.dir_id, this.fileList[i1]);
-                }
+            if (hasUploader) return;
+            this.uploading = true;
+            for (let i1 = 0; i1 < this.fileList.length; i1++) {
+                if (this.fileList[i1].status !== "waiting") continue;
+                console.info(this.info)
+                console.info(this.fileList[i1])
+                await this.uploadProcess(this.info.dir_id, this.fileList[i1]);
             }
             this.uploading = false;
-
         },
         uploadProcess: function (dirId, file) {
             return new Promise(
                 (resolve, reject) => {
+                    file.status = "uploading"
                     helper.query(
                         'file_upload',
                         {
@@ -268,8 +269,11 @@ export default {
                         },
                         {
                             progress: (e) => {
-                                if (e.lengthComputable) return;
+                                // console.info(e)
+                                this.fileList.splice(0, 0)
+                                if (!e.lengthComputable) return;
                                 file.process = e.loaded / e.total
+                                console.info(file.process)
                             }
                         }
                     ).then((data) => {

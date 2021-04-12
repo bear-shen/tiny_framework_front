@@ -33,10 +33,15 @@ const Helper = {
             let targetUrl           = config.api(api);
             let xmlHttp             = new XMLHttpRequest();
             xmlHttp.withCredentials = true;
-            if (extra && extra.progress) {
-                xmlHttp.addEventListener("progress", extra.progress)
-            }
             xmlHttp.open('POST', targetUrl, true);
+            if (extra && extra.progress) {
+                console.warn(`use progress`);
+                xmlHttp.upload.addEventListener('progress', extra.progress, false)
+                // xmlHttp.loadstart  = extra.progress;
+                // xmlHttp.load       = extra.progress;
+                // xmlHttp.loadend    = extra.progress;
+                // xmlHttp.addEventListener("progress", extra.progress)
+            }
             xmlHttp.onreadystatechange = function () {
                 if (xmlHttp.readyState !== 4 /*&& xmlhttp.status < 400*/) return;
                 // console.warn(xmlHttp.responseText);

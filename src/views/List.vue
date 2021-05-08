@@ -3,7 +3,7 @@
 但是没想好操作怎么合并，现在是复制过去的
 -->
 <template>
-    <div class="list">
+    <div :class="['list',refreshStamp]">
         <div class="listHeader">
             <ul class="headerGroup breadcrumb">
                 <li v-for="bread in navi" v-on:click="goto(bread.type,bread.id)">
@@ -31,22 +31,22 @@
                 <button type="button" class="sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="headerGroup layout">
-                <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listTypeLocal==='text'}]" v-on:click="changeListType('text')"></button>
-                <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listTypeLocal==='detail'}]" v-on:click="changeListType('detail')"></button>
-                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listTypeLocal==='image'}]" v-on:click="changeListType('image')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listType==='image'}]" v-on:click="changeListType('image')"></button>
             </div>
         </div>
-        <ul :class="['listContent','listType_'+listTypeLocal]">
+        <ul :class="['listContent','listType_'+listType]">
             <file-list-detail
-                v-if="listTypeLocal==='detail'" v-for="(item,index) in list"
+                v-if="listType==='detail'" v-for="(item,index) in list"
                 :key="index" :item="item" :dir="dir" :from="'list'"
             ></file-list-detail>
             <file-list-text
-                v-if="listTypeLocal==='text'" v-for="(item,index) in list"
+                v-if="listType==='text'" v-for="(item,index) in list"
                 :key="index" :item="item" :dir="dir" :from="'list'"
             ></file-list-text>
             <file-list-image
-                v-if="listTypeLocal==='image'" v-for="(item,index) in list"
+                v-if="listType==='image'" v-for="(item,index) in list"
                 :key="index" :item="item" :dir="dir" :from="'list'"
             ></file-list-image>
         </ul>
@@ -182,13 +182,14 @@ export default {
             keyword  : '',
             sort     : '',
             //
-            //listType: this.listTypeLocal,
+            listType: 'text',
             // from query
             navi: [],
             list: [],
             dir : {},
             // page: 1,
             //
+            refreshStamp: (new Date()) * 1
         }
     },
     /*watch  : {
@@ -231,7 +232,7 @@ export default {
         // console.info(GenFunc);
         // console.info(UploaderLib);
         // this.page = this.$store.state.pageSet;
-        //this.listType       = this.listTypeLocal;
+        this.listType       = this.listTypeLocal;
         this.sort = this.sortLocal;
         this.fillQuery(router.currentRoute.query);
         this.query(this.queryData, this.page).then(this.fillData);
@@ -697,7 +698,7 @@ export default {
         },
         changeListType: function (listType) {
             console.info('list: changeListType');
-            // this.listType      = listType;
+            this.listType      = listType;
             this.listTypeLocal = listType;
         },
         //
@@ -930,6 +931,9 @@ export default {
                     });
                     break;
             }
+        },
+        refresh  : function () {
+            this.refreshStamp = (new Date()) * 1;
         }
     },
 }

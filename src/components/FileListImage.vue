@@ -9,8 +9,8 @@ from 来自对象 {list|favourite|recycle}
             <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
             <img v-else class="ct_cover" :src="item.cover" :alt="item.title">
         </div>
-        <div v-if="!editMetaFlag" class="ct_title">{{item.title}}</div>
-        <div v-else class="ct_title"><input type="text" v-model="item.title"></div>
+        <div v-if="!editMetaFlag" class="ct_title">{{item.name}}</div>
+        <div v-else class="ct_title"><input type="text" v-model="item.name"></div>
         <div class="ct_operate">
             <template v-if="['list','favourite'].indexOf(from)!==-1">
                 <button v-if="editMetaFlag" v-on:click="saveMeta()" class="sysIcon sysIcon_save active"></button>
@@ -141,7 +141,7 @@ from 来自对象 {list|favourite|recycle}
                 console.info('list: saveMeta');
                 this.editMetaFlag = 0;
                 let data          = {
-                    title      : this.item.title,
+                    name      : this.item.name,
                     description: this.item.description,
                 };
             },

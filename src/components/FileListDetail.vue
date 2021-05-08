@@ -12,7 +12,7 @@ from 来自对象 {list|favourite|recycle}
         <div class="ct_meta">
             <template v-if="editMetaFlag">
                 <label class="ct_title">title:
-                    <input type="text" v-model="item.title">
+                    <input type="text" v-model="item.name">
                 </label>
                 <label class="ct_description">description:
                     <textarea v-model="item.description"></textarea>
@@ -20,7 +20,7 @@ from 来自对象 {list|favourite|recycle}
             </template>
             <template v-else>
                 <div class="ct_type">{{ item.type }}</div>
-                <div class="ct_title">{{ item.title }}</div>
+                <div class="ct_title">{{ item.name }}</div>
                 <div class="ct_description">{{ item.description }}</div>
                 <div class="ct_size">{{ item.size }}</div>
                 <div class="ct_hash">{{ item.hash }}</div>
@@ -277,7 +277,7 @@ export default {
             return new Promise((resolve, reject) => {
                 let query = {
                     id         : this.item.id,
-                    title      : this.item.title,
+                    name       : this.item.name,
                     description: this.item.description,
                 };
                 helper.query(

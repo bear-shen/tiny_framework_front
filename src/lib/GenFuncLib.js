@@ -19,7 +19,7 @@ const GenFunc = {
      * @param parentNode {HTMLElement|String|Node}
      * @return HTMLElement
      * */
-    getParentNode : function (parentNode) {
+    getParentNode: function (parentNode) {
         var targetNode = document.body;
         if (parentNode && typeof parentNode == "string" && parentNode.length > 0) {
             var targetNodeTmp = document.getElementById(parentNode);
@@ -61,7 +61,7 @@ const GenFunc = {
      *    "event":[ function(){} , function(){} ]
      * }
      * */
-    createNode    : function (tag, attributes, parentNode, eventListener) {
+    createNode: function (tag, attributes, parentNode, eventListener) {
         if (!tag) {
             console.error("没有标签名");
             return;
@@ -176,7 +176,7 @@ const GenFunc = {
      * @param method    {string}                    method，不写入时自动判断为get或者post
      *
      *    */
-    sendAjaxV2    : function (path, getReq, data, header, async, method) {
+    sendAjaxV2: function (path, getReq, data, header, async, method) {
         console.log("========= sending ajax =========");
         ///////////////////////////////////////////////////////////////////////
         // 过滤，追加默认值
@@ -311,24 +311,24 @@ const GenFunc = {
      * }
      * @return {XMLHttpRequest|String|Boolean}
      * */
-    sendAjaxV3    : function (input) {
+    sendAjaxV3: function (input) {
         var localConfigTmp = {
-            'path'            : '',
+            'path': '',
             /**
              * [{k:k1,v:v1},{k:k2,v:v2},]
              * {k1:v1,k2:v2,} * default
              * */
-            'get'             : false,
+            'get': false,
             /**
              * [{k:k1,v:v1},{k:k2,v:v2},]
              * {k1:v1,k2:v2,}
              * FormData * default
              * */
-            'post'            : false,
+            'post': false,
             /**
              * {get|post}
              * * */
-            'method'          : 'get',
+            'method': 'get',
             /**
              * ['k1:v1','k2:v2',]
              * {k1:v1,k2:v2,} * default
@@ -451,10 +451,10 @@ const GenFunc = {
         if (!localConfig.async) return xmlHttp.responseText;
         else return xmlHttp;
     },
-    send          : function (input) {
+    send      : function (input) {
         GenFunc.sendAjaxV3(input);
     },
-    sendAjax      : function (input) {
+    sendAjax  : function (input) {
         GenFunc.sendAjaxV3(input);
     },
     //array////////////////////////////////////////////////////////////////////////////////////////
@@ -462,7 +462,7 @@ const GenFunc = {
      * 判断当前对象是否为数组
      * 可以使用自带的 Array.isArray(array);
      * */
-    isArray       : function (input) {
+    isArray: function (input) {
         return Object.prototype.toString.call(input) === '[object Array]';
     },
     /**
@@ -473,7 +473,7 @@ const GenFunc = {
      * @deprecated
      * @see Object.assign(a,b)
      * */
-    mergeArray    : function () {
+    mergeArray: function () {
         var newArray = {};
         for (var ia = 0; ia < arguments.length; ia++) {
             for (var key in arguments[ia]) {
@@ -488,13 +488,13 @@ const GenFunc = {
      * 同php方法
      * split本来就可以直接取代了……
      * */
-    explode       : function (string, splitter, limit) {
+    explode: function (string, splitter, limit) {
         return string.split(splitter, limit);
     },
     /**
      * 同php方法
      * */
-    implode       : function (array, splitter) {
+    implode: function (array, splitter) {
         if (!splitter) {
             splitter = ",";
         }
@@ -511,7 +511,7 @@ const GenFunc = {
      * 删除数组中的一组数据
      * 感觉可能会有bug，但是总之目前看起来可以用
      * */
-    removeVal     : function (sourceArr, val) {
+    removeVal: function (sourceArr, val) {
         if (typeof val == "string") {
             val = [val];
         } else if (typeof val != "object" || !val.length) {
@@ -544,7 +544,7 @@ const GenFunc = {
      * ]
      * @return array
      * */
-    sort2DTable   : function (inputTable, sortCol, isNum, direction) {
+    sort2DTable: function (inputTable, sortCol, isNum, direction) {
         return inputTable.sort(
             function (a, b) {
                 //数字
@@ -569,7 +569,7 @@ const GenFunc = {
     /**
      * 设定cookie中的指定值
      * */
-    setCookie     : function (c_name, value, expiredays, path) {
+    setCookie: function (c_name, value, expiredays, path) {
         console.warn("setCookie");
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + expiredays);
@@ -580,7 +580,7 @@ const GenFunc = {
     /**
      * 获取cookie中的字段
      * */
-    getCookie     : function (c_name) {
+    getCookie: function (c_name) {
         console.info(document.cookie);
         if (document.cookie.length > 0) {
             var c_start = document.cookie.indexOf(c_name + "=");
@@ -598,7 +598,7 @@ const GenFunc = {
      * 空字段之类的没有处理
      * 返回k:v
      * */
-    getRequests   : function () {
+    getRequests  : function () {
         var url        = location.search; //获取url中"?"符后的字串
         var theRequest = [];
         if (url.indexOf("?") !== -1) {
@@ -613,7 +613,7 @@ const GenFunc = {
         }
         return theRequest;
     },
-    mergeRequests : function (array) {
+    mergeRequests: function (array) {
         var result = [];
         for (var k in array) {
             // console.warn("========================================");
@@ -631,13 +631,13 @@ const GenFunc = {
     /**
      * trim方法，使用正则，默认为\s
      * */
-    trim          : function (string, trimChar) {
+    trim  : function (string, trimChar) {
         if (!trimChar) trimChar = "\\\s";
         var reg = "^[" + trimChar + "]*(.*?)[" + trimChar + "]*$";
         // console.warn(reg);
         return string.replace(new RegExp(reg, "igm"), "$1");
     },
-    prefix        : function (num, length, txt) {
+    prefix: function (num, length, txt) {
         return (Array(length).join(txt) + num).slice(-length);
     },
     /**
@@ -645,7 +645,7 @@ const GenFunc = {
      * GBK的gbkurlencode
      * 仅限于GBK页面
      * */
-    encodeGBKurl  : function (s) {
+    encodeGBKurl: function (s) {
         var img = document.createElement("img");
 
 // escapeDBC 对多字节字符编码的函数
@@ -674,7 +674,7 @@ const GenFunc = {
             }
         );
     },
-    getUrlParam   : function (name) {
+    getUrlParam : function (name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
         var r   = window.location.search.substr(1).match(reg); //匹配目标参数
         if (r != null) return unescape(r[2]);
@@ -683,7 +683,7 @@ const GenFunc = {
     /**
      * @see https://www.cnblogs.com/hermitks/p/10979221.html
      * */
-    randStr       : function (len, table) {
+    randStr: function (len, table) {
         len        = len || 32;
         let chars  = table || 'abcdefghijklmnopqrstuvwxyz0123456789';
         /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
@@ -694,7 +694,7 @@ const GenFunc = {
         }
         return pwd;
     },
-    kmgt          : function (num, decimal) {
+    kmgt   : function (num, decimal) {
         if (typeof num !== "number") num = parseFloat(num);
         if (!decimal) decimal = 0;
         //
@@ -717,7 +717,7 @@ const GenFunc = {
     /**
      * 判断函数是否为空
      * */
-    isEmpty       : function (object) {
+    isEmpty        : function (object) {
         for (var ia in object) {
             if (object.hasOwnProperty(ia)) {
                 return false;
@@ -725,7 +725,7 @@ const GenFunc = {
         }
         return true;
     },
-    toggleClass   : function (element, className) {
+    toggleClass    : function (element, className) {
         var classes = element.className;
         //没参数
         if (!classes || !classes.trim().length) {
@@ -743,7 +743,7 @@ const GenFunc = {
         if (!exist) classArr.push(className);
         element.className = Array.prototype.join.call(classArr, " ");  //把数组转成字符串并赋值
     },
-    copyObject    : function (object) {
+    copyObject     : function (object) {
         let target = {};
         for (var key in object) {
             if (!object.hasOwnProperty(key)) continue;
@@ -751,7 +751,20 @@ const GenFunc = {
         }
         return target;
     },
-    zzz           : {
+    inputDateFormat: function (date) {
+        let d     = date ? new Date(date) : new Date();
+        let month = '' + (d.getMonth() + 1),
+            day   = '' + d.getDate(),
+            year  = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    },
+    zzz            : {
         /**
          * 1.5 收集数据并发送ajax
          * @param path      {string}              ajax文件路径
@@ -774,7 +787,7 @@ const GenFunc = {
          *    string
          *
          * */
-        sendAjax      : function (path, getReq, postReq, header, async, parseType) {
+        sendAjax: function (path, getReq, postReq, header, async, parseType) {
             console.log("========= sending ajax =========");
 
             /**
@@ -979,7 +992,7 @@ const GenFunc = {
          *
          * 当然没做ie兼容……
          * */
-        createNode    : function (tag, attributes, parentNode, innerTxt, eventListener) {
+        createNode: function (tag, attributes, parentNode, innerTxt, eventListener) {
             var newNode = document.createElement(tag);
             //设置attribute
             for (var key in attributes) {

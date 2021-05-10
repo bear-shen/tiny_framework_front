@@ -5,9 +5,9 @@ from 来自对象 {list|favourite|recycle}
 -->
 <template>
     <li :data-id="item.id">
-        <div :class="['ct_icon','listIcon','listIcon_file_'+item.type]" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)"></div>
+        <div :class="['ct_icon','listIcon','listIcon_file_'+item.type]" v-on:click="goto(item.type==='folder'?'folder':'file',item.id)"></div>
         <!--        <div class="ct_id">{{item.id}}</div>-->
-        <div v-if="!editMetaFlag" class="ct_title" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)">{{item.name}}</div>
+        <div v-if="!editMetaFlag" class="ct_title" v-on:click="goto(item.type==='folder'?'folder':'file',item.id)">{{item.name}}</div>
         <label v-else class="ct_title">
             <input type="text" v-model="item.name">
         </label>

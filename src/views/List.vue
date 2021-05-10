@@ -151,7 +151,7 @@ import helper         from "../lib/Helper";
  * audio
  *
  * naviType:
- * directory
+ * folder
  * tag
  * search
  * */
@@ -232,8 +232,8 @@ export default {
         // console.info(GenFunc);
         // console.info(UploaderLib);
         // this.page = this.$store.state.pageSet;
-        this.listType       = this.listTypeLocal;
-        this.sort = this.sortLocal;
+        this.listType = this.listTypeLocal;
+        this.sort     = this.sortLocal;
         this.fillQuery(router.currentRoute.query);
         this.query(this.queryData, this.page).then(this.fillData);
         store.commit(
@@ -635,22 +635,22 @@ export default {
              {
              id  : 0,
              name: 'root',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 1,
              name: 'dir a',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 2,
              name: 'dir c',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 3,
              name: 'dir d',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 4,
@@ -711,8 +711,8 @@ export default {
                     query.sort = targetId;
                     break;
                 //点文件夹，跳转文件夹
-                case 'directory':
-                    query.method = 'directory';
+                case 'folder':
+                    query.method = 'folder';
                     query.target = targetId;
                     break;
                 //tag 查询当前目录下的 tag
@@ -762,16 +762,26 @@ export default {
                 info: {
                     title   : 'addFolder',
                     data    : {
-                        title      : '',
+                        name       : '',
                         description: '',
                     },
                     template: {
-                        title      : {type: 'text', default: '', editable: true,},
+                        name       : {type: 'text', default: '', editable: true,},
                         description: {type: 'text', default: '', editable: true,},
                     },
-                    submit  : function (data) {
+                    submit  : (data) => {
                         console.info('list: callback: submit');
                         console.info(data);
+                        helper.query(
+                            'file_mkdir',
+                            {
+                                name       : data.name,
+                                description: data.description,
+                                dir_id     : this.dir.id,
+                            }
+                        ).then((data) => {
+                            console.warn(data);
+                        });
                     },
                     cancel  : function (data) {
                         console.info('list: callback: cancel');

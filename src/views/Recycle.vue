@@ -142,7 +142,7 @@ import helper         from "../lib/Helper";
  * audio
  *
  * naviType:
- * directory
+ * folder
  * tag
  * search
  * */
@@ -625,22 +625,22 @@ export default {
              {
              id  : 0,
              name: 'root',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 1,
              name: 'dir a',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 2,
              name: 'dir c',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 3,
              name: 'dir d',
-             type: 'directory',
+             type: 'folder',
              },
              {
              id  : 4,
@@ -701,8 +701,8 @@ export default {
                     query.sort = targetId;
                     break;
                 //点文件夹，跳转文件夹
-                case 'directory':
-                    query.method = 'directory';
+                case 'folder':
+                    query.method = 'folder';
                     query.target = targetId;
                     break;
                 //tag 查询当前目录下的 tag

@@ -5,7 +5,7 @@ from 来自对象 {list|favourite|recycle}
 -->
 <template>
     <li :data-id="item.id" :class="[]">
-        <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'directory':'file',item.id)">
+        <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'folder':'file',item.id)">
             <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
             <img v-else class="ct_cover" :src="item.cover" :alt="item.title">
         </div>

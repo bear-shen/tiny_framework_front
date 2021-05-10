@@ -789,25 +789,13 @@ export default {
             // this.$parent.showConfirm();
         },
         addFile  : function () {
-            /*store.commit('popup', {
-             type: 'upload',
-             info: {},
-             });
-             return;*/
             console.info('list: addFile');
-            /*store.commit('popup', {
-             type: 'login',
-             });*/
             store.commit('popup', {
                 type: 'uploader',
                 info: {
                     dir_id: this.dir.id,
                 }
             });
-            /*this.$parent.showLoader(
-             {type:'loader'}
-             );*/
-            // this.$parent.showConfirm();
         },
         popupDev : function () {
             console.warn('popupDev');

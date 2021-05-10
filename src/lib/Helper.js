@@ -67,13 +67,19 @@ const Helper = {
             // 要传文件还是得formdata，json不能用，
             // 虽然也可以base64再说，不过大文件总归不好
             /*let formData = new FormData();
-            for (let k in data) {
-                if (data.hasOwnProperty(k)) {
-                    formData.append(k, data[k]);
-                }
+             for (let k in data) {
+             if (data.hasOwnProperty(k)) {
+             formData.append(k, data[k]);
+             }
+             }
+             xmlHttp.send(formData);*/
+            let target = null;
+            if (data.__proto__ === FormData.prototype) {
+                target = data;
+            } else {
+                target = JSON.stringify(data ? data : {})
             }
-            xmlHttp.send(formData);*/
-            xmlHttp.send(JSON.stringify(data ? data : {}));
+            xmlHttp.send(target);
         }));
     }
 };

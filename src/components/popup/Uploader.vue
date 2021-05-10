@@ -260,13 +260,13 @@ export default {
         uploadProcess: function (dirId, file) {
             return new Promise(
                 (resolve, reject) => {
+                    let formData = new FormData();
+                    formData.append('dir', dirId);
+                    formData.append('file', file.bin);
                     file.status = "uploading"
                     helper.query(
                         'file_upload',
-                        {
-                            dir : dirId,
-                            file: file.bin,
-                        },
+                        formData,
                         {
                             progress: (e) => {
                                 // console.info(e)

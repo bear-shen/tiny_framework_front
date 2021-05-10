@@ -39,7 +39,7 @@ from 来自对象 {list|favourite|recycle}
                     <button v-if="editTagFlag" v-on:click="saveTag()" class="sysIcon sysIcon_save active">&nbsp;tag</button>
                     <button v-else v-on:click="editTag()" class="sysIcon sysIcon_tag-o">&nbsp;tag</button>
 
-                    <button v-if="item.favourite" v-on:click="favourite()" class="sysIcon sysIcon_heart-o active">&nbsp;favourite</button>
+                    <button v-if="item.status==2" v-on:click="favourite()" class="sysIcon sysIcon_heart-o active">&nbsp;favourite</button>
                     <button v-else v-on:click="favourite()" class="sysIcon sysIcon_heart-o">&nbsp;favourite</button>
 
                     <button v-if="item.type!=='folder'" v-on:click="fileVersion()" class="sysIcon sysIcon_stack">&nbsp;version</button>
@@ -321,7 +321,7 @@ export default {
                     'file_favourite',
                     query
                 ).then((data) => {
-                    this.item.favourite = this.item.favourite ? 0 : 1;
+                    this.item.status = this.item.status == '2' ? '1' : '2';
                     return resolve();
                 });
             });

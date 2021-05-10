@@ -19,7 +19,7 @@ from 来自对象 {list|favourite|recycle}
                 <button v-if="editMetaFlag" v-on:click="saveMeta()" class="sysIcon sysIcon_save active">&nbsp;rename</button>
                 <button v-else v-on:click="editMeta()" class="sysIcon sysIcon_edit">&nbsp;rename</button>
 
-                <button v-if="item.favourite" v-on:click="favourite()" class="sysIcon sysIcon_heart-o active">&nbsp;favourite</button>
+                <button v-if="item.status==2" v-on:click="favourite()" class="sysIcon sysIcon_heart-o active">&nbsp;favourite</button>
                 <button v-else v-on:click="favourite()" class="sysIcon sysIcon_heart-o">&nbsp;favourite</button>
 
                 <button v-if="item.type!=='folder'" v-on:click="fileVersion()" class="sysIcon sysIcon_stack">&nbsp;version</button>
@@ -94,6 +94,7 @@ from 来自对象 {list|favourite|recycle}
 <script>
     import store  from '../store';
     import Hinter from "./Hinter";
+import helper from "../lib/Helper";
 
     export default {
         name         : "FileListText",
@@ -128,55 +129,112 @@ from 来自对象 {list|favourite|recycle}
                 console.info('list: editMeta');
                 this.editMetaFlag = 1;
             },
-            /**
-             * @todo api file_mod
-             * */
             saveMeta      : function () {
                 console.info('list: saveMeta');
-                this.editMetaFlag = 0;
-                let data          = {
-                    title      : this.item.title,
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id         : this.item.id,
+                    name       : this.item.name,
                     description: this.item.description,
                 };
+                helper.query(
+                    'file_mod',
+                    query
+                ).then((data) => {
+                    this.editMetaFlag = 0;
+                    console.warn(data);
+                    return resolve();
+                });
+            });
             },
             /**
-             * @todo api file_cover
              * */
             setCover      : function () {
                 console.info('list: setCover');
-                if (this.dir)
+            return new Promise((resolve, reject) => {
+                if (!this.dir) return resolve();
+                let query = {
+                    id           : this.dir.id,
+                    node_cover_id: this.item.id,
+                };
+                helper.query(
+                    'file_cover',
+                    query
+                ).then((data) => {
                     this.dir.cover_id = this.item.id;
+                    return resolve();
+                });
+            });
             },
             /**
-             * @todo api file_favourite
              * */
             favourite     : function () {
                 console.info(`list: favourite ${this.item.id}`);
-                this.item.favourite = this.item.favourite ? 0 : 1;
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_favourite',
+                    query
+                ).then((data) => {
+                    this.item.status = this.item.status == '2' ? '1' : '2';
+                    return resolve();
+                });
+            });
             },
             /**
-             * @todo api file_delete @use $parent
              * */
             deleteFile    : function () {
                 console.info('list: deleteFile');
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_delete',
+                    query
+                ).then((data) => {
                 this.delFromList();
+                    return resolve();
+                });
+            });
             },
             /**
-             * @todo api file_recover @use $parent
              * */
             recoverFile   : function () {
                 console.info('list: recoverFile');
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_recover',
+                    query
+                ).then((data) => {
                 this.delFromList();
+                    return resolve();
+                });
+            });
             },
             /**
-             * @todo api file_delete_forever @use $parent
              * */
             deleteForever : function () {
                 console.info('list: deleteForever');
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_delete_forever',
+                    query
+                ).then((data) => {
                 this.delFromList();
+                    return resolve();
+                });
+            });
             },
             /**
-             * @todo api file_move
              * */
             moveFile      : function () {
                 console.info('list: moveFile');
@@ -186,7 +244,20 @@ from 来自对象 {list|favourite|recycle}
                         title : 'move to:',
                         submit: (dirItem, dirRoute) => {
                             console.info(`moveFile to ${JSON.stringify(dirItem)}`);
+                        return new Promise((resolve, reject) => {
+                            let query = {
+                                id       : this.item.id,
+                                target_id: dirItem.id,
+                            };
+                            helper.query(
+                                'file_move',
+                                query
+                            ).then((data) => {
+                                console.warn(data);
                             this.delFromList();
+                                return resolve();
+                            });
+                        });
                         },
                     }
                 });
@@ -229,6 +300,7 @@ from 来自对象 {list|favourite|recycle}
                 this.editTagFlag = 1;
             },
             /**
+         *
              * @todo api tag_apply
              * */
             saveTag       : function () {

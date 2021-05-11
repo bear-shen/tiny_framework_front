@@ -4,7 +4,7 @@ dir 当前文件夹数据
 from 来自对象 {list|favourite|recycle}
 -->
 <template>
-    <li :data-id="item.id" :class="[item.tag.length?'hasTag':'noTag']">
+    <li :data-id="item.id" :class="[item.tag.length||editTagFlag?'hasTag':'noTag']">
         <div class="ct_alpha" v-on:click="goto(item.type==='folder'?'folder':'file',item.id)">
             <span v-if="!item.cover" :class="['ct_icon','listIcon','listIcon_file_'+item.type]"></span>
             <img v-else class="ct_cover" :src="item.cover" :alt="item.title">
@@ -407,7 +407,7 @@ export default {
         },
         delFromList: function () {
             for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
-                if (this.item.id !== this.item.id) continue;
+                if (this.item.id !== this.$parent.list[i1].id) continue;
                 this.$parent.list.splice(i1, 1);
             }
         },
@@ -448,24 +448,49 @@ export default {
          * */
         saveTag: function () {
             console.info('list: saveTag');
-            this.editTagFlag = 0;
+            return new Promise((resolve, reject) => {
+                let tagIdList = [];
+                for (let i1 = 0; i1 < this.item.tag.length; i1++) {
+                    let group = this.item.tag[i1];
+                    for (let i2 = 0; i2 < group.sub.length; i2++) {
+                        tagIdList.push(group.sub[i2].id);
+                    }
+                }
+                helper.query(
+                    'file_tag_associate',
+                    {id: this.item.id, tag: tagIdList}
+                ).then((data) => {
+                    // console.info(data);
+                    this.editTagFlag = 0;
+                });
+            });
         },
         /**
          * @todo api tag_get
          * */
         hinterQuery   : function (searchTxt) {
             console.debug(`User: hinterQuery ${searchTxt}`);
-            //
             return new Promise((resolve, reject) => {
-                return resolve(
-                    {
-                        list: [
-                            {id: 75, name: 'drugs', group_id: 2, group_name: 'male',},
-                            {id: 74, name: 'bbm', group_id: 1, group_name: 'male',},
-                            {id: 76, name: 'anal', group_id: 3, group_name: 'male',},
-                            {id: 77, name: 'yaoi', group_id: 4, group_name: 'male',},
-                        ],
-                    });
+                helper.query(
+                    'tag_get',
+                    {name: searchTxt,}
+                ).then((data) => {
+                    console.info(data)
+                    let targetList = [];
+                    for (let i1 = 0; i1 < data.length; i1++) {
+                        targetList.push(
+                            {
+                                id        : data[i1].id,
+                                name      : data[i1].name,
+                                group_id  : data[i1].group.id,
+                                group_name: data[i1].group.name,
+                            });
+                    }
+                    return resolve(
+                        {
+                            list: targetList,
+                        });
+                });
             });
         },
         hinterCallback: function (target) {

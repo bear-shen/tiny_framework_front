@@ -105,8 +105,16 @@ export default {
         },
         htQuery    : function () {
             console.info('Hinter.vue htQuery');
-            if (!this.htData.length) return;
-            if (!this.query) return;
+            if (!this.htData.length) {
+                this.active  = 0;
+                this.loading = 0;
+                return;
+            }
+            if (!this.query) {
+                this.active  = 0;
+                this.loading = 0;
+                return;
+            }
             this.active  = 1;
             this.loading = 1;
             this.query(this.htData).then(this.fillData);

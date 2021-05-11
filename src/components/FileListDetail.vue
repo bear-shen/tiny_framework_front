@@ -385,7 +385,7 @@ export default {
                 type: 'list',
                 info: {
                     title : 'move to:',
-                    submit: (dirItem, dirRoute) => {
+                    submit: (dirItem) => {
                         console.info(`moveFile to ${JSON.stringify(dirItem)}`);
                         return new Promise((resolve, reject) => {
                             let query = {

@@ -136,61 +136,112 @@ export default {
             this.editMetaFlag = 1;
 
         },
-        /**
-         * @todo api file_mod
-         * */
         saveMeta: function () {
             console.info('list: saveMeta');
-            helper.query(
-                'file_mod',
-                {
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id         : this.item.id,
                     name       : this.item.name,
                     description: this.item.description,
-                    id         : this.item.id,
-                }
+                };
+                helper.query(
+                    'file_mod',
+                    query
             ).then((data) => {
+                    this.editMetaFlag = 0;
                 console.warn(data);
-                this.editMetaFlag = 0;
+                    return resolve();
+                });
             });
         },
         /**
-         * @todo api file_cover
          * */
         setCover: function () {
             console.info('list: setCover');
-            if (this.dir)
+            return new Promise((resolve, reject) => {
+                if (!this.dir) return resolve();
+                let query = {
+                    id           : this.dir.id,
+                    node_cover_id: this.item.id,
+                };
+                helper.query(
+                    'file_cover',
+                    query
+                ).then((data) => {
                 this.dir.cover_id = this.item.id;
+                    return resolve();
+                });
+            });
         },
         /**
-         * @todo api file_favourite
          * */
         favourite: function () {
             console.info(`list: favourite ${this.item.id}`);
-            this.item.favourite = this.item.favourite ? 0 : 1;
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_favourite',
+                    query
+                ).then((data) => {
+                    this.item.status = this.item.status == '2' ? '1' : '2';
+                    return resolve();
+                });
+            });
         },
         /**
-         * @todo api file_delete @use $parent
          * */
         deleteFile: function () {
             console.info('list: deleteFile');
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_delete',
+                    query
+                ).then((data) => {
             this.delFromList();
+                    return resolve();
+                });
+            });
         },
         /**
-         * @todo api file_recover @use $parent
          * */
         recoverFile: function () {
             console.info('list: recoverFile');
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_recover',
+                    query
+                ).then((data) => {
             this.delFromList();
+                    return resolve();
+                });
+            });
         },
         /**
-         * @todo api file_delete_forever @use $parent
          * */
         deleteForever: function () {
             console.info('list: deleteForever');
+            return new Promise((resolve, reject) => {
+                let query = {
+                    id: this.item.id,
+                };
+                helper.query(
+                    'file_delete_forever',
+                    query
+                ).then((data) => {
             this.delFromList();
+                    return resolve();
+                });
+            });
         },
         /**
-         * @todo api file_move
          * */
         moveFile   : function () {
             console.info('list: moveFile');
@@ -198,9 +249,22 @@ export default {
                 type: 'list',
                 info: {
                     title : 'move to:',
-                    submit: (dirItem, dirRoute) => {
+                    submit: (dirItem) => {
                         console.info(`moveFile to ${JSON.stringify(dirItem)}`);
+                        return new Promise((resolve, reject) => {
+                            let query = {
+                                id       : this.item.id,
+                                target_id: dirItem.id,
+                            };
+                            helper.query(
+                                'file_move',
+                                query
+                            ).then((data) => {
+                                console.warn(data);
                         this.delFromList();
+                                return resolve();
+                            });
+                        });
                     },
                 }
             });
@@ -243,6 +307,7 @@ export default {
             this.editTagFlag = 1;
         },
         /**
+         *
          * @todo api tag_apply
          * */
         saveTag: function () {

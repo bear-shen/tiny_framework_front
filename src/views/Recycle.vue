@@ -30,15 +30,15 @@ api 有了以后改改就能用的
         <ul :class="['listContent','listType_'+listTypeLocal]">
             <file-list-detail
                 v-if="listTypeLocal==='detail'" v-for="(item,index) in list"
-                :key="index" :item="item" :dir="dir" :from="'list'"
+                :key="index" :item="item" :dir="dir" :from="'recycle'"
             ></file-list-detail>
             <file-list-text
                 v-if="listTypeLocal==='text'" v-for="(item,index) in list"
-                :key="index" :item="item" :dir="dir" :from="'list'"
+                :key="index" :item="item" :dir="dir" :from="'recycle'"
             ></file-list-text>
             <file-list-image
                 v-if="listTypeLocal==='image'" v-for="(item,index) in list"
-                :key="index" :item="item" :dir="dir" :from="'list'"
+                :key="index" :item="item" :dir="dir" :from="'recycle'"
             ></file-list-image>
         </ul>
         <!--        <file-detail v-bind:file-detail="detail"/>-->

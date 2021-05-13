@@ -3,7 +3,7 @@
 api 有了以后改改就能用的
 -->
 <template>
-    <div class="recycle">
+    <div :class="['recycle',refreshStamp]">
         <div class="listHeader">
             <div class="headerGroup search">
                 <input type="text" placeholder="search" v-model="keyword">
@@ -22,22 +22,22 @@ api 有了以后改改就能用的
                 </select>
             </div>
             <div class="headerGroup layout">
-                <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listTypeLocal==='text'}]" v-on:click="changeListType('text')"></button>
-                <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listTypeLocal==='detail'}]" v-on:click="changeListType('detail')"></button>
-                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listTypeLocal==='image'}]" v-on:click="changeListType('image')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_text',{active:listType==='text'}]" v-on:click="changeListType('text')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_detail',{active:listType==='detail'}]" v-on:click="changeListType('detail')"></button>
+                <button type="button" :class="['sysIcon','sysIcon_listType_img',{active:listType==='image'}]" v-on:click="changeListType('image')"></button>
             </div>
         </div>
-        <ul :class="['listContent','listType_'+listTypeLocal]">
+        <ul :class="['listContent','listType_'+listType]">
             <file-list-detail
-                v-if="listTypeLocal==='detail'" v-for="(item,index) in list"
+                v-if="listType==='detail'" v-for="(item,index) in list"
                 :key="index" :item="item" :dir="dir" :from="'recycle'"
             ></file-list-detail>
             <file-list-text
-                v-if="listTypeLocal==='text'" v-for="(item,index) in list"
+                v-if="listType==='text'" v-for="(item,index) in list"
                 :key="index" :item="item" :dir="dir" :from="'recycle'"
             ></file-list-text>
             <file-list-image
-                v-if="listTypeLocal==='image'" v-for="(item,index) in list"
+                v-if="listType==='image'" v-for="(item,index) in list"
                 :key="index" :item="item" :dir="dir" :from="'recycle'"
             ></file-list-image>
         </ul>
@@ -173,13 +173,14 @@ export default {
             keyword  : '',
             sort     : '',
             //
-            //listType: this.listTypeLocal,
+            listType: 'text',
             // from query
             navi: [],
             list: [],
             dir : {},
             // page: 1,
             //
+            refreshStamp: (new Date()) * 1
         }
     },
     /*watch  : {
@@ -222,7 +223,7 @@ export default {
         // console.info(GenFunc);
         // console.info(UploaderLib);
         // this.page = this.$store.state.pageSet;
-        //this.listType       = this.listTypeLocal;
+        this.listType = this.listTypeLocal;
         this.sort = this.sortLocal;
         this.fillQuery(router.currentRoute.query);
         this.query(this.queryData, this.page).then(this.fillData);
@@ -688,7 +689,7 @@ export default {
         },
         changeListType: function (listType) {
             console.info('list: changeListType');
-            // this.listType      = listType;
+            this.listType      = listType;
             this.listTypeLocal = listType;
         },
         //
@@ -752,16 +753,26 @@ export default {
                 info: {
                     title   : 'addFolder',
                     data    : {
-                        title      : '',
+                        name       : '',
                         description: '',
                     },
                     template: {
-                        title      : {type: 'text', default: '', editable: true,},
+                        name       : {type: 'text', default: '', editable: true,},
                         description: {type: 'text', default: '', editable: true,},
                     },
-                    submit  : function (data) {
+                    submit  : (data) => {
                         console.info('list: callback: submit');
                         console.info(data);
+                        helper.query(
+                            'file_mkdir',
+                            {
+                                name       : data.name,
+                                description: data.description,
+                                dir_id     : this.dir.id,
+                            }
+                        ).then((data) => {
+                            console.warn(data);
+                        });
                     },
                     cancel  : function (data) {
                         console.info('list: callback: cancel');
@@ -779,26 +790,140 @@ export default {
             // this.$parent.showConfirm();
         },
         addFile  : function () {
-            store.commit('popup', {
-                type: 'login',
-                info: {},
-            });
-            return;
             console.info('list: addFile');
-            /*store.commit('popup', {
-             type: 'login',
-             });*/
             store.commit('popup', {
                 type: 'uploader',
                 info: {
                     dir_id: this.dir.id,
                 }
             });
-            /*this.$parent.showLoader(
-             {type:'loader'}
-             );*/
-            // this.$parent.showConfirm();
         },
+        popupDev : function () {
+            console.warn('popupDev');
+            return;
+            let type = 'version';
+            switch (type) {
+                case 'form':
+                    store.commit('popup', {
+                        type: 'form',
+                        info: {
+                            title   : 'addFolder',
+                            data    : {
+                                title      : '',
+                                description: '',
+                                locked     : 'locked',
+                                datetime   : '1919-08-10T11:45:14',
+                                textarea   : 'textarea',
+                                checkbox   : [],
+                                radio      : 'radio',
+                            },
+                            template: {
+                                title      : {type: 'text', default: '', editable: true,},
+                                description: {type: 'text', default: '', editable: true,},
+                                locked     : {type: 'text', default: '', editable: false,},
+                                datetime   : {type: 'datetime', default: '', editable: true,},
+                                textarea   : {type: 'textarea', default: '', editable: true,},
+                                checkbox   : {type: 'checkbox', default: '', editable: true,},
+                                _checkbox  : [
+                                    'val_1',
+                                    'val_2',
+                                    'val_3',
+                                ],
+                                radio      : {type: 'radio', default: '', editable: true,},
+                                _radio     : [
+                                    'val_1',
+                                    'val_2',
+                                    'val_3',
+                                ],
+                            },
+                            submit  : function (data) {
+                                console.info('list: callback: submit');
+                                console.info(data);
+                            },
+                            cancel  : function (data) {
+                                console.info('list: callback: cancel');
+                                console.info(data);
+                            },
+                            error   : function (data) {
+                                console.info('list: callback: error');
+                                console.info(data);
+                            },
+        },
+                    });
+                    break;
+                case 'loader':
+                    store.commit('popup', {
+                        type: 'loader',
+                    });
+                    break;
+                case 'confirm':
+                    store.commit('popup', {
+                        type: 'confirm',
+                        info: {
+                            data: 'confirm test',
+                        }
+                    });
+                    break;
+                case 'uploader':
+                    store.commit('popup', {
+                        type: 'uploader',
+                        info: {
+                            dir_id: 1,
+                        }
+                    });
+                    break;
+                case 'file':
+                    store.commit('popup', {
+                        type: 'file',
+                        info: {
+                            currentId: 1,
+                            query    : this.query,
+                            queryData: this.queryData,
+                        }
+                    });
+                    break;
+                case 'list':
+                    store.commit('popup', {
+                        type: 'list',
+                        info: {
+                            title : 'move to:',
+                            submit: (dirItem, dirRoute) => {
+                                console.info(`moveFile to ${JSON.stringify(dirItem)}`);
+                                this.delFromList();
+                            },
+                        }
+                    });
+                    break;
+                case 'login':
+                    store.commit('popup', {
+                        type: 'login',
+                        info: {}
+                    });
+                    break;
+                case 'version':
+                    store.commit('popup', {
+                        type: 'version',
+                        info: {
+                            id: 1,
+                        }
+                    });
+                    break;
+                case 'register':
+                    store.commit('popup', {
+                        type: 'register',
+                        info: {}
+                    });
+                    break;
+                case 'hide':
+                    store.commit('popup', {
+                        type: 'hide',
+                    });
+                    break;
+            }
+        },
+        refresh  : function () {
+            this.refreshStamp = (new Date()) * 1;
+        }
     },
 }
 </script>

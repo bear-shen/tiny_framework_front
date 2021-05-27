@@ -3,7 +3,7 @@
         <div :class="['content',
         {showDetail:detailOn},
         {noDetail:!detailOn},
-        current.tag.length?'hasTag':'noTag',
+        current.tag&&current.tag.length?'hasTag':'noTag',
         ]">
             <div class="contentBody" v-on:click="toggleDetail">
                 <template v-if="current.type==='image'">

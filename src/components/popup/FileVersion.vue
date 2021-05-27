@@ -138,6 +138,7 @@
 import GenFuncLib from "../../lib/GenFuncLib";
 import Helper     from "../../lib/Helper";
 import router     from "../../router";
+import helper     from "../../lib/Helper";
 
 export default {
     name     : 'PopupFileVersion',
@@ -161,65 +162,95 @@ export default {
     },
     methods  : {
         deleteNode: function (itemIndex) {
-            if (this.list.length > 1)
-                this.list.splice(itemIndex, 1);
+            //前端先不允许修改吧
+            if (this.list.length <= 1) return;
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'file_ver_del',
+                    {
+                        file_id: this.list[itemIndex].id,
+                        node_id: this.info.id,
+                    }
+                ).then((data) => {
+                    console.warn(data);
+                    this.list.splice(itemIndex, 1);
+                });
+            });
         },
         download  : function (itemIndex) {
+            // console.info(this.list[itemIndex]);
+            window.open(this.list[itemIndex].raw)
         },
         /**
-         * @todo api file_ver_mod
+         * @debug
          * */
         setCurrent: function (itemIndex) {
+            return new Promise((resolve, reject) => {
+                helper.query(
+                    'file_ver_mod',
+                    {
+                        file_id: this.list[itemIndex].id,
+                        node_id: this.info.id,
+                    }
+                ).then((data) => {
+                    console.warn(data);
+                });
+            });
         },
         /**
-         * @todo api file_ver
          * */
         query   : function (itemId) {
-            let targetList = [];
-            for (let i1 = 0; i1 < 20; i1++) {
-                targetList.push(
-                    {
-                        id         : '0',
-                        raw        : '/sample/cover.jpg',
-                        normal     : '/sample/cover.jpg',
-                        cover      : '/sample/cover.jpg',
-                        cover_id   : '1',
-                        title      : 'this is title this is title this is title this is title this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'image',
-                        favourite  : '1',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        //
-                        is_current: 1,
-                    });
-                targetList.push(
-                    {
-                        id         : '0',
-                        raw        : '/sample/cover.jpg',
-                        normal     : '/sample/cover.jpg',
-                        cover      : '',
-                        cover_id   : '1',
-                        title      : 'this is title this is title this is title this is title this is title',
-                        description: 'this is description',
-                        size       : '996 KB',
-                        hash       : '4A4A808691495B1370A9C1F7620EEFD0',
-                        type       : 'image',
-                        favourite  : '1',
-                        time_create: '1919-08-10 11:45:14',
-                        time_update: '1919-08-10 11:45:14',
-                        //
-                        is_current: 0,
-                    });
-            }
             return new Promise((resolve, reject) => {
-                return resolve(
-                    {
-                        list: targetList,
-                    });
+                helper.query(
+                    'file_ver',
+                    {node_id: itemId}
+                ).then((data) => {
+                    console.warn(data);
+                    return resolve(
+                        {
+                            list: data,
+                        });
+                });
             });
+            /*let targetList = [];
+             for (let i1 = 0; i1 < 20; i1++) {
+             targetList.push(
+             {
+             id         : '0',
+             raw        : '/sample/cover.jpg',
+             normal     : '/sample/cover.jpg',
+             cover      : '/sample/cover.jpg',
+             cover_id   : '1',
+             title      : 'this is title this is title this is title this is title this is title',
+             description: 'this is description',
+             size       : '996 KB',
+             hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+             type       : 'image',
+             favourite  : '1',
+             time_create: '1919-08-10 11:45:14',
+             time_update: '1919-08-10 11:45:14',
+             //
+             is_current: 1,
+             });
+             targetList.push(
+             {
+             id         : '0',
+             raw        : '/sample/cover.jpg',
+             normal     : '/sample/cover.jpg',
+             cover      : '',
+             cover_id   : '1',
+             title      : 'this is title this is title this is title this is title this is title',
+             description: 'this is description',
+             size       : '996 KB',
+             hash       : '4A4A808691495B1370A9C1F7620EEFD0',
+             type       : 'image',
+             favourite  : '1',
+             time_create: '1919-08-10 11:45:14',
+             time_update: '1919-08-10 11:45:14',
+             //
+             is_current: 0,
+             });
+             }*/
         },
         fillData: function (resolveData) {
             console.info('popup FileDetail: fillData');

@@ -87,7 +87,7 @@
 }
 .tagGroup {
     .groupList {
-        column-count: 3;
+        column-count: 5;
         width: 100%;
         color: map_get($colors, sub_font);
         > li {
@@ -148,7 +148,7 @@
 @media (max-width: $tabletWidth) {
     .tagGroup {
         .groupList {
-            column-count: 2;
+            column-count: 3;
         }
     }
 }

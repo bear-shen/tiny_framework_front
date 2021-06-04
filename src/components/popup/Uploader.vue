@@ -125,6 +125,7 @@
 import config     from '../../config';
 import GenFuncLib from '../../lib/GenFuncLib';
 import helper     from "../../lib/Helper";
+import GenFunc    from "../../lib/GenFuncLib";
 
 /**
  * UploaderLib.js 里的分片功能正在考虑要不要去掉，想想都觉得烦。。。
@@ -257,6 +258,40 @@ export default {
             }
             this.uploading = false;
         },
+        uploadPartial: async function (dirId, file) {
+            let fileToken   = GenFunc.randStr(32);
+            let chunkLength = 25 * 1000 * 1000;
+            let mark        = {part: '__PART__', end: '__END__',};
+            let chunkSize   = Math.ceil(file.bin.size / chunkLength);
+            let processed   = 0;
+            let total       = file.bin.size;
+            //
+            for (let i1 = 0; i1 < chunkSize; i1++) {
+                let subBlob  = file.bin.slice(i1 * chunkLength, chunkLength);
+                let isLast   = i1 === (chunkSize - 1);
+                let subFile  = new File([subBlob], isLast ? mark.end : mark.part);
+                //
+                let formData = new FormData();
+                formData.append('token', fileToken);
+                formData.append('dir', dirId);
+                formData.append('file', subFile);
+                //
+                await helper.query(
+                    'file_upload_partial',
+                    formData,
+                    {
+                        progress: (e) => {
+                            if (!e.lengthComputable) return;
+                            file.process = (processed + e.loaded) / total
+                            console.info(file.process)
+                            // console.info(e)
+                            this.fileList.splice(0, 0)
+                        }
+                    }
+                );
+                processed += subFile.size;
+            }
+        },
         uploadProcess: function (dirId, file) {
             return new Promise(
                 (resolve, reject) => {
@@ -269,11 +304,11 @@ export default {
                         formData,
                         {
                             progress: (e) => {
-                                // console.info(e)
-                                this.fileList.splice(0, 0)
                                 if (!e.lengthComputable) return;
                                 file.process = e.loaded / e.total
                                 console.info(file.process)
+                                // console.info(e)
+                                this.fileList.splice(0, 0)
                             }
                         }
                     ).then((data) => {

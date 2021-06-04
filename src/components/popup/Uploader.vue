@@ -254,14 +254,14 @@ export default {
                 if (this.fileList[i1].status !== "waiting") continue;
                 console.info(this.info)
                 console.info(this.fileList[i1])
-                await this.uploadProcess(this.info.dir_id, this.fileList[i1]);
+                await this.uploadPartial(this.info.dir_id, this.fileList[i1]);
             }
             this.uploading = false;
         },
         uploadPartial: async function (dirId, file) {
             let fileToken   = GenFunc.randStr(32);
             let chunkLength = 25 * 1000 * 1000;
-            let mark        = {part: '__PART__', end: '__END__',};
+            let mark        = {part: '___PART___', end: '___END____',};
             let chunkSize   = Math.ceil(file.bin.size / chunkLength);
             let processed   = 0;
             let total       = file.bin.size;

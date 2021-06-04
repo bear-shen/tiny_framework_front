@@ -17,9 +17,11 @@
                     <textarea disabled v-model="current.raw"></textarea>
                 </template>
                 <template v-else-if="current.type==='video'">
-                    <video :src="current.normal" controls></video>
+                    <video v-if="current.alpha" :src="current.normal" controls :poster="current.alpha"></video>
+                    <video v-else :src="current.normal" controls></video>
                 </template>
                 <template v-else-if="current.type==='audio'">
+                    <img v-if="current.alpha" class="ct_cover" :src="current.alpha" :alt="current.title">
                     <audio :src="current.normal" controls></audio>
                 </template>
             </div>

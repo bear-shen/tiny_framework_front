@@ -147,14 +147,19 @@
             }
         }
     }
+    $hasTagHeight: 60vh;
+    $noTagHeight: 80vh;
     .content.noDetail {
         .contentBody {
             text-align: center;
             padding: $fontSize;
             height: calc(100vh - #{$footerHeight*2} - #{$fontSize*2});
-            > .ct_icon {
+            /*> .ct_icon {
                 //font-size: calc((100vh - #{$footerHeight} * 3 - 40px) * 0.5);
                 font-size: $footerHeight;
+            }*/
+            > .ct_icon {
+                font-size: calc(#{$noTagHeight} * 0.5);
             }
         }
         .contentDetail {
@@ -183,8 +188,6 @@
             }
         }
     }
-    $hasTagHeight: 60vh;
-    $noTagHeight: 80vh;
     .content.showDetail.hasTag {
         .contentBody {
             height: $hasTagHeight;

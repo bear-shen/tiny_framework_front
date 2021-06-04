@@ -35,7 +35,7 @@ const Helper = {
             xmlHttp.withCredentials = true;
             xmlHttp.open('POST', targetUrl, true);
             if (extra && extra.progress) {
-                console.warn(`use progress`);
+                // console.warn(`use progress`);
                 xmlHttp.upload.addEventListener('progress', extra.progress, false)
                 // xmlHttp.loadstart  = extra.progress;
                 // xmlHttp.load       = extra.progress;

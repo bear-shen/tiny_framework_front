@@ -267,14 +267,18 @@ export default {
             let total       = file.bin.size;
             //
             for (let i1 = 0; i1 < chunkSize; i1++) {
-                let subBlob  = file.bin.slice(i1 * chunkLength, chunkLength);
+                let subBlob = file.bin.slice(i1 * chunkLength, (i1 + 1) * chunkLength);
+                // console.info(subBlob);
+                // continue;
                 let isLast   = i1 === (chunkSize - 1);
-                let subFile  = new File([subBlob], isLast ? mark.end : mark.part);
+                let subFile  = new File([subBlob], `${file.name}${isLast ? mark.end : mark.part}`);
                 //
                 let formData = new FormData();
                 formData.append('token', fileToken);
                 formData.append('dir', dirId);
                 formData.append('file', subFile);
+                // console.info(file, subBlob, subFile, subFile.name, subFile.size, i1 * chunkLength, chunkLength);
+                // continue;
                 //
                 await helper.query(
                     'file_upload_partial',
@@ -283,7 +287,7 @@ export default {
                         progress: (e) => {
                             if (!e.lengthComputable) return;
                             file.process = (processed + e.loaded) / total
-                            console.info(file.process)
+                            console.info(file.process, processed, e.loaded, total, subFile.size);
                             // console.info(e)
                             this.fileList.splice(0, 0)
                         }

@@ -134,6 +134,11 @@
                 display: block;
                 text-align: center;
             }
+            > audio {
+                position: relative;
+                bottom: $fontSize*4;
+                height: $fontSize*2;
+            }
             > textarea {
                 width: 90%;
                 height: 90%;

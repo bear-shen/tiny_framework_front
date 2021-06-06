@@ -154,6 +154,7 @@ export default {
             /*{
              name   : 'test.tst',
              size   : '100 Kb',
+             token   : 'qweqweqweqw',
              bin    : false,
              process: 1,
              status : 'uploaded',
@@ -161,6 +162,7 @@ export default {
              {
              name   : 'test.tst',
              size   : '100 Kb',
+             token   : 'qweqweqweqw',
              bin    : false,
              process: 0.8,
              status : 'uploading',
@@ -168,6 +170,7 @@ export default {
              {
              name   : 'test.tst',
              size   : '100 Kb',
+             token   : 'qweqweqweqw',
              bin    : false,
              process: 0.2,
              status : 'failed',
@@ -175,21 +178,18 @@ export default {
              {
              name   : 'test.tst',
              size   : '100 Kb',
+             token   : 'qweqweqweqw',
              bin    : false,
              process: 0,
              status : 'waiting',
              },*/
         ];
-        let len      = fileList.length;
-        for (let i = 0; i < len; i++) {
-            fileList.push(fileList[i]);
-            fileList.push(fileList[i]);
-        }
+
         return {
-            fileList        : fileList,
+            fileList        : [],
             open            : false,
             dragging        : false,
-            uploading       : false,
+            queueSize       : 5,
             preventEventList: [
                 'drag',
                 'dragleave',
@@ -208,8 +208,8 @@ export default {
         this.removePrevent();
     },
     updated  : function () {
-        this.$refs.dragWindow.scrollTop =
-            this.$refs.dragWindow.scrollHeight - this.$refs.dragWindow.clientHeight;
+        // this.$refs.dragWindow.scrollTop =
+        //     this.$refs.dragWindow.scrollHeight - this.$refs.dragWindow.clientHeight;
     },
     mounted  : function () {
         console.info(`popup uploader: mounted`);
@@ -221,7 +221,7 @@ export default {
         this.$refs.dragWindow.addEventListener('paste', this.onDragPaste);
         this.$refs.dragInput.addEventListener('change', this.onInputChange);
         /*this.$refs.dragList.addEventListener('dragenter', (e)=>{
-         e.stopPropagation();
+         e.stopPropagation();0
          e.preventDefault();
          });
          this.$refs.dragList.addEventListener('dragleave', (e)=>{
@@ -238,43 +238,35 @@ export default {
          });*/
     },
     methods  : {
-        cancel: function () {
+        cancel       : function () {
             console.info(`popup uploader: cancel`);
             this.$parent.hide();
         },
-        /**
-         * */
-        upload       : async function () {
-            console.info(`popup uploader: upload`);
-            /* dev
-             if (this.uploading) return;
-             console.info(this.info);
-             console.info(this.fileList);
-             this.uploading  = true;
-             let hasUploader = false;*/
-            let hasUploader = false;
-            //
+        queueAvail   : function () {
+            let inQueue = 0;
             for (let i1 = 0; i1 < this.fileList.length; i1++) {
-                if (this.fileList[i1].status !== 'uploading') continue;
-                hasUploader = true;
+                if (this.fileList[i1].status == 'uploading') inQueue += 1;
             }
-            if (hasUploader) return;
-            this.uploading = true;
+            return inQueue < this.queueSize;
+        },
+        nextQueue    : function () {
             for (let i1 = 0; i1 < this.fileList.length; i1++) {
-                if (this.fileList[i1].status !== "waiting") continue;
-                console.info(this.info)
-                console.info(this.fileList[i1])
-                await this.uploadPartial(this.info.dir_id, this.fileList[i1]);
+                if (this.fileList[i1].status != 'waiting') continue;
+                this.uploadPartial(this.info.dir_id, this.fileList[i1]);
+                break;
             }
-            this.uploading = false;
         },
         uploadPartial: async function (dirId, file) {
-            let fileToken   = GenFunc.randStr(32);
+            if (!this.queueAvail) {
+                return;
+            }
+            file.status     = "uploading"
             let chunkLength = 25 * 1000 * 1000;
             let mark        = {part: '___PART___', end: '___END____',};
             let chunkSize   = Math.ceil(file.bin.size / chunkLength);
             let processed   = 0;
             let total       = file.bin.size;
+
             //
             for (let i1 = 0; i1 < chunkSize; i1++) {
                 let subBlob = file.bin.slice(i1 * chunkLength, (i1 + 1) * chunkLength);
@@ -284,27 +276,36 @@ export default {
                 let subFile  = new File([subBlob], `${file.name}${isLast ? mark.end : mark.part}`);
                 //
                 let formData = new FormData();
-                formData.append('token', fileToken);
+                formData.append('token', file.token);
                 formData.append('dir', dirId);
                 formData.append('file', subFile);
                 // console.info(file, subBlob, subFile, subFile.name, subFile.size, i1 * chunkLength, chunkLength);
                 // continue;
                 //
-                await helper.query(
-                    'file_upload_partial',
-                    formData,
-                    {
-                        progress: (e) => {
-                            if (!e.lengthComputable) return;
-                            file.process = (processed + e.loaded) / total
-                            console.info(file.process, processed, e.loaded, total, subFile.size);
-                            // console.info(e)
-                            this.fileList.splice(0, 0)
+                try {
+                    await helper.query(
+                        'file_upload_partial',
+                        formData,
+                        {
+                            progress: (e) => {
+                                if (!e.lengthComputable) return;
+                                file.process = (processed + e.loaded) / total
+                                console.info(file.process, processed, e.loaded, total, subFile.size);
+                                // console.info(e)
+                                // let beforeScroll = this.$refs.dragWindow.scrollTop;
+                                this.fileList.splice(0, 0);
+                                // this.$refs.dragWindow.scrollTop = beforeScroll;
+                            }
                         }
-                    }
-                );
+                    );
+                } catch (e) {
+                    file.status = "failed"
+                    break;
+                }
                 processed += subFile.size;
             }
+            file.status = "uploaded"
+            this.nextQueue();
         },
         uploadProcess: function (dirId, file) {
             return new Promise(
@@ -381,12 +382,14 @@ export default {
                 let fileInfo = {
                     name   : file.name,
                     size   : GenFuncLib.kmgt(file.size, 2),
+                    token  : GenFunc.randStr(32),
                     bin    : file,
                     process: 0,
                     status : 'waiting',
                 };
                 this.fileList.push(fileInfo);
-                await this.uploadPartial(this.info.dir_id, fileInfo);
+                //这边不加await，调用之后函数内自行执行下一个
+                this.uploadPartial(this.info.dir_id, fileInfo);
             } catch (e) {
                 console.warn(e);
             }

@@ -53,8 +53,9 @@
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
         <!--        </div>-->
-
+        <float-uploader v-if="dir.name" :info="{dir_id:dir.id,}"></float-uploader>
     </div>
+
 </template>
 
 <style lang="scss">
@@ -138,6 +139,7 @@ import Helper         from '../lib/Helper'
 import FileListDetail from "../components/FileListDetail";
 import FileListText   from "../components/FileListText";
 import FileListImage  from "../components/FileListImage";
+import FloatUploader  from "../components/FloatUploader";
 import helper         from "../lib/Helper";
 // import Popup    from '../components/Popup'
 
@@ -157,7 +159,7 @@ import helper         from "../lib/Helper";
  * */
 export default {
     name      : 'List',
-    components: {FileListImage, FileListText, FileListDetail},
+    components: {FileListImage, FileListText, FileListDetail, FloatUploader},
     store     : store,
     watch     : {
         $route: function (to, from) {

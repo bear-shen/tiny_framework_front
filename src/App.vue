@@ -53,6 +53,7 @@ body {
 table {
     border-collapse: collapse;
 }
+// ----------------------------------------------------
 #app {
     #body {
         position: relative;
@@ -85,6 +86,7 @@ table {
         #content {
             margin-left: $navWidth;
             width: calc(100vw - #{$navWidth});
+            position: relative;
         }
     }
     @media(min-width: $tabletWidth+1) {
@@ -104,27 +106,6 @@ table {
                 width: calc(100vw - #{$navFoldWidth});
             }
         }
-    }
-}
-.listHeader {
-    line-height: $fontSize*2;
-    /*height: $fontSize*2;*/
-    font-size: $fontSize;
-    .headerGroup {
-        white-space: nowrap;
-        display: inline-block;
-        vertical-align: top;
-        height: $fontSize*2;
-        line-height: $fontSize*2;
-        padding-top: 0;
-        padding-bottom: 0;
-        > * {
-            display: inline-block;
-            vertical-align: top;
-            padding: $fontSize*0.5;
-            line-height: $fontSize;
-        }
-        margin-right: $fontSize*0.25;
     }
 }
 @media (max-width: $tabletWidth) {
@@ -191,6 +172,46 @@ table {
         }
     }
 }
+// ----------------------------------------------------
+.listHeader {
+    line-height: $fontSize*2;
+    /*height: $fontSize*2;*/
+    font-size: $fontSize;
+    position: fixed;
+    z-index: 2;
+    background-color: map_get($colors, bk);
+    width: calc(100vw - #{$navWidth});
+    .headerGroup {
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: top;
+        height: $fontSize*2;
+        line-height: $fontSize*2;
+        padding-top: 0;
+        padding-bottom: 0;
+        > * {
+            display: inline-block;
+            vertical-align: top;
+            padding: $fontSize*0.5;
+            line-height: $fontSize;
+        }
+        margin-right: $fontSize*0.25;
+    }
+}
+.listContent {
+    padding: $fontSize*2 0;
+}
+@media (max-width: $tabletWidth) {
+    .listHeader {
+        width: 100%;
+    }
+
+}
+@media (max-width: $mobileWidth) {
+    .listHeader {
+    }
+}
+// ----------------------------------------------------
 input, button, select, textarea {
 }
 button, select {

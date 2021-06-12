@@ -409,6 +409,8 @@ export default {
             for (let i1 = 0; i1 < this.$parent.list.length; i1++) {
                 if (this.item.id !== this.$parent.list[i1].id) continue;
                 this.$parent.list.splice(i1, 1);
+                // console.info(i1,this.$parent.list[i1]);
+                // break;
             }
         },
         /**

@@ -205,6 +205,9 @@ table {
     .listHeader {
         width: 100%;
     }
+    .listContent {
+        padding: $fontSize*4 0;
+    }
 
 }
 @media (max-width: $mobileWidth) {

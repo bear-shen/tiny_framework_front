@@ -27,7 +27,7 @@
                 </select>
             </div>
             <div class="headerGroup operate">
-                <button type="button" class="sysIcon sysIcon_addfile" v-on:click="addFile"></button>
+<!--                <button type="button" class="sysIcon sysIcon_addfile" v-on:click="addFile"></button>-->
                 <button type="button" class="sysIcon sysIcon_addfolder" v-on:click="addFolder"></button>
             </div>
             <div class="headerGroup layout">

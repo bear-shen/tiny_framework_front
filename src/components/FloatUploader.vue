@@ -1,6 +1,10 @@
 <template>
     <div :class="['float_uploader',{open:open}]">
-        <div v-on:click="toggle" class="toggleWindow">toggle upload window</div>
+        <div v-on:click="toggle" class="toggleWindow">
+            <span class="sysIcon sysIcon_addfile"></span>
+            &emsp;
+            toggle upload window
+        </div>
         <div
             :class="['dragWindow',{dragging:dragging},]"
             ref="dragWindow"
@@ -47,6 +51,7 @@
     }
     .dragWindow {
         display: none;
+        height: 0;
     }
 }
 @media (max-width: $tabletWidth) {

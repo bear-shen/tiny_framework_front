@@ -64,17 +64,20 @@ input[type="text"] {
 #content.list {
     .listHeader {
         .breadcrumb {
+
             white-space: nowrap;
             background-color: map_get($colors, header_bread_bk);
             width: 50vw;
+            //text-overflow: ellipsis;
             overflow: hidden;
-            text-overflow: ellipsis;
+            @include smallScroll;
+            overflow-x: auto;
             li {
-                padding-left: $fontSize;
+                padding-left: $fontSize*0.25;
                 &::before {
                     content: '>';
                     display: inline-block;
-                    padding-right: $fontSize;
+                    padding-right: $fontSize*0.25;
                 }
             }
         }

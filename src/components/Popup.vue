@@ -106,7 +106,7 @@
         },
         methods   : {
             show : function (data) {
-                if (this.type === 'hide') {
+                if (data.type === 'hide') {
                     this.hide();
                     return;
                 }

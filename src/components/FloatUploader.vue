@@ -205,11 +205,11 @@ export default {
         };
     },
     created  : function () {
-        console.info(`popup uploader: created`);
+        console.info(`float uploader: created`);
         console.info(this.$refs);
     },
     destroyed: function () {
-        console.info(`popup uploader: destroyed`);
+        console.info(`float uploader: destroyed`);
         this.removePrevent();
     },
     updated  : function () {
@@ -217,7 +217,7 @@ export default {
         //     this.$refs.dragWindow.scrollHeight - this.$refs.dragWindow.clientHeight;
     },
     mounted  : function () {
-        console.info(`popup uploader: mounted`);
+        console.info(`float uploader: mounted`);
         this.callPrevent();
         console.info(this.$refs);
         this.$refs.dragWindow.addEventListener('dragenter', this.onDragEnter);
@@ -244,7 +244,7 @@ export default {
     },
     methods  : {
         cancel       : function () {
-            console.info(`popup uploader: cancel`);
+            console.info(`float uploader: cancel`);
             this.$parent.hide();
         },
         queueAvail   : function () {
@@ -357,17 +357,17 @@ export default {
         },
         //
         onDragEnter  : function (e) {
-            console.info(`popup uploader: onDragEnter`);
+            console.info(`float uploader: onDragEnter`);
             console.info(e);
             this.dragging = true;
         },
         onDragLeave  : function (e) {
-            console.info(`popup uploader: onDragLeave`);
+            console.info(`float uploader: onDragLeave`);
             console.info(e);
             this.dragging = false;
         },
         onDragDrop   : async function (e) {
-            console.info(`popup uploader: onDragDrop`);
+            console.info(`float uploader: onDragDrop`);
             console.info(e);
             this.dragging = false;
             let fileList  = e.dataTransfer.files;
@@ -376,11 +376,11 @@ export default {
             }
         },
         onDragPaste  : function (e) {
-            console.info(`popup uploader: onDragPaste`);
+            console.info(`float uploader: onDragPaste`);
             console.info(e);
         },
         onInputChange: async function (e) {
-            console.info(`popup uploader: onInputChange`);
+            console.info(`float uploader: onInputChange`);
             let fileList = e.target.files;
             for (let i1 = 0; i1 < fileList.length; i1++) {
                 await this.addFile(fileList[i1]);
@@ -388,11 +388,11 @@ export default {
         },
         //
         delFile  : function (index) {
-            console.info(`popup uploader: delFile ${index}`);
+            console.info(`float uploader: delFile ${index}`);
             this.fileList.splice(index, 1);
         },
         addFile  : async function (file) {
-            console.info(`popup uploader: addFile`);
+            console.info(`float uploader: addFile`);
             try {
                 await this.checkFile(file);
                 let fileInfo = {

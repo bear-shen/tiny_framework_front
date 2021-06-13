@@ -53,7 +53,7 @@
         <!--        <file-detail v-bind:file-detail="detail"/>-->
         <!--        <div class="listUploadAplha">-->
         <!--        </div>-->
-        <float-uploader v-if="dir.name" :info="{dir_id:dir.id,}"></float-uploader>
+        <float-uploader v-if="dir.name" :dir-id="dir.id"></float-uploader>
     </div>
 
 </template>

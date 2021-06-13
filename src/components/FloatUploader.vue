@@ -9,15 +9,15 @@
             :class="['dragWindow',{dragging:dragging},]"
             ref="dragWindow"
         >
+            <!--这边用table排版不会排。。。先这样吧-->
             <ul class="dragList" ref="dragList">
                 <li v-for="(file,i) in fileList" :class="[file.status]">
                     <p>{{ file.name }}</p>
                     <p>{{ file.size }}</p>
-                    <!--<p>{{ file.status }}</p>-->
+                    <p v-if="file.status =='uploading'">{{ file.speed }}</p>
+                    <p v-else-if="file.status==='waiting'" v-on:click="delFile(i)" class="delBtn">[x]</p>
+                    <p v-else>{{ file.status }}</p>
                     <div class="statusBar" :style="{width:`${file.process*100}%`}"></div>
-                    <template v-if="file.status==='waiting'">
-                        <div v-on:click="delFile(i)" class="delBtn">[x]</div>
-                    </template>
                 </li>
                 <li>
                     <label>drag file/archive here or click ...<input type="file" multiple ref="dragInput"></label>
@@ -153,7 +153,7 @@ import GenFunc    from "../lib/GenFuncLib";
 
 export default {
     name     : 'FloatUploader',
-    props    : ['info'],
+    props    : ['dirId'],
     data     : function () {
         let fileList = [
             /*{
@@ -248,24 +248,28 @@ export default {
             this.$parent.hide();
         },
         queueAvail   : function () {
+            // console.info(`check queue`);
             let inQueue = 0;
             for (let i1 = 0; i1 < this.fileList.length; i1++) {
                 if (this.fileList[i1].status == 'uploading') inQueue += 1;
             }
+            // console.info('queue:', inQueue);
             return inQueue < this.queueSize;
         },
         nextQueue    : function () {
             for (let i1 = 0; i1 < this.fileList.length; i1++) {
                 if (this.fileList[i1].status != 'waiting') continue;
-                this.uploadPartial(this.info.dir_id, this.fileList[i1]);
+                this.uploadPartial(this.dirId, this.fileList[i1]);
                 break;
             }
         },
         uploadPartial: async function (dirId, file) {
-            if (!this.queueAvail) {
+            if (!this.queueAvail()) {
                 return;
             }
+            // console.warn('set uploading');
             file.status     = "uploading"
+            file.processT   = new Date();
             let chunkLength = 25 * 1000 * 1000;
             let mark        = {part: '___PART___', end: '___END____',};
             let chunkSize   = Math.ceil(file.bin.size / chunkLength);
@@ -294,8 +298,16 @@ export default {
                         {
                             progress: (e) => {
                                 if (!e.lengthComputable) return;
-                                file.process = (processed + e.loaded) / total
-                                console.info(file.process, processed, e.loaded, total, subFile.size);
+                                // console.info(file.process, processed, e.loaded, total, subFile.size);
+                                let processT  = new Date();
+                                let processD  = processed + e.loaded;
+                                file.process  = processD / total;
+                                file.speed    = GenFunc.kmgt(
+                                    (processD - file.processD) / (processT - file.processT) * 1000,
+                                    2
+                                ) + '/s';
+                                file.processT = processT;
+                                file.processD = processD;
                                 // console.info(e)
                                 // let beforeScroll = this.$refs.dragWindow.scrollTop;
                                 this.fileList.splice(0, 0);
@@ -325,7 +337,7 @@ export default {
                         {
                             progress: (e) => {
                                 if (!e.lengthComputable) return;
-                                file.process = e.loaded / e.total
+                                file.process = e.loaded / e.total;
                                 console.info(file.process)
                                 // console.info(e)
                                 this.fileList.splice(0, 0)
@@ -381,20 +393,23 @@ export default {
         },
         addFile  : async function (file) {
             console.info(`popup uploader: addFile`);
-            console.info(file);
             try {
                 await this.checkFile(file);
                 let fileInfo = {
-                    name   : file.name,
-                    size   : GenFuncLib.kmgt(file.size, 2),
-                    token  : GenFunc.randStr(32),
-                    bin    : file,
-                    process: 0,
-                    status : 'waiting',
+                    name    : file.name,
+                    size    : GenFuncLib.kmgt(file.size, 2),
+                    token   : GenFunc.randStr(32),
+                    bin     : file,
+                    process : 0,
+                    status  : 'waiting',
+                    processT: 0,
+                    processD: 0,
+                    speed   : '0 K/s',
                 };
+                console.info(fileInfo);
                 this.fileList.push(fileInfo);
                 //这边不加await，调用之后函数内自行执行下一个
-                this.uploadPartial(this.info.dir_id, fileInfo);
+                this.uploadPartial(this.dirId, fileInfo);
             } catch (e) {
                 console.warn(e);
             }

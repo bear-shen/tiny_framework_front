@@ -57,14 +57,16 @@ input[type="text"] {
             white-space: nowrap;
             background-color: map_get($colors, header_bread_bk);
             width: 50vw;
+            //text-overflow: ellipsis;
             overflow: hidden;
-            text-overflow: ellipsis;
+            @include smallScroll;
+            overflow-x: auto;
             li {
-                padding-left: $fontSize;
+                padding-left: $fontSize*0.25;
                 &::before {
                     content: '>';
                     display: inline-block;
-                    padding-right: $fontSize;
+                    padding-right: $fontSize*0.25;
                 }
             }
         }
@@ -154,6 +156,8 @@ export default {
         $route: function (to, from) {
             console.info(`list: route to ${router.currentRoute.name}`);
             this.fillQuery(router.currentRoute.query);
+
+            store.commit('popup', {type:'loader'});
             this.query(this.queryData, this.page).then(this.fillData);
         },
         /*queryData       : function (to, from) {
@@ -226,6 +230,7 @@ export default {
         this.listType = this.listTypeLocal;
         this.sort     = this.sortLocal;
         this.fillQuery(router.currentRoute.query);
+        store.commit('popup', {type:'loader'});
         this.query(this.queryData, this.page).then(this.fillData);
         store.commit(
             'pushMsg',
@@ -679,6 +684,7 @@ export default {
         },
         fillData      : function (resolveData) {
             console.info('list: fillData');
+            store.commit('popup', {type:'hide'});
             this.list = resolveData.list;
             //detail目前也就一个判断封面的功能，其实可以省掉的
             this.dir  = resolveData.dir;

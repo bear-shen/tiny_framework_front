@@ -18,6 +18,11 @@ export default new Vuex.Store(
             popupDOM: null,
         },
         mutations: {
+            //
+            pushFloat    : (state, payload) => {
+            },
+            registerFloat: (state, dom) => {
+            },
             // -------------------------------
             usePagination    : (state) => {
                 // if (!state.paginatorDOM) return false;

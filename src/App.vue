@@ -23,6 +23,7 @@
         </div>
         <Footer/>
         <Popup/>
+        <div></div>
     </div>
 </template>
 
@@ -291,6 +292,7 @@ export default {
             foldNav     : false,
             routes      : [],
             currentRoute: {},
+            floatWindowList:[],
         };
     },
     store     : store,
@@ -313,11 +315,13 @@ export default {
         this.currentRoute = router.currentRoute;
         // globalDbg         = router;
         globalDbg         = this;
+
     },
     methods   : {
         toggler: function () {
             this.foldNav = !this.foldNav;
         },
+        pushFloat:function (){},
     },
 }
 </script>

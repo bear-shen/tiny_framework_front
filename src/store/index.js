@@ -16,12 +16,15 @@ export default new Vuex.Store(
             msgDOM: null,
             //
             popupDOM: null,
+            //
+            floatPusher: null,
         },
         mutations: {
             //
-            pushFloat    : (state, payload) => {
+            pushFloat        : (state, payload) => {
             },
-            registerFloat: (state, dom) => {
+            registerPushFloat: (state, func) => {
+                state.floatPusher = func;
             },
             // -------------------------------
             usePagination    : (state) => {
